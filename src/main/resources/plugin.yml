@@ -1,0 +1,3 @@
+name: FMC
+main: flour.fmc.FMC
+version: dev
