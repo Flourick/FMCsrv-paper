@@ -11,7 +11,7 @@ commands:
         aliases: [cme]
         permission: fmc.colorme
         permission-message: §cYou do not have permission to color yourself!
-        usage: "§eUsage:§r /<command> <color|list>"
+        usage: "§eUsage:§r /<command> §7<§rcolor§7|§rlist§7>§r"
         
 permissions:
     fmc.colorme:
