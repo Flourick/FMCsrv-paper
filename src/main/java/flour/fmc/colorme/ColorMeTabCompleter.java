@@ -1,4 +1,4 @@
-package flour.fmc;
+package flour.fmc.colorme;
 
 import java.util.ArrayList;
 import java.util.Collections;
