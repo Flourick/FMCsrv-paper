@@ -4,6 +4,7 @@ import io.papermc.lib.PaperLib;
 import net.md_5.bungee.api.ChatColor;
 
 import flour.fmc.colorme.ColorMeTabCompleter;
+import flour.fmc.colorme.ColorMe;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,9 +21,13 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class FMC extends JavaPlugin
 {
-	private static FMC instance;
+	//modules
+	private ColorMe colorMe;
 	
-	public static FMC getInstance() {
+	//plugin instance
+	private static FMC instance;
+	public static FMC getInstance()
+	{
 		return instance;
 	}
 	
@@ -34,6 +39,8 @@ public class FMC extends JavaPlugin
 		
 		// Creates config.yml if not already present
 		this.saveDefaultConfig();
+		
+		colorMe = new ColorMe(this);
 		
 		this.getCommand("colorme").setTabCompleter(new ColorMeTabCompleter());
 		this.getCommand("cme").setTabCompleter(new ColorMeTabCompleter());
@@ -53,14 +60,14 @@ public class FMC extends JavaPlugin
 			}
 		}, this);
 		
-		getLogger().info("FMC plugin has been enabled");
+		getLogger().info("FMC has been enabled");
 	}
 
 	@Override
 	public void onDisable()
 	{
 		saveConfig();
-		getLogger().info("FMC plugin has been disabled");
+		getLogger().info("FMC has been disabled");
 	}
 	
 	@Override
