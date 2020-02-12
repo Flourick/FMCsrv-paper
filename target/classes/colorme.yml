@@ -1,0 +1,11 @@
+# ColorMe module configuration file
+# ---
+# use-vanilla-teams-for-coloring:
+#   Uses the vanilla teams instead of the bukkit API to provide
+#   players with colors. Has the advantage of the color showing
+#   in more places such as joining, pets etc. Do not use when
+#   you have any other use for teams. You MUST enable this option
+#   in paper.yml too if you wish to use it
+# ---
+use-vanilla-teams-for-coloring: false
+player-colors:

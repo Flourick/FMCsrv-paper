@@ -1,12 +1,10 @@
 package flour.fmc.colorme;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-import org.bukkit.util.StringUtil;
 
 /**
  * colorme command TAB completion
