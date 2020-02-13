@@ -3,8 +3,12 @@ package flour.fmc.colorme;
 import flour.fmc.FMC;
 import flour.fmc.utils.CConfig;
 import flour.fmc.utils.IModule;
+import java.util.Iterator;
 
 import net.md_5.bungee.api.ChatColor;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.Logger;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -13,6 +17,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.scheduler.BukkitRunnable;
 
 /**
  * ColorMe module class
@@ -26,34 +31,73 @@ import org.bukkit.event.player.PlayerJoinEvent;
 public class ColorMe implements IModule, CommandExecutor
 {
 	private final boolean useTeams;
-	
 	private final CConfig colorMeConfig;
+	private final FMC fmc;
 	
 	public ColorMe(FMC fmc)
 	{
+		this.fmc = fmc;
+		
 		this.colorMeConfig = new CConfig(fmc, "colorme.yml");
 		
 		// Creates default config if not present
 		colorMeConfig.saveDefaultConfig();
 		
 		useTeams = colorMeConfig.getConfig().getBoolean("use-vanilla-teams-for-coloring");
-		
+	}
+	
+	@Override
+	public void onEnable()
+	{
 		fmc.getCommand("colorme").setTabCompleter(new ColorMeTabCompleter());
 		fmc.getCommand("colorme").setExecutor(this);
 		
-		fmc.getServer().getPluginManager().registerEvents(new Listener() {
-			@EventHandler
-			public void playerJoin(PlayerJoinEvent event)
-			{
-		 		Player player = event.getPlayer();
-				
-				// Colors the player when he joins
-				String color = colorMeConfig.getConfig().getString("player-colors." + player.getName());
-				if(color != null) {
-					colorPlayer(player, color);
+		if(useTeams) {
+			BukkitRunnable runnable = new BukkitRunnable() {
+				@Override
+				public void run()
+				{
+					// adds a filter for team messages a.k.a less console spam
+					TeamLogFilter teamLogFilter = new TeamLogFilter();
+					fmc.addLogFilter(teamLogFilter);
+					
+					// adds teams
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_dark_red");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_red");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_gold");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_yellow");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_dark_green");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_green");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_aqua");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_dark_aqua");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_dark_blue");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_blue");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_light_purple");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_dark_purple");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_dark_gray");
+					fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team add ColorMe_gray");
+					
+					// enable logging for teams again
+					fmc.removeLogFilter(teamLogFilter);
 				}
-			}
-		}, fmc);
+			};
+			runnable.runTaskLater(fmc, 1L);
+		}
+		else {
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void playerJoin(PlayerJoinEvent event)
+				{
+					Player player = event.getPlayer();
+
+					// Colors the player when he joins
+					String color = colorMeConfig.getConfig().getString("player-colors." + player.getName());
+					if(color != null) {
+						colorPlayer(player, color);
+					}
+				}
+			}, fmc);
+		}
 	}
 	
 	@Override
@@ -111,6 +155,71 @@ public class ColorMe implements IModule, CommandExecutor
 	}
 	
 	private boolean colorPlayer(Player player, String color)
+	{
+		if(useTeams) {
+			return colorPlayerTeams(player, color);
+		}
+		else {
+			return colorPlayerBukkit(player, color);
+		}
+	}
+	
+	private boolean colorPlayerTeams(Player player, String color)
+	{
+		switch(color) {
+			case "dark_red":
+
+				break;
+			case "red":
+
+				break;
+			case "gold":
+
+				break;
+			case "yellow":
+
+				break;
+			case "dark_green":
+
+				break;
+			case "green":
+
+				break;
+			case "aqua":
+
+				break;
+			case "dark_aqua":
+
+				break;
+			case "dark_blue":
+
+				break;
+			case "blue":
+
+				break;
+			case "light_purple":
+
+				break;
+			case "dark_purple":
+
+				break;
+			case "dark_gray":
+
+				break;
+			case "gray":
+
+				break;
+			case "white":
+
+				break;
+			default:
+				return false;
+		}
+		
+		return true;
+	}
+	
+	private boolean colorPlayerBukkit(Player player, String color)
 	{
 		switch(color) {
 			case "dark_red":
@@ -176,6 +285,7 @@ public class ColorMe implements IModule, CommandExecutor
 			default:
 				return false;
 		}
+		
 		return true;
 	}
 }

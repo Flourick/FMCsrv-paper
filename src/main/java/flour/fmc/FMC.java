@@ -3,8 +3,12 @@ package flour.fmc;
 import io.papermc.lib.PaperLib;
 
 import flour.fmc.colorme.ColorMe;
+import flour.fmc.dyngen.DynGen;
 import java.util.ArrayList;
 import java.util.logging.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Filter;
+import org.apache.logging.log4j.core.Logger;
 import org.bukkit.ChatColor;
 
 import org.bukkit.command.Command;
@@ -18,14 +22,20 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class FMC extends JavaPlugin
 {
+	private Logger rootLogger;
+	
 	// modules
 	private ColorMe colorMe;
 	private boolean colorMeEnabled = true;
+	private DynGen dynGen;
+	private boolean dynGenEnabled = true;
 	
 	@Override
 	public void onEnable()
 	{
 		PaperLib.suggestPaper(this);
+		
+		rootLogger = (Logger) LogManager.getRootLogger();
 		
 		// creates config.yml if not already present
 		saveDefaultConfig();
@@ -33,12 +43,18 @@ public class FMC extends JavaPlugin
 		ArrayList<String> enabledModules = new ArrayList<>();
 		
 		// load modules
-		if(colorMeEnabled = getConfig().getBoolean("enable-color-me")) {
+		if(colorMeEnabled = getConfig().getBoolean("enable-colorme")) {
 			colorMe = new ColorMe(this);
+			colorMe.onEnable();
 			enabledModules.add("ColorMe");
 		}
+		if(dynGenEnabled = getConfig().getBoolean("enable-dyngen")) {
+			dynGen = new DynGen(this);
+			dynGen.onEnable();
+			enabledModules.add("DynGen");
+		}
 		
-		getLogger().log(Level.INFO, "FMC has been successfully enabled");
+		getLogger().log(Level.INFO, "FMC has been successfully enabled!");
 		getLogger().log(Level.INFO, "Loaded modules: {0}", enabledModules);
 	}
 
@@ -52,6 +68,9 @@ public class FMC extends JavaPlugin
 		if(colorMeEnabled) {
 			colorMe.onDisable();
 		}
+		if(dynGenEnabled) {
+			dynGen.onDisable();
+		}
 		
 		getLogger().log(Level.INFO, "FMC has been disabled");
 	}
@@ -59,9 +78,19 @@ public class FMC extends JavaPlugin
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[])
 	{
-		// No FMC commands for now
+		// No base FMC commands for now
 		sender.sendMessage(ChatColor.RED + "Disabled command.");
 		
 		return true;
+	}
+	
+	public void addLogFilter(Filter filter)
+	{
+		rootLogger.getContext().addFilter(filter);
+	}
+	
+	public void removeLogFilter(Filter filter)
+	{
+		rootLogger.getContext().removeFilter(filter);
 	}
 }

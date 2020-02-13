@@ -1,4 +1,5 @@
 # Main FMC configuration file
 # ---
-enable-color-me: true
+enable-colorme: true
+enable-dyngen: true
     

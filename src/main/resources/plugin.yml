@@ -12,9 +12,18 @@ commands:
         permission: fmc.colorme
         permission-message: §cYou do not have permission to color yourself!
         usage: "§eUsage:§r /<command> §7<§rcolor§7|§rlist§7>§r"
+    dyngen:
+        description: Generates and renders chunks on the DynMap.
+        aliases: [dg]
+        permission: fmc.dyngen
+        permission-message: §cYou do not have permission for DynGen!
+        usage: "§eUsage:§r /<command> §7<§rmode§7> §7[§rx§7] §7[§rz§7] §7[§rradius§7] §7[§rworld§7]"
         
 permissions:
     fmc.colorme:
         description: Allows to color your name
         default: true
+    fmc.dyngen:
+        description: Allows the use of dyngen command
+        default: op
             

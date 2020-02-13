@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>flour</groupId>
 	<artifactId>FMC</artifactId>
-	<version>dev</version>
+	<version>DEV</version>
 	<packaging>jar</packaging>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -46,6 +46,12 @@
            <type>jar</type>
            <scope>provided</scope>
        </dependency>
+	   
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.13.0</version>
+		</dependency>
 	 </dependencies>
 
 	 <build>
