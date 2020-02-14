@@ -291,7 +291,7 @@ public class ColorMe implements IModule, CommandExecutor
 				break;
 			case "dark_purple":
 				fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team leave " + playerName);
-				fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team join cme_purple " + playerName);
+				fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team join cme_dark_purple " + playerName);
 				break;
 			case "dark_gray":
 				fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "team leave " + playerName);

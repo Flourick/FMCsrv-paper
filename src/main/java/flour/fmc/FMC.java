@@ -36,7 +36,7 @@ public class FMC extends JavaPlugin
 	public void onEnable()
 	{
 		PaperLib.suggestPaper(this);
-		if(PaperLib.isPaper()) {
+		if(!PaperLib.isPaper()) {
 			getLogger().log(Level.WARNING, "This plugin might not work as expected or at all on anything other than Paper! I HIGHLY recommend using Paper.");
 		}
 		
