@@ -8,12 +8,21 @@ package flour.fmc.utils;
 public interface IModule
 {
 	/**
-	* Gets called when the server starts/reloads or the plugin gets enabled
-	*/
-	public void onEnable();
+	 * States if the module is enabled or disabled
+	 * 
+	 * @return true if module is disabled, false otherwise
+	 */
+	public boolean getDisabled();
 	
 	/**
-	* Gets called whenever server stops/restarts/reloads or the plugin gets disabled
-	*/
+	 * Gets called when the server starts/reloads or the plugin gets enabled
+	 * 
+	 * @return true if successful, false otherwise
+	 */
+	public boolean onEnable();
+	
+	/**
+	 * Gets called whenever server stops/restarts/reloads or the plugin gets disabled
+	 */
 	public void onDisable();
 }
