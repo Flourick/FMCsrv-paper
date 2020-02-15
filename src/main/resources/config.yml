@@ -1,5 +1,6 @@
 # Main FMC configuration file
 # ---
 enable-colorme: true
+enable-oneplayersleep: true
 enable-dyngen: true
     

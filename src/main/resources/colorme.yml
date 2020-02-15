@@ -1,5 +1,9 @@
 # ColorMe module configuration file
 # for it to work in Paper use-vanilla-world-scoreboard-name-coloring MUST be set to false!
+#
+# ---
+# use-custom-join-and-quit-messages: (boolean)
+#	- adds some more join/quit messages
 # ---
 use-custom-join-and-quit-messages: true
 player-colors:

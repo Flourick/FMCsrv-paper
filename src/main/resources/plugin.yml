@@ -2,7 +2,7 @@ name: FMC
 main: flour.fmc.FMC
 version: DEV
 api-version: 1.15
-description: FMC utilities
+description: FMC modular utility plugin
 author: Flourick
 
 commands:
@@ -12,16 +12,25 @@ commands:
         permission: fmc.colorme
         permission-message: §cYou do not have permission to color yourself!
         usage: "§eUsage:§r /<command> §7<§rcolor§7|§rlist§7>§r"
+    wakeplayer:
+        description: Wakes a player if he is trying to sleep to skip the night.
+        aliases: [wp]
+        permission: fmc.wakeplayer
+        permission-message: §cYou do not have permission to wake others!
+        usage: "§eUsage:§r /<command> §7<§rplayer§7>"
     dyngen:
         description: Generates and renders chunks on the DynMap.
         aliases: [dg]
         permission: fmc.dyngen
         permission-message: §cYou do not have permission for DynGen!
         usage: "§eUsage:§r /<command> §7<§rmode§7> §7[§rx§7] §7[§rz§7] §7[§rradius§7] §7[§rworld§7]"
-        
+
 permissions:
     fmc.colorme:
-        description: Allows to color your name
+        description: Allows the use of colorme command
+        default: true
+    fmc.wakeplayer:
+        description: Allows the use of wakeplayer command
         default: true
     fmc.dyngen:
         description: Allows the use of dyngen command

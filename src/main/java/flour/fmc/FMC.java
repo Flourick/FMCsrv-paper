@@ -4,6 +4,7 @@ import io.papermc.lib.PaperLib;
 
 import flour.fmc.colorme.ColorMe;
 import flour.fmc.dyngen.DynGen;
+import flour.fmc.oneplayersleep.OnePlayerSleep;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -31,6 +32,8 @@ public class FMC extends JavaPlugin
 	private boolean colorMeEnabled = false;
 	private DynGen dynGen;
 	private boolean dynGenEnabled = false;
+	private OnePlayerSleep onePlayerSleep;
+	private boolean onePlayerSleepEnabled = false;
 	
 	@Override
 	public void onEnable()
@@ -59,6 +62,17 @@ public class FMC extends JavaPlugin
 				colorMeEnabled = false;
 			}
 		}
+		if(onePlayerSleepEnabled = getConfig().getBoolean("enable-oneplayersleep")) {
+			onePlayerSleep = new OnePlayerSleep(this);
+			if(onePlayerSleep.onEnable()) {
+				enabledModules.add("OnePlayerSleep");
+			}
+			else {
+				// module disabled itself, maybe wrong config?
+				onePlayerSleep = null;
+				onePlayerSleepEnabled = false;
+			}
+		}
 		if(dynGenEnabled = getConfig().getBoolean("enable-dyngen")) {
 			dynGen = new DynGen(this);
 			if(dynGen.onEnable()) {
@@ -70,6 +84,7 @@ public class FMC extends JavaPlugin
 				dynGenEnabled = false;
 			}
 		}
+		
 		
 		getLogger().log(Level.INFO, "FMC has been successfully enabled!");
 		getLogger().log(Level.INFO, "Loaded modules: {0}", enabledModules);
@@ -84,6 +99,9 @@ public class FMC extends JavaPlugin
 		// call onDisable() of modules
 		if(colorMeEnabled) {
 			colorMe.onDisable();
+		}
+		if(onePlayerSleepEnabled) {
+			onePlayerSleep.onDisable();
 		}
 		if(dynGenEnabled) {
 			dynGen.onDisable();

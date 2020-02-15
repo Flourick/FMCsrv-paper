@@ -248,46 +248,59 @@ public class ColorMe implements IModule, CommandExecutor
 	
 	private String getRandomJoinMessage(String playerName)
 	{
-		Random rnd = new Random(); 
-        int idx = rnd.nextInt(12);
+		Random rnd = new Random();
 		
 		String[] messages = {
-			ChatColor.YELLOW + "No way! Is that the real " + playerName + ChatColor.YELLOW + "?",
-			ChatColor.YELLOW + "The whole package of " + playerName + ChatColor.YELLOW + " is here!",
-			ChatColor.YELLOW + "Attention! " + playerName + ChatColor.YELLOW + " is now here!",
-			ChatColor.YELLOW + "Woooo! " + playerName + ChatColor.YELLOW + " joined!",
-			ChatColor.YELLOW + "Here comes " + playerName + ChatColor.YELLOW + "!",
-			playerName + ChatColor.YELLOW + " is here and ready to place some blocks!",
-			playerName + ChatColor.YELLOW + " has just landed",
+			playerName + ChatColor.YELLOW + " just landed here",
 			playerName + ChatColor.YELLOW + " has just arrived",
-			playerName + ChatColor.YELLOW + " is here! Run for your lives!",
+			playerName + ChatColor.YELLOW + " is here now",
 			playerName + ChatColor.YELLOW + " joined the server",
-			playerName + ChatColor.YELLOW + " just hopped on!",
-			playerName + ChatColor.YELLOW + " appeared out of nowhere"
+			playerName + ChatColor.YELLOW + " joined the server",
+			playerName + ChatColor.YELLOW + " joined the server",
+			playerName + ChatColor.YELLOW + " joined the server",
+			playerName + ChatColor.YELLOW + " joined the server",
+			playerName + ChatColor.YELLOW + " joined the server",
+			playerName + ChatColor.YELLOW + " just hopped on",
+			playerName + ChatColor.YELLOW + " appeared out of nowhere",
+			playerName + ChatColor.YELLOW + " connected to the server",
+			playerName + ChatColor.YELLOW + " connected to the server",
+			playerName + ChatColor.YELLOW + " connected to the server",
+			playerName + ChatColor.YELLOW + " connected to the server",
+			playerName + ChatColor.YELLOW + " connected to the server",
+			playerName + ChatColor.YELLOW + " connected to the server"
 		};
+		int idx = rnd.nextInt(messages.length);
 		
 		return messages[idx];
 	}
 	
 	private String getRandomQuitMessage(String playerName)
 	{
-		Random rnd = new Random(); 
-        int idx = rnd.nextInt(12);
+		Random rnd = new Random();
 		
 		String[] messages = {
-			ChatColor.YELLOW + "And just like that, " + playerName + ChatColor.YELLOW + " was gone",
-			ChatColor.YELLOW + "It was hard to leave for " + playerName + ChatColor.YELLOW + ", but he did it",
-			ChatColor.YELLOW + "Unfortunately " + playerName + ChatColor.YELLOW + " had to leave",
 			playerName + ChatColor.YELLOW + " has propably better things to do",
 			playerName + ChatColor.YELLOW + " left the server",
-			playerName + ChatColor.YELLOW + " left. Who was that anyway?",
+			playerName + ChatColor.YELLOW + " left the server",
+			playerName + ChatColor.YELLOW + " left the server",
+			playerName + ChatColor.YELLOW + " left the server",
+			playerName + ChatColor.YELLOW + " left the server",
+			playerName + ChatColor.YELLOW + " left the server",
+			playerName + ChatColor.YELLOW + " left the server",
+			playerName + ChatColor.YELLOW + " removed himself from the game",
 			playerName + ChatColor.YELLOW + " pressed ALT + F4",
 			playerName + ChatColor.YELLOW + " is not here with us anymore",
-			playerName + ChatColor.YELLOW + " wandered off the server",
-			playerName + ChatColor.YELLOW + " popped off",
-			playerName + ChatColor.YELLOW + " left. It was way past his bedtime!",
-			playerName + ChatColor.YELLOW + " left in fear"
+			playerName + ChatColor.YELLOW + " dropped out the server",
+			playerName + ChatColor.YELLOW + " decided it was time to leave",
+			playerName + ChatColor.YELLOW + " left in fear",
+			playerName + ChatColor.YELLOW + " disconnected",
+			playerName + ChatColor.YELLOW + " disconnected",
+			playerName + ChatColor.YELLOW + " disconnected",
+			playerName + ChatColor.YELLOW + " disconnected",
+			playerName + ChatColor.YELLOW + " disconnected",
+			playerName + ChatColor.YELLOW + " disconnected"
 		};
+		int idx = rnd.nextInt(messages.length);
 		
 		return messages[idx];
 	}

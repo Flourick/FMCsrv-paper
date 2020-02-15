@@ -17,7 +17,7 @@ import org.bukkit.command.CommandSender;
  */
 public class DynGen implements IModule, CommandExecutor
 {	
-	private FMC fmc;
+	private final FMC fmc;
 	private boolean isEnabled = false;
 	
 	public DynGen(FMC fmc)
