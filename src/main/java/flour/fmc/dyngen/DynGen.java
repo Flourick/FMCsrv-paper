@@ -18,7 +18,7 @@ import org.bukkit.command.CommandSender;
 public class DynGen implements IModule, CommandExecutor
 {	
 	private FMC fmc;
-	private boolean isDisabled = true;
+	private boolean isEnabled = false;
 	
 	public DynGen(FMC fmc)
 	{
@@ -30,14 +30,14 @@ public class DynGen implements IModule, CommandExecutor
 	{
 		fmc.getCommand("dyngen").setExecutor(this);
 		
-		isDisabled = false;
+		isEnabled = true;
 		return true;
 	}
 
 	@Override
 	public void onDisable()
 	{
-		isDisabled = true;
+		isEnabled = false;
 	}
 
 	@Override
@@ -48,7 +48,7 @@ public class DynGen implements IModule, CommandExecutor
 		return true;
 	}
 
-	public boolean getDisabled() {
-		return isDisabled;
+	public boolean isEnabled() {
+		return isEnabled;
 	}
 }

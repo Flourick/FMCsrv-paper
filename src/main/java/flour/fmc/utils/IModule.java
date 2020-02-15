@@ -10,9 +10,9 @@ public interface IModule
 	/**
 	 * States if the module is enabled or disabled
 	 * 
-	 * @return true if module is disabled, false otherwise
+	 * @return true if module is enabled, false otherwise
 	 */
-	public boolean getDisabled();
+	public boolean isEnabled();
 	
 	/**
 	 * Gets called when the server starts/reloads or the plugin gets enabled

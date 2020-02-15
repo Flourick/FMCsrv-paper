@@ -53,11 +53,21 @@ public class FMC extends JavaPlugin
 			if(colorMe.onEnable()) {
 				enabledModules.add("ColorMe");
 			}
+			else {
+				// module disabled itself, maybe wrong config?
+				colorMe = null;
+				colorMeEnabled = false;
+			}
 		}
 		if(dynGenEnabled = getConfig().getBoolean("enable-dyngen")) {
 			dynGen = new DynGen(this);
 			if(dynGen.onEnable()) {
 				enabledModules.add("DynGen");
+			}
+			else {
+				// module disabled itself, maybe wrong config?
+				dynGen = null;
+				dynGenEnabled = false;
 			}
 		}
 		
@@ -72,10 +82,10 @@ public class FMC extends JavaPlugin
 		saveConfig();
 		
 		// call onDisable() of modules
-		if(colorMeEnabled && !colorMe.getDisabled()) {
+		if(colorMeEnabled) {
 			colorMe.onDisable();
 		}
-		if(dynGenEnabled && !dynGen.getDisabled()) {
+		if(dynGenEnabled) {
 			dynGen.onDisable();
 		}
 		

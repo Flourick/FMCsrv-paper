@@ -20,12 +20,14 @@ public class ColorMeTabCompleter implements TabCompleter
 	{
         final List<String> completions = new ArrayList<>();
         
-		for(String arg : FIRST_ARGS) {
-			if(arg.toLowerCase().startsWith(args[0].toLowerCase())) {
-				completions.add(arg);
+		if(args.length == 1) {
+			for(String arg : FIRST_ARGS) {
+				if(arg.toLowerCase().startsWith(args[0].toLowerCase())) {
+					completions.add(arg);
+				}
 			}
 		}
-		
+
         return completions;
 	}
 	
