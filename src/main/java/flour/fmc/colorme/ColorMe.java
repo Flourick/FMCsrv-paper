@@ -290,7 +290,7 @@ public class ColorMe implements IModule, CommandExecutor
 			playerName + ChatColor.YELLOW + " removed himself from the game",
 			playerName + ChatColor.YELLOW + " pressed ALT + F4",
 			playerName + ChatColor.YELLOW + " is not here with us anymore",
-			playerName + ChatColor.YELLOW + " dropped out the server",
+			playerName + ChatColor.YELLOW + " dropped out of the server",
 			playerName + ChatColor.YELLOW + " decided it was time to leave",
 			playerName + ChatColor.YELLOW + " left in fear",
 			playerName + ChatColor.YELLOW + " disconnected",

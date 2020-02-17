@@ -1,9 +1,10 @@
 package flour.fmc;
 
+import flour.fmc.afk.AFK;
 import io.papermc.lib.PaperLib;
 
 import flour.fmc.colorme.ColorMe;
-import flour.fmc.dyngen.DynGen;
+import flour.fmc.dynfmc.DynFMC;
 import flour.fmc.oneplayersleep.OnePlayerSleep;
 
 import java.util.ArrayList;
@@ -30,10 +31,12 @@ public class FMC extends JavaPlugin
 	// modules
 	private ColorMe colorMe;
 	private boolean colorMeEnabled = false;
-	private DynGen dynGen;
-	private boolean dynGenEnabled = false;
+	private DynFMC dynFMC;
+	private boolean dynFMCEnabled = false;
 	private OnePlayerSleep onePlayerSleep;
 	private boolean onePlayerSleepEnabled = false;
+	private AFK afk;
+	private boolean afkEnabled = false;
 	
 	@Override
 	public void onEnable()
@@ -73,15 +76,26 @@ public class FMC extends JavaPlugin
 				onePlayerSleepEnabled = false;
 			}
 		}
-		if(dynGenEnabled = getConfig().getBoolean("enable-dyngen")) {
-			dynGen = new DynGen(this);
-			if(dynGen.onEnable()) {
-				enabledModules.add("DynGen");
+		if(dynFMCEnabled = getConfig().getBoolean("enable-dynfmc")) {
+			dynFMC = new DynFMC(this);
+			if(dynFMC.onEnable()) {
+				enabledModules.add("DynFMC");
 			}
 			else {
 				// module disabled itself, maybe wrong config?
-				dynGen = null;
-				dynGenEnabled = false;
+				dynFMC = null;
+				dynFMCEnabled = false;
+			}
+		}
+		if(afkEnabled = getConfig().getBoolean("enable-afk")) {
+			afk = new AFK(this);
+			if(afk.onEnable()) {
+				enabledModules.add("AFK");
+			}
+			else {
+				// module disabled itself, maybe wrong config?
+				afk = null;
+				afkEnabled = false;
 			}
 		}
 		
@@ -103,8 +117,11 @@ public class FMC extends JavaPlugin
 		if(onePlayerSleepEnabled) {
 			onePlayerSleep.onDisable();
 		}
-		if(dynGenEnabled) {
-			dynGen.onDisable();
+		if(dynFMCEnabled) {
+			dynFMC.onDisable();
+		}
+		if(afkEnabled) {
+			afk.onDisable();
 		}
 		
 		getLogger().log(Level.INFO, "FMC has been disabled");

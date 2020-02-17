@@ -2,5 +2,6 @@
 # ---
 enable-colorme: true
 enable-oneplayersleep: true
-enable-dyngen: true
+enable-dynfmc: true
+enable-afk: true
     
