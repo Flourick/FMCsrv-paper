@@ -6,6 +6,7 @@ import io.papermc.lib.PaperLib;
 import flour.fmc.colorme.ColorMe;
 import flour.fmc.dynfmc.DynFMC;
 import flour.fmc.oneplayersleep.OnePlayerSleep;
+import flour.fmc.utils.EmptyTabCompleter;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -17,6 +18,10 @@ import org.apache.logging.log4j.core.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -99,6 +104,19 @@ public class FMC extends JavaPlugin
 			}
 		}
 		
+		//FMC commands
+		getCommand("announce").setTabCompleter(new EmptyTabCompleter());
+		
+		// Enables players colored chat & formatting
+		if(getConfig().getBoolean("allow-chat-color-codes")) {
+			getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler(priority=EventPriority.HIGH)
+				public void OnPlayerAsyncChat(AsyncPlayerChatEvent e)
+				{
+					e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
+				}
+			}, this);
+		}
 		
 		getLogger().log(Level.INFO, "FMC has been successfully enabled!");
 		getLogger().log(Level.INFO, "Loaded modules: {0}", enabledModules);
@@ -130,7 +148,19 @@ public class FMC extends JavaPlugin
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[])
 	{
-		// No base FMC commands for now
+		if(cmd.getName().toLowerCase().equals("announce")) {
+			if(args.length < 1) {
+				return false;
+			}
+			
+			String message;
+			message =  ChatColor.translateAlternateColorCodes('&', String.join(" ", args));
+			getServer().broadcastMessage(message);
+			
+			return true;
+		}
+		
+		// Any other leftover commands from disabled modules
 		sender.sendMessage(ChatColor.RED + "Disabled command.");
 		
 		return true;

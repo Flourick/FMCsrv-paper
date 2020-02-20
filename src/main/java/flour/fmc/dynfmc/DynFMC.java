@@ -39,7 +39,13 @@ public class DynFMC implements IModule, CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args)
 	{
-		// TODO: a lot
+		if(cmd.getName().toLowerCase().equals("dyngen")) {
+			if(args.length < 1) {
+				return false;
+			}
+			
+			
+		}
 		
 		return true;
 	}

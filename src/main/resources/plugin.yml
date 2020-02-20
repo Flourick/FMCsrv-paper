@@ -6,17 +6,23 @@ description: FMC modular utility plugin
 author: Flourick
 
 commands:
+    announce:
+        description: Announces a completely custom message to everyone.
+        aliases: [all]
+        permission: fmc.announce
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command> §7<§rmessage§7>§r"
     colorme:
         description: Colors your name!
         aliases: [cme]
         permission: fmc.colorme
-        permission-message: §cYou do not have permission to color yourself!
+        permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command> §7<§rcolor§7|§rlist§7>§r"
     wakeplayer:
         description: Wakes a player if he is trying to sleep to skip the night.
         aliases: [wp]
         permission: fmc.wakeplayer
-        permission-message: §cYou do not have permission to wake others!
+        permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command> §7<§rplayer§7>"
     dyngen:
         description: Generates and renders chunks on the DynMap.
@@ -26,6 +32,9 @@ commands:
         usage: "§eUsage:§r /<command> §7<§rmode§7> §7[§rx§7] §7[§rz§7] §7[§rradius§7] §7[§rworld§7]"
 
 permissions:
+    fmc.announce:
+        description: Allows the use of announce command
+        default: op
     fmc.colorme:
         description: Allows the use of colorme command
         default: true

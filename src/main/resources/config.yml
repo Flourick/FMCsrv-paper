@@ -1,5 +1,9 @@
 # Main FMC configuration file
 # ---
+# allow-chat-color-codes: (boolean)
+#    - allows users to use formatting codes using '&' symbol
+# ---
+allow-chat-color-codes: true
 enable-colorme: true
 enable-oneplayersleep: true
 enable-dynfmc: true
