@@ -1,19 +1,20 @@
-package flour.fmc.colorme;
+package flour.fmc.dynfmc;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 /**
- * colorme command TAB completion
+ * Tab completer for the dyngen command
  * 
  * @author Flourick
  */
-public class ColorMeTabCompleter implements TabCompleter
+public class DynGenTabCompleter implements TabCompleter
 {
-	private static final String[] FIRST_ARGS = { "list", "dark_red", "red", "gold", "yellow", "dark_green", "green", "aqua", "dark_aqua", "dark_blue", "blue", "light_purple", "dark_purple", "dark_gray", "gray", "white"};
+	private static final String[] FIRST_ARGS = {"round", "square"};
 	
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args)
@@ -27,7 +28,14 @@ public class ColorMeTabCompleter implements TabCompleter
 				}
 			}
 		}
-
+		else if(args.length == 5) {
+			for(World world : sender.getServer().getWorlds()) {
+				if(world.getName().toLowerCase().startsWith(args[4].toLowerCase())) {
+					completions.add(world.getName());
+				}
+			}
+		}
+		
         return completions;
 	}
 }

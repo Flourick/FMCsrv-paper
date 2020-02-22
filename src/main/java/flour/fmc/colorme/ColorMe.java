@@ -163,7 +163,7 @@ public class ColorMe implements IModule, CommandExecutor
 					colorMeConfig.getConfig().set("player-colors." + player.getName(), args[0]);
 				}
 				else {
-					player.sendMessage("§cInvalid argument " + "\'" + args[0] + "\'" + ".");
+					player.sendMessage(ChatColor.RED + "Invalid argument " + "\'" + args[0] + "\'" + ".");
 				}
 			}
 		}

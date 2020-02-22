@@ -29,7 +29,7 @@ commands:
         aliases: [dg]
         permission: fmc.dyngen
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command> §7<§rmode§7> §7[§rx§7] §7[§rz§7] §7[§rradius§7] §7[§rworld§7]"
+        usage: "§eUsage:§r /<command> §7<§rmode§7> §7<§rradius§7> §7[<§rx§7> §7<§rz§7>] §7[§rworld§7]"
 
 permissions:
     fmc.announce:
