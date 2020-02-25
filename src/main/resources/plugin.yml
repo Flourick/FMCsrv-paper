@@ -8,7 +8,7 @@ author: Flourick
 commands:
     announce:
         description: Announces a completely custom message to everyone.
-        aliases: [all]
+        aliases: [ann]
         permission: fmc.announce
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command> §7<§rmessage§7>§r"
@@ -24,12 +24,18 @@ commands:
         permission: fmc.wakeplayer
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command> §7<§rplayer§7>"
-    dyngen:
-        description: Generates and renders chunks on the DynMap.
-        aliases: [dg]
-        permission: fmc.dyngen
+    setbase:
+        description: Places a marker with your name on DynMap.
+        aliases: [sb]
+        permission: fmc.dynfmc
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command> §7<§rmode§7> §7<§rradius§7> §7[<§rx§7> §7<§rz§7>] §7[§rworld§7]"
+        usage: "§eUsage:§r /<command>"
+    removebase:
+        description: Removes previously placed marker with your name on DynMap.
+        aliases: [rmb]
+        permission: fmc.dynfmc
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command>"
 
 permissions:
     fmc.announce:
@@ -41,7 +47,7 @@ permissions:
     fmc.wakeplayer:
         description: Allows the use of wakeplayer command
         default: true
-    fmc.dyngen:
-        description: Allows the use of dyngen command
-        default: op
+    fmc.dynfmc:
+        description: Allows the use of setbase and removebase command
+        default: true
             

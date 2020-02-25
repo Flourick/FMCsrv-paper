@@ -18,10 +18,6 @@ import org.apache.logging.log4j.core.Logger;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -34,14 +30,14 @@ public class FMC extends JavaPlugin
 	private Logger rootLogger;
 	
 	// modules
-	private ColorMe colorMe;
-	private boolean colorMeEnabled = false;
-	private DynFMC dynFMC;
-	private boolean dynFMCEnabled = false;
-	private OnePlayerSleep onePlayerSleep;
-	private boolean onePlayerSleepEnabled = false;
-	private AFK afk;
-	private boolean afkEnabled = false;
+	private ColorMe			colorMe;
+	private boolean			colorMeEnabled = false;
+	private DynFMC			dynFMC;
+	private boolean			dynFMCEnabled = false;
+	private OnePlayerSleep	onePlayerSleep;
+	private boolean			onePlayerSleepEnabled = false;
+	private AFK				afk;
+	private boolean			afkEnabled = false;
 	
 	@Override
 	public void onEnable()
@@ -106,17 +102,6 @@ public class FMC extends JavaPlugin
 		
 		//FMC commands
 		getCommand("announce").setTabCompleter(new EmptyTabCompleter());
-		
-		// Enables players colored chat & formatting
-		if(getConfig().getBoolean("allow-chat-color-codes")) {
-			getServer().getPluginManager().registerEvents(new Listener() {
-				@EventHandler(priority=EventPriority.HIGH)
-				public void OnPlayerAsyncChat(AsyncPlayerChatEvent e)
-				{
-					e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
-				}
-			}, this);
-		}
 		
 		getLogger().log(Level.INFO, "FMC has been successfully enabled!");
 		getLogger().log(Level.INFO, "Loaded modules: {0}", enabledModules);

@@ -4,6 +4,7 @@ import flour.fmc.FMC;
 import flour.fmc.utils.IModule;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -24,6 +25,8 @@ public class AFK implements IModule
 {
 	private final FMC fmc;
 	private boolean isEnabled = false;
+	
+	private boolean announceAFKStatus = false;
 	
 	Map<Player, Integer> playerTimes;
 	private int afkTimeout = 300;
@@ -142,7 +145,9 @@ public class AFK implements IModule
 		player.setPlayerListName(player.getPlayerListName() + ChatColor.GRAY + " [" + ChatColor.RESET +"AFK" + ChatColor.GRAY + "]" + ChatColor.RESET);
 		playerTimes.put(player, -1);
 		
-		//fmc.getServer().broadcastMessage(player.getDisplayName() + ChatColor.YELLOW + " is now AFK!");
+		if(announceAFKStatus) {
+			fmc.getServer().broadcastMessage(player.getDisplayName() + ChatColor.YELLOW + " is now AFK!");
+		}
 	}
 	
 	private void setPlayerNotAFK(Player player)
@@ -150,13 +155,17 @@ public class AFK implements IModule
 		player.setPlayerListName(player.getDisplayName());
 		playerTimes.put(player, 0);
 		
-		//fmc.getServer().broadcastMessage(player.getDisplayName() + ChatColor.YELLOW + " is no longer AFK!");
+		if(announceAFKStatus) {
+			fmc.getServer().broadcastMessage(player.getDisplayName() + ChatColor.YELLOW + " is no longer AFK!");
+		}
 	}
 
 	@Override
 	public void onDisable()
 	{
 		isEnabled = false;
+		
+		fmc.getLogger().log(Level.INFO, "Disabled AFK module.");
 	}
 
 	public boolean isEnabled() {

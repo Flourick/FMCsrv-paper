@@ -7,6 +7,7 @@ import flour.fmc.utils.IModule;
 import io.papermc.lib.PaperLib;
 
 import java.io.File;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Level;
 
@@ -19,7 +20,9 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
@@ -35,7 +38,10 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class ColorMe implements IModule, CommandExecutor
 {
 	private boolean isEnabled = false;
+	
 	private boolean useCustomMessages = false;
+	private List<String> joinMessages;
+	private List<String> quitMessages;
 	
 	private final CConfig colorMeConfig;
 	private final FMC fmc;
@@ -66,7 +72,11 @@ public class ColorMe implements IModule, CommandExecutor
 			}
 		}
 		
-		useCustomMessages = colorMeConfig.getConfig().getBoolean("use-custom-join-and-quit-messages");
+		if(useCustomMessages = colorMeConfig.getConfig().getBoolean("custom-messages.use-custom-join-and-quit-messages")) {
+			// gets custom messages from YAML, falls back to defaults if not found
+			joinMessages = colorMeConfig.getConfig().getStringList("custom-messages.join-messages");
+			quitMessages = colorMeConfig.getConfig().getStringList("custom-messages.quit-messages");
+		}
 		
 		fmc.getCommand("colorme").setTabCompleter(new ColorMeTabCompleter());
 		fmc.getCommand("colorme").setExecutor(this);
@@ -106,6 +116,17 @@ public class ColorMe implements IModule, CommandExecutor
 					Player player = event.getPlayer();
 
 					event.setQuitMessage(getRandomQuitMessage(player.getDisplayName()));
+				}
+			}, fmc);
+		}
+		
+		// Enables players colored chat & formatting
+		if(colorMeConfig.getConfig().getBoolean("allow-chat-color-codes")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler(priority=EventPriority.HIGH)
+				public void OnPlayerAsyncChat(AsyncPlayerChatEvent e)
+				{
+					e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
 				}
 			}, fmc);
 		}
@@ -249,59 +270,20 @@ public class ColorMe implements IModule, CommandExecutor
 	private String getRandomJoinMessage(String playerName)
 	{
 		Random rnd = new Random();
+		int idx = rnd.nextInt(joinMessages.size());
 		
-		String[] messages = {
-			playerName + ChatColor.YELLOW + " just landed here",
-			playerName + ChatColor.YELLOW + " has just arrived",
-			playerName + ChatColor.YELLOW + " is here now",
-			playerName + ChatColor.YELLOW + " joined the server",
-			playerName + ChatColor.YELLOW + " joined the server",
-			playerName + ChatColor.YELLOW + " joined the server",
-			playerName + ChatColor.YELLOW + " joined the server",
-			playerName + ChatColor.YELLOW + " joined the server",
-			playerName + ChatColor.YELLOW + " joined the server",
-			playerName + ChatColor.YELLOW + " just hopped on",
-			playerName + ChatColor.YELLOW + " appeared out of nowhere",
-			playerName + ChatColor.YELLOW + " connected to the server",
-			playerName + ChatColor.YELLOW + " connected to the server",
-			playerName + ChatColor.YELLOW + " connected to the server",
-			playerName + ChatColor.YELLOW + " connected to the server",
-			playerName + ChatColor.YELLOW + " connected to the server",
-			playerName + ChatColor.YELLOW + " connected to the server"
-		};
-		int idx = rnd.nextInt(messages.length);
+		String message = ChatColor.translateAlternateColorCodes('&', joinMessages.get(idx).replace("{PLAYER}", playerName));
 		
-		return messages[idx];
+		return message;
 	}
 	
 	private String getRandomQuitMessage(String playerName)
 	{
 		Random rnd = new Random();
+		int idx = rnd.nextInt(quitMessages.size());
 		
-		String[] messages = {
-			playerName + ChatColor.YELLOW + " has propably better things to do",
-			playerName + ChatColor.YELLOW + " left the server",
-			playerName + ChatColor.YELLOW + " left the server",
-			playerName + ChatColor.YELLOW + " left the server",
-			playerName + ChatColor.YELLOW + " left the server",
-			playerName + ChatColor.YELLOW + " left the server",
-			playerName + ChatColor.YELLOW + " left the server",
-			playerName + ChatColor.YELLOW + " left the server",
-			playerName + ChatColor.YELLOW + " removed himself from the game",
-			playerName + ChatColor.YELLOW + " pressed ALT + F4",
-			playerName + ChatColor.YELLOW + " is not here with us anymore",
-			playerName + ChatColor.YELLOW + " dropped out of the server",
-			playerName + ChatColor.YELLOW + " decided it was time to leave",
-			playerName + ChatColor.YELLOW + " left in fear",
-			playerName + ChatColor.YELLOW + " disconnected",
-			playerName + ChatColor.YELLOW + " disconnected",
-			playerName + ChatColor.YELLOW + " disconnected",
-			playerName + ChatColor.YELLOW + " disconnected",
-			playerName + ChatColor.YELLOW + " disconnected",
-			playerName + ChatColor.YELLOW + " disconnected"
-		};
-		int idx = rnd.nextInt(messages.length);
+		String message = ChatColor.translateAlternateColorCodes('&', quitMessages.get(idx).replace("{PLAYER}", playerName));
 		
-		return messages[idx];
+		return message;
 	}
 }

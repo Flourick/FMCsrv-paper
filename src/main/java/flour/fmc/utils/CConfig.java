@@ -11,7 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
- * Custom config class for addition configuration files
+ * Custom config class for additional configuration files
  * 
  * @author Flourick
  */

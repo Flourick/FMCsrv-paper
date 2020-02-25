@@ -1,10 +1,11 @@
 package flour.fmc.dynfmc;
 
 import flour.fmc.FMC;
+import flour.fmc.utils.EmptyTabCompleter;
 import flour.fmc.utils.IModule;
-import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.ChatColor;
-import org.bukkit.World;
+import flour.fmc.utils.Log4jFilter;
+import java.util.logging.Level;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -28,8 +29,22 @@ public class DynFMC implements IModule, CommandExecutor
 	@Override
 	public boolean onEnable()
 	{
-		fmc.getCommand("dyngen").setExecutor(this);
-		fmc.getCommand("dyngen").setTabCompleter(new DynGenTabCompleter());
+		if(fmc.getServer().getPluginManager().getPlugin("dynmap") == null || !fmc.getServer().getPluginManager().getPlugin("dynmap").isEnabled()) {
+			fmc.getLogger().log(Level.SEVERE, "DynMap is REQUIRED for DynFMC module to work!");
+			
+			return false;
+		}
+		
+		fmc.getCommand("setbase").setExecutor(this);
+		fmc.getCommand("setbase").setTabCompleter(new EmptyTabCompleter());
+		fmc.getCommand("removebase").setExecutor(this);
+		fmc.getCommand("removebase").setTabCompleter(new EmptyTabCompleter());
+		
+		// adds the bases set if not already created + filters out the error message
+		Log4jFilter basesFilter = new Log4jFilter(new String[] {"Error: set already exists - id:bases"}, true);
+		fmc.addLogFilter(basesFilter);
+		fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker addset bases");
+		fmc.removeLogFilter(basesFilter);
 		
 		isEnabled = true;
 		return true;
@@ -39,161 +54,36 @@ public class DynFMC implements IModule, CommandExecutor
 	public void onDisable()
 	{
 		isEnabled = false;
+		
+		fmc.getLogger().log(Level.INFO, "Disabled DynFMC module.");
 	}
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args)
 	{
-		if(cmd.getName().toLowerCase().equals("dyngen")) {
-			if(args.length < 2) {
-				return false;
-			}
-			
-			if(args[0].equals("square") || args[0].equals("round")) {
-				if(args.length == 2) {
-					// radius
-					if(!(sender instanceof Player)){
-						sender.sendMessage(ChatColor.RED + "Only players don't need to specify coordinates!");
-						return true;
-					}
-					
-					// radius arg check
-					if(!NumberUtils.isNumber(args[1])) {
-						sender.sendMessage(ChatColor.RED + "Invalid radius argument " + "\'" + args[1] + "\'" + ".");
-						return true;
-					}
-					int radius = Integer.parseInt(args[1]);
-					
-					if(radius < 5 || radius > 200000) {
-						sender.sendMessage(ChatColor.RED + "Invalid radius argument size " + "\'" + args[1] + "\'" + ".");
-						return true;
-					}
-					
-					// all good, lets make work!
-					Player player = (Player) sender;
-					if(args[0].equals("round")) {
-						dynGenRound(player.getWorld(), player.getLocation().getBlockX(), player.getLocation().getBlockZ(), radius);
-					}
-					else {
-						dynGenSquare(player.getWorld(), player.getLocation().getBlockX(), player.getLocation().getBlockZ(), radius);
-					}
-				}
-				else if(args.length == 4) {
-					// radius and coordinates
-					if(!(sender instanceof Player)){
-						sender.sendMessage(ChatColor.RED + "Only players don't need to specify world!");
-						return true;
-					}
-					
-					// radius check
-					if(!NumberUtils.isNumber(args[1])) {
-						sender.sendMessage(ChatColor.RED + "Invalid radius argument " + "\'" + args[1] + "\'" + ".");
-						return true;
-					}
-					int radius = Integer.parseInt(args[1]);
-					
-					if(radius < 5 || radius > 200000) {
-						sender.sendMessage(ChatColor.RED + "Invalid radius argument size " + "\'" + args[1] + "\'" + ".");
-						return true;
-					}
-					
-					// x and z check
-					if(!NumberUtils.isNumber(args[2])) {
-						sender.sendMessage(ChatColor.RED + "Invalid x argument " + "\'" + args[2] + "\'" + ".");
-						return true;
-					}
-					if(!NumberUtils.isNumber(args[3])) {
-						sender.sendMessage(ChatColor.RED + "Invalid z argument " + "\'" + args[3] + "\'" + ".");
-						return true;
-					}
-					int x = Integer.parseInt(args[2]);
-					int z = Integer.parseInt(args[3]);
-					
-					if(x > 3000000 || x < -3000000) {
-						sender.sendMessage(ChatColor.RED + "Invalid x argument size " + "\'" + args[2] + "\'" + ".");
-						return true;
-					}
-					if(z > 3000000 || z < -3000000) {
-						sender.sendMessage(ChatColor.RED + "Invalid z argument size " + "\'" + args[3] + "\'" + ".");
-						return true;
-					}
-					
-					// all good, lets make work!
-					Player player = (Player) sender;
-					if(args[0].equals("round")) {
-						dynGenRound(player.getWorld(), x, z, radius);
-					}
-					else {
-						dynGenSquare(player.getWorld(), x, z, radius);
-					}
-				}
-				else if(args.length == 5) {
-					// radius, coordinates and world (this is mainly for console)
-					
-					// radius check
-					if(!NumberUtils.isNumber(args[1])) {
-						sender.sendMessage(ChatColor.RED + "Invalid radius argument " + "\'" + args[1] + "\'" + ".");
-						return true;
-					}
-					int radius = Integer.parseInt(args[1]);
-					
-					if(radius < 5 || radius > 200000) {
-						sender.sendMessage(ChatColor.RED + "Invalid radius argument size " + "\'" + args[1] + "\'" + ".");
-						return true;
-					}
-					
-					// x and z check
-					if(!NumberUtils.isNumber(args[2])) {
-						sender.sendMessage(ChatColor.RED + "Invalid x argument " + "\'" + args[2] + "\'" + ".");
-						return true;
-					}
-					if(!NumberUtils.isNumber(args[3])) {
-						sender.sendMessage(ChatColor.RED + "Invalid z argument " + "\'" + args[3] + "\'" + ".");
-						return true;
-					}
-					int x = Integer.parseInt(args[2]);
-					int z = Integer.parseInt(args[3]);
-					
-					if(x > 3000000 || x < -3000000) {
-						sender.sendMessage(ChatColor.RED + "Invalid x argument size " + "\'" + args[2] + "\'" + ".");
-						return true;
-					}
-					if(z > 3000000 || z < -3000000) {
-						sender.sendMessage(ChatColor.RED + "Invalid z argument size " + "\'" + args[3] + "\'" + ".");
-						return true;
-					}
-					
-					World foundWorld = null;
-					
-					// world check
-					for(World world : fmc.getServer().getWorlds()) {
-						if(world.getName().equals(args[4])) {
-							foundWorld = world;
-						}
-					}
-					
-					if(foundWorld == null) {
-						sender.sendMessage(ChatColor.RED + "Invalid world argument " + "\'" + args[4] + "\'" + ".");
-						return true;
-					}
-					
-					// all good, lets make work!
-					if(args[0].equals("round")) {
-						dynGenRound(foundWorld, x, z, radius);
-					}
-					else {
-						dynGenSquare(foundWorld, x, z, radius);
-					}
-				}
-				else {
-					sender.sendMessage(ChatColor.RED + "Invalid number of arguments!");
-					return true;
-				}
-			}
-			else {
-				sender.sendMessage(ChatColor.RED + "Invalid mode argument " + "\'" + args[0] + "\'" + ".");
+		if(cmd.getName().toLowerCase().equals("setbase")) {
+			if(!(sender instanceof Player)){
+				sender.sendMessage(ChatColor.RED + "Players only command.");
 				return true;
 			}
+			
+			Player player = (Player) sender;
+			int x = player.getLocation().getBlockX();
+			int y = player.getLocation().getBlockY();
+			int z = player.getLocation().getBlockZ();
+			
+			fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker delete " + player.getName() + " set:bases");
+			fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker add " + player.getName() + " icon:house set:bases x:" + x + " y:" + y + " z:" + z + " world:" + player.getWorld().getName());
+		}
+		else if(cmd.getName().toLowerCase().equals("removebase")) {
+			if(!(sender instanceof Player)){
+				sender.sendMessage(ChatColor.RED + "Players only command.");
+				return true;
+			}
+			
+			Player player = (Player) sender;
+			
+			fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker delete " + player.getName() + " set:bases");
 		}
 		
 		return true;
@@ -201,15 +91,5 @@ public class DynFMC implements IModule, CommandExecutor
 
 	public boolean isEnabled() {
 		return isEnabled;
-	}
-	
-	private void dynGenSquare(World world, int x, int z, int radius)
-	{
-		fmc.getServer().broadcastMessage("SQUARE: " + world.getName() + " " + x + "/" + z + " " + radius);
-	}
-	
-	private void dynGenRound(World world, int x, int z, int radius)
-	{
-		fmc.getServer().broadcastMessage("ROUND: " + world.getName() + " " + x + "/" + z + " " + radius);
 	}
 }

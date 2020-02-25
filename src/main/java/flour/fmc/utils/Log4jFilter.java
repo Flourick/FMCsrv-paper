@@ -19,18 +19,37 @@ public class Log4jFilter implements Filter
 	private LifeCycle.State state = LifeCycle.State.STARTED;;
 	private String[] filterWords;
 	
+	private boolean startsWithMode;
+	
 	public Log4jFilter(String[] filterWords)
 	{
 		this.filterWords = filterWords;
+		startsWithMode = false;
 	}
 	
-	public Filter.Result checkMessage(String message)
+	public Log4jFilter(String[] filterWords, boolean startsWithMode)
 	{
-        if(Arrays.stream(filterWords).parallel().anyMatch(message::contains)) {
-			return Filter.Result.DENY;
+		this.filterWords = filterWords;
+		this.startsWithMode = startsWithMode;
+	}
+	
+	private Filter.Result checkMessage(String message)
+	{
+		if(startsWithMode) {
+			if(Arrays.stream(filterWords).parallel().anyMatch(message::startsWith)) {
+				return Filter.Result.DENY;
+			}
+			else {
+				return Filter.Result.NEUTRAL;
+			}
 		}
 		else {
-			return Filter.Result.NEUTRAL;
+			if(Arrays.stream(filterWords).parallel().anyMatch(message::contains)) {
+				return Filter.Result.DENY;
+			}
+			else {
+				return Filter.Result.NEUTRAL;
+			}
 		}
     }
 	
