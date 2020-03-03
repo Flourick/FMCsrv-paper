@@ -74,6 +74,8 @@ public class DynFMC implements IModule, CommandExecutor
 			
 			fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker delete " + player.getName() + " set:bases");
 			fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker add " + player.getName() + " icon:house set:bases x:" + x + " y:" + y + " z:" + z + " world:" + player.getWorld().getName());
+			
+			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2[&aDynFMC&2] &rPlaced base marker on DynMap!"));
 		}
 		else if(cmd.getName().toLowerCase().equals("removebase")) {
 			if(!(sender instanceof Player)){
@@ -84,6 +86,7 @@ public class DynFMC implements IModule, CommandExecutor
 			Player player = (Player) sender;
 			
 			fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker delete " + player.getName() + " set:bases");
+			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2[&aDynFMC&2] &rRemoved base marker from DynMap!"));
 		}
 		
 		return true;

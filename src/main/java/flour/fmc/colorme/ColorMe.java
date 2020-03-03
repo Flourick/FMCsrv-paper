@@ -29,7 +29,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 /**
  * ColorMe module class
  * <p>
- * Allows players to change their names color using either
+ * Allows players to change their names colour using either
  * Bukkit API calls or vanilla teams feature.
  * </p>
  * 
@@ -49,7 +49,6 @@ public class ColorMe implements IModule, CommandExecutor
 	public ColorMe(FMC fmc)
 	{
 		this.fmc = fmc;
-		
 		this.colorMeConfig = new CConfig(fmc, "colorme.yml");
 		
 		// Creates default config if not present

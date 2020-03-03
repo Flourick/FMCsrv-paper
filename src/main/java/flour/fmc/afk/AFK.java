@@ -1,6 +1,7 @@
 package flour.fmc.afk;
 
 import flour.fmc.FMC;
+import flour.fmc.utils.CConfig;
 import flour.fmc.utils.IModule;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,21 +27,50 @@ public class AFK implements IModule
 	private final FMC fmc;
 	private boolean isEnabled = false;
 	
-	private boolean announceAFKStatus = false;
+	private final CConfig afkConfig;
+	private boolean announceAFKStatus;
+	private String playerIsAFKMessage;
+	private String playerNoLongerAFKMessage;
+	private int afkTimeout;
+	private int afkPeriod;
 	
 	Map<Player, Integer> playerTimes;
-	private int afkTimeout = 300;
 	
 	public AFK(FMC fmc)
 	{
 		this.fmc = fmc;
 		this.playerTimes = new HashMap<>();
+		this.afkConfig = new CConfig(fmc, "afk.yml");
+		
+		// creates default config if not present
+		afkConfig.saveDefaultConfig();
 	}
 
 	@Override
 	public boolean onEnable()
 	{
-		fmc.getServer().getPluginManager().registerEvents(new Listener() {
+		// get values from configuration yaml file
+		afkPeriod = afkConfig.getConfig().getInt("afk-check-period") * 20;
+		if(afkPeriod < 20 || afkPeriod > 200) {
+			afkPeriod = 20;
+			fmc.getLogger().log(Level.WARNING, "afk-check-period is out of bounds! Falling back to defaults.");
+		}
+		
+		afkTimeout = afkConfig.getConfig().getInt("afk-timeout");
+		if(afkTimeout < afkPeriod || afkTimeout < 30 || afkTimeout > 86400) {
+			afkTimeout = 300;
+			fmc.getLogger().log(Level.WARNING, "afk-timeout is out of bounds! Falling back to defaults.");
+		}
+		
+		announceAFKStatus = afkConfig.getConfig().getBoolean("announce-afk-in-chat");
+		if(announceAFKStatus) {
+			playerIsAFKMessage = afkConfig.getConfig().getString("announce-afk-messages.is-afk-message");
+			playerNoLongerAFKMessage = afkConfig.getConfig().getString("announce-afk-messages.no-longer-afk-message");
+		}
+		
+		// player moved a.k.a no longer AFK!
+		fmc.getServer().getPluginManager().registerEvents(new Listener()
+		{
 			@EventHandler
 			public void onPlayerMove(final PlayerMoveEvent e)
 			{
@@ -49,7 +79,6 @@ public class AFK implements IModule
 					return;
 				}
 				
-				// AFK user moved
 				if(playerTimes.get(e.getPlayer()) == -1) {
 					setPlayerNotAFK(e.getPlayer());
 				}
@@ -59,11 +88,12 @@ public class AFK implements IModule
 			}
 		}, fmc);
 		
-		fmc.getServer().getPluginManager().registerEvents(new Listener() {
+		// player chatted so no longer AFK!
+		fmc.getServer().getPluginManager().registerEvents(new Listener()
+		{
 			@EventHandler(priority=EventPriority.LOW)
 			public void OnPlayerAsyncChat(AsyncPlayerChatEvent e)
 			{
-				// player chatted
 				if(playerTimes.get(e.getPlayer()) == -1) {
 					setPlayerNotAFK(e.getPlayer());
 				}
@@ -73,11 +103,12 @@ public class AFK implements IModule
 			}
 		}, fmc);
 		
-		fmc.getServer().getPluginManager().registerEvents(new Listener() {
+		// player issued a command so no longer AFK
+		fmc.getServer().getPluginManager().registerEvents(new Listener()
+		{
 			@EventHandler(priority=EventPriority.LOW)
 			public void OnPlayerIssuedCommand(PlayerCommandPreprocessEvent e)
 			{
-				// player issued a command
 				if(playerTimes.get(e.getPlayer()) == -1) {
 					setPlayerNotAFK(e.getPlayer());
 				}
@@ -87,20 +118,22 @@ public class AFK implements IModule
 			}
 		}, fmc);
 		
-		fmc.getServer().getPluginManager().registerEvents(new Listener() {
+		// player joined, let's watch him closely
+		fmc.getServer().getPluginManager().registerEvents(new Listener()
+		{
 			@EventHandler(priority=EventPriority.NORMAL)
 			public void onPlayerJoin(PlayerJoinEvent e)
 			{		
-				// joined, let's watch him
 				playerTimes.put(e.getPlayer(), 0);
 			}
 		}, fmc);
 		
-		fmc.getServer().getPluginManager().registerEvents(new Listener() {
+		// player disconnected, no longer checking for AFK
+		fmc.getServer().getPluginManager().registerEvents(new Listener()
+		{
 			@EventHandler(priority=EventPriority.NORMAL)
 			public void OnPlayerQuit(PlayerQuitEvent e)
 			{
-				// disconnected, no longer checking for AFK
 				playerTimes.remove(e.getPlayer());
 			}
 		}, fmc);
@@ -134,7 +167,7 @@ public class AFK implements IModule
 				}	
 			}
 			
-		}, 20, 20);
+		}, 20, afkPeriod);
 		
 		isEnabled = true;
 		return true;
@@ -145,8 +178,12 @@ public class AFK implements IModule
 		player.setPlayerListName(player.getPlayerListName() + ChatColor.GRAY + " [" + ChatColor.RESET +"AFK" + ChatColor.GRAY + "]" + ChatColor.RESET);
 		playerTimes.put(player, -1);
 		
+		// announce message to chat or atleast log it
 		if(announceAFKStatus) {
-			fmc.getServer().broadcastMessage(player.getDisplayName() + ChatColor.YELLOW + " is now AFK!");
+			fmc.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', playerIsAFKMessage.replace("{PLAYER}", player.getDisplayName())));
+		}
+		else {
+			fmc.getLogger().log(Level.INFO, "{0} is now AFK!", player.getName());
 		}
 	}
 	
@@ -155,8 +192,12 @@ public class AFK implements IModule
 		player.setPlayerListName(player.getDisplayName());
 		playerTimes.put(player, 0);
 		
+		// announce message to chat or atleast log it
 		if(announceAFKStatus) {
-			fmc.getServer().broadcastMessage(player.getDisplayName() + ChatColor.YELLOW + " is no longer AFK!");
+			fmc.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', playerNoLongerAFKMessage.replace("{PLAYER}", player.getDisplayName())));
+		}
+		else {
+			fmc.getLogger().log(Level.INFO, "{0} is no longer AFK!", player.getName());
 		}
 	}
 
@@ -168,7 +209,8 @@ public class AFK implements IModule
 		fmc.getLogger().log(Level.INFO, "Disabled AFK module.");
 	}
 
-	public boolean isEnabled() {
+	public boolean isEnabled()
+	{
 		return isEnabled;
 	}
 }
