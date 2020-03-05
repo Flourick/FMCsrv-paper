@@ -1,0 +1,13 @@
+# Stats module configuration file
+# ---
+# connection-string: String
+#    - JDBC MySQL connection string in format = jdbc:mysql://hostname:port/databaseName
+# username: String
+#    - username used to connect to database
+# password: String
+#    - password of the username
+# ---
+connection-string: jdbc:mysql://hostname:port/databaseName
+username: username
+password: password
+    

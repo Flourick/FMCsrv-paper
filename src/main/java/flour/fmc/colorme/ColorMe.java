@@ -65,7 +65,7 @@ public class ColorMe implements IModule, CommandExecutor
 			boolean use_vanilla_world_scoreboard_name_coloring = config.getBoolean("world-settings.default.use-vanilla-world-scoreboard-name-coloring");
 			
 			if(use_vanilla_world_scoreboard_name_coloring) {
-				fmc.getLogger().log(Level.SEVERE, "use-vanilla-world-scoreboard-name-coloring has to be set to false in \'paper.yml\' for ColorMe to work!");
+				fmc.getLogger().log(Level.SEVERE, "[ColorMe] use-vanilla-world-scoreboard-name-coloring has to be set to false in \'paper.yml\' for ColorMe to work!");
 				onDisable();
 				return false;
 			}
@@ -90,7 +90,7 @@ public class ColorMe implements IModule, CommandExecutor
 				String color = colorMeConfig.getConfig().getString("player-colors." + player.getName());
 				if(color != null) {
 					if(!colorPlayer(player, color)) {
-						fmc.getLogger().log(Level.WARNING, "Invalid entry in colorme.yml: ''{0}: {1}''", new Object[] {player.getName(), color});
+						fmc.getLogger().log(Level.WARNING, "[ColorMe] Invalid entry in colorme.yml: ''{0}: {1}''", new Object[] {player.getName(), color});
 						colorMeConfig.getConfig().set("player-colors." + player.getName(), null);
 					}
 				}
@@ -191,6 +191,7 @@ public class ColorMe implements IModule, CommandExecutor
 		return true;
 	}
 	
+	@Override
 	public boolean isEnabled()
 	{
 		return isEnabled;

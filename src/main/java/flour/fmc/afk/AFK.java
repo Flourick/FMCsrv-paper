@@ -53,13 +53,13 @@ public class AFK implements IModule
 		afkPeriod = afkConfig.getConfig().getInt("afk-check-period") * 20;
 		if(afkPeriod < 20 || afkPeriod > 200) {
 			afkPeriod = 20;
-			fmc.getLogger().log(Level.WARNING, "afk-check-period is out of bounds! Falling back to defaults.");
+			fmc.getLogger().log(Level.WARNING, "[AFK] afk-check-period is out of bounds! Falling back to defaults.");
 		}
 		
 		afkTimeout = afkConfig.getConfig().getInt("afk-timeout");
 		if(afkTimeout < afkPeriod || afkTimeout < 30 || afkTimeout > 86400) {
 			afkTimeout = 300;
-			fmc.getLogger().log(Level.WARNING, "afk-timeout is out of bounds! Falling back to defaults.");
+			fmc.getLogger().log(Level.WARNING, "[AFK] afk-timeout is out of bounds! Falling back to defaults.");
 		}
 		
 		announceAFKStatus = afkConfig.getConfig().getBoolean("announce-afk-in-chat");
@@ -183,7 +183,7 @@ public class AFK implements IModule
 			fmc.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', playerIsAFKMessage.replace("{PLAYER}", player.getDisplayName())));
 		}
 		else {
-			fmc.getLogger().log(Level.INFO, "{0} is now AFK!", player.getName());
+			fmc.getLogger().log(Level.INFO, "[AFK] {0} is now AFK!", player.getName());
 		}
 	}
 	
@@ -197,7 +197,7 @@ public class AFK implements IModule
 			fmc.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', playerNoLongerAFKMessage.replace("{PLAYER}", player.getDisplayName())));
 		}
 		else {
-			fmc.getLogger().log(Level.INFO, "{0} is no longer AFK!", player.getName());
+			fmc.getLogger().log(Level.INFO, "[AFK] {0} is no longer AFK!", player.getName());
 		}
 	}
 
@@ -209,6 +209,7 @@ public class AFK implements IModule
 		fmc.getLogger().log(Level.INFO, "Disabled AFK module.");
 	}
 
+	@Override
 	public boolean isEnabled()
 	{
 		return isEnabled;

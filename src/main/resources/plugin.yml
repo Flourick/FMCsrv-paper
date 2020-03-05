@@ -2,7 +2,7 @@ name: FMC
 main: flour.fmc.FMC
 version: DEV
 api-version: 1.15
-description: FMC modular utility plugin
+description: FMC modular vanilla tweaks plugin
 author: Flourick
 
 commands:
@@ -36,6 +36,12 @@ commands:
         permission: fmc.dynfmc
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command>"
+    statistics:
+        description: Shows statistics for given player or yourself
+        aliases: [stats]
+        permission: fmc.stats
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command> §7[§rplayer§7]"
 
 permissions:
     fmc.announce:
@@ -50,4 +56,12 @@ permissions:
     fmc.dynfmc:
         description: Allows the use of setbase and removebase command
         default: true
+    fmc.stats:
+        description: Allows the use of statistics command for yourself
+        default: true
+    fmc.stats.others:
+        description: Allows the use of statistics command for yourself and others
+        default: op
+        children:
+            fmc.stats: true
             

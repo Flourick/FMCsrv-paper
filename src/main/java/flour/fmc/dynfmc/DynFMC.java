@@ -30,7 +30,7 @@ public class DynFMC implements IModule, CommandExecutor
 	public boolean onEnable()
 	{
 		if(fmc.getServer().getPluginManager().getPlugin("dynmap") == null || !fmc.getServer().getPluginManager().getPlugin("dynmap").isEnabled()) {
-			fmc.getLogger().log(Level.SEVERE, "DynMap is REQUIRED for DynFMC module to work!");
+			fmc.getLogger().log(Level.SEVERE, "[DynFMC] DynMap is REQUIRED for DynFMC module to work!");
 			
 			return false;
 		}
@@ -92,6 +92,7 @@ public class DynFMC implements IModule, CommandExecutor
 		return true;
 	}
 
+	@Override
 	public boolean isEnabled() {
 		return isEnabled;
 	}

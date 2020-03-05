@@ -6,6 +6,7 @@ import io.papermc.lib.PaperLib;
 import flour.fmc.colorme.ColorMe;
 import flour.fmc.dynfmc.DynFMC;
 import flour.fmc.oneplayersleep.OnePlayerSleep;
+import flour.fmc.stats.Stats;
 import flour.fmc.utils.EmptyTabCompleter;
 
 import java.util.ArrayList;
@@ -38,6 +39,8 @@ public class FMC extends JavaPlugin
 	private boolean			onePlayerSleepEnabled = false;
 	private AFK				afk;
 	private boolean			afkEnabled = false;
+	private Stats			stats;
+	private boolean			statsEnabled = false;
 	
 	@Override
 	public void onEnable()
@@ -99,6 +102,17 @@ public class FMC extends JavaPlugin
 				afkEnabled = false;
 			}
 		}
+		if(statsEnabled = getConfig().getBoolean("enable-stats")) {
+			stats = new Stats(this);
+			if(stats.onEnable()) {
+				enabledModules.add("Stats");
+			}
+			else {
+				// module disabled itself, maybe wrong config?
+				stats = null;
+				statsEnabled = false;
+			}
+		}
 		
 		//FMC commands
 		getCommand("announce").setTabCompleter(new EmptyTabCompleter());
@@ -125,6 +139,9 @@ public class FMC extends JavaPlugin
 		}
 		if(afkEnabled) {
 			afk.onDisable();
+		}
+		if(statsEnabled) {
+			stats.onDisable();
 		}
 		
 		getLogger().log(Level.INFO, "FMC has been disabled");
