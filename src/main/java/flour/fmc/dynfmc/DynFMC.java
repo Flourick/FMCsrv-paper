@@ -41,7 +41,7 @@ public class DynFMC implements IModule, CommandExecutor
 		fmc.getCommand("removebase").setTabCompleter(new EmptyTabCompleter());
 		
 		// adds the bases set if not already created + filters out the error message
-		Log4jFilter basesFilter = new Log4jFilter(new String[] {"Error: set already exists - id:bases"}, true);
+		Log4jFilter basesFilter = new Log4jFilter(new String[] {"Error: set already exists - id:bases", "Added set id:\'bases\' (bases)"}, true);
 		fmc.addLogFilter(basesFilter);
 		fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker addset bases");
 		fmc.removeLogFilter(basesFilter);
@@ -75,7 +75,7 @@ public class DynFMC implements IModule, CommandExecutor
 			fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker delete " + player.getName() + " set:bases");
 			fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker add " + player.getName() + " icon:house set:bases x:" + x + " y:" + y + " z:" + z + " world:" + player.getWorld().getName());
 			
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2[&aDynFMC&2] &rPlaced base marker on DynMap!"));
+			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2[&aDynFMC&2] &ePlaced base marker on DynMap!"));
 		}
 		else if(cmd.getName().toLowerCase().equals("removebase")) {
 			if(!(sender instanceof Player)){
@@ -86,7 +86,7 @@ public class DynFMC implements IModule, CommandExecutor
 			Player player = (Player) sender;
 			
 			fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker delete " + player.getName() + " set:bases");
-			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2[&aDynFMC&2] &rRemoved base marker from DynMap!"));
+			player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&2[&aDynFMC&2] &eRemoved base marker from DynMap!"));
 		}
 		
 		return true;

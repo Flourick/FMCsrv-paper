@@ -1,4 +1,4 @@
-package flour.fmc.oneplayersleep;
+package flour.fmc.stats;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
  * 
  * @author Flourick
  */
-public class WakePlayerTabCompleter implements TabCompleter
+public class StatsTabCompleter implements TabCompleter
 {
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args)
