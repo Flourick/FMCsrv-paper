@@ -13,13 +13,15 @@ public class PlayerStats
 	private final String name;
 	private final Timestamp firstJoined;
 	private final Timestamp lastJoined;
+	private final int timesJoined;
 	
-	public PlayerStats(String UUID, String name, Timestamp firstJoinTime, Timestamp lastJoinTime)
+	public PlayerStats(String UUID, String name, Timestamp firstJoinTime, Timestamp lastJoinTime, int timesJoined)
 	{
 		this.UUID = UUID;
 		this.name = name;
 		this.firstJoined = firstJoinTime;
 		this.lastJoined = lastJoinTime;
+		this.timesJoined = timesJoined;
 	}
 
 	public String getUUID()
@@ -40,5 +42,10 @@ public class PlayerStats
 	public Timestamp getLastJoined()
 	{
 		return lastJoined;
+	}
+	
+	public int getTimesJoined()
+	{
+		return timesJoined;
 	}
 }

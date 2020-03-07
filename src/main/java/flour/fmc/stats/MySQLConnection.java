@@ -22,6 +22,8 @@ public class MySQLConnection
 	private Statement st;
 	private PreparedStatement getPlayerByNameStatement;
 	
+	private final String playerStatsTableName = "PlayerStats";
+	
 	private final String connString;
 	private final String username;
 	private final String password;
@@ -40,7 +42,7 @@ public class MySQLConnection
 		try {
 			conn = DriverManager.getConnection(connString, username, password);
 			st = conn.createStatement();
-			getPlayerByNameStatement = conn.prepareStatement("SELECT * FROM PlayerStats WHERE name = ?");
+			getPlayerByNameStatement = conn.prepareStatement("SELECT * FROM " + playerStatsTableName + " WHERE name = ?");
 			
 			// creates tables if not already created
 			createTables();
@@ -62,14 +64,13 @@ public class MySQLConnection
 	
 	private boolean createTables() throws SQLException
 	{
-		// INSERT INTO PlayerStats (uuid, name, first_joined, last_joined) VALUES (UNHEX(REPLACE('123e4567-e89b-42d3-a456-556642440000', '-', '')), 'Test', '2012-06-18 10:34:09', '2016-05-12 11:00:00')
-		
 		String sqlCreatePlayerStats =
-			  "CREATE TABLE IF NOT EXISTS PlayerStats"
+			  "CREATE TABLE IF NOT EXISTS " + playerStatsTableName
             + "  (uuid            BINARY(16) PRIMARY KEY,"
             + "   name            VARCHAR(16) NOT NULL,"
             + "   first_joined    DATETIME,"
-            + "   last_joined     DATETIME)";
+			+ "   last_joined     DATETIME,"
+            + "   times_joined    INT NOT NULL DEFAULT 0)";
 		
 		st.execute(sqlCreatePlayerStats);
 		
@@ -82,7 +83,7 @@ public class MySQLConnection
 		String UUID = player.getUniqueId().toString();
 		String name = player.getName();
 		
-		String sqlGetPlayer = "SELECT * FROM PlayerStats WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
+		String sqlGetPlayer = "SELECT * FROM " + playerStatsTableName + " WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
 		
 		try(ResultSet results = st.executeQuery(sqlGetPlayer)) {
 			if(!results.next()) {
@@ -93,8 +94,9 @@ public class MySQLConnection
 			String foundName = results.getString("name");
 			Timestamp firstJoined = results.getTimestamp("first_joined");
 			Timestamp lastJoined = results.getTimestamp("last_joined");
+			int timesJoined = results.getInt("times_joined");
 			
-			pStats = new PlayerStats(UUID, foundName, firstJoined, lastJoined);
+			pStats = new PlayerStats(UUID, foundName, firstJoined, lastJoined, timesJoined);
 		}
 		catch(SQLException e) {
 			exceptionLog = e.getMessage();
@@ -121,8 +123,9 @@ public class MySQLConnection
 			String foundName = results.getString("name");
 			Timestamp firstJoined = results.getTimestamp("first_joined");
 			Timestamp lastJoined = results.getTimestamp("last_joined");
+			int timesJoined = results.getInt("times_joined");
 			
-			pStats = new PlayerStats(myUUID, foundName, firstJoined, lastJoined);
+			pStats = new PlayerStats(myUUID, foundName, firstJoined, lastJoined, timesJoined);
 		}
 		catch(SQLException e) {
 			exceptionLog = e.getMessage();
@@ -140,7 +143,7 @@ public class MySQLConnection
 		String UUID = player.getUniqueId().toString();
 		String name = player.getName();
 		
-		String sqlGetPlayer = "SELECT * FROM PlayerStats WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
+		String sqlGetPlayer = "SELECT * FROM " + playerStatsTableName + " WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
 		
 		try(ResultSet results = st.executeQuery(sqlGetPlayer)) {
 			Date date = new Date();
@@ -149,17 +152,18 @@ public class MySQLConnection
 			if(results.next()) {
 				// player already has a record so we update his last join time and his name if he changed it
 				String foundName = results.getString("name");
+				int joinCount = results.getInt("times_joined");
 				
 				if(!foundName.equals(name)) {
 					name = foundName;
 				}
 				
-				String sqlUpdatePlayer = "UPDATE PlayerStats SET name = '" + name + "', last_joined = '" + ts + "' WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
+				String sqlUpdatePlayer = "UPDATE " + playerStatsTableName + " SET name = '" + name + "', last_joined = '" + ts + "', times_joined = " + ++joinCount + " WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
 				st.execute(sqlUpdatePlayer);
 			}
 			else {
 				// player does not have a record yet so we create one
-				String sqlNewPlayer = "INSERT INTO PlayerStats (uuid, name, first_joined, last_joined) VALUES (UNHEX(REPLACE('" + UUID.replace("-", "") + "', '-', '')), '" + name + "', '" + ts + "', '" + ts + "')";
+				String sqlNewPlayer = "INSERT INTO " + playerStatsTableName + " (uuid, name, first_joined, last_joined, times_joined) VALUES (UNHEX(REPLACE('" + UUID.replace("-", "") + "', '-', '')), '" + name + "', '" + ts + "', '" + ts + "', 1)";
 				st.execute(sqlNewPlayer);
 			}
 		}
@@ -171,7 +175,7 @@ public class MySQLConnection
 		return true;
 	}
 	
-	static UUID toUUID(byte[] bytes)
+	private static UUID toUUID(byte[] bytes)
 	{
 		if(bytes.length != 16) {
 			throw new IllegalArgumentException();
