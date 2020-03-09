@@ -26,14 +26,17 @@ commands:
         usage: "§eUsage:§r /<command> §7<§rplayer§7>"
     setbase:
         description: Places a marker with your name on DynMap.
-        aliases: [sb]
         permission: fmc.dynfmc
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command>"
     removebase:
         description: Removes previously placed marker with your name on DynMap.
-        aliases: [rmb]
         permission: fmc.dynfmc
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command>"
+    afk:
+        description: Sets you as an AFK individual.
+        permission: fmc.afk
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command>"
     statistics:
@@ -55,6 +58,9 @@ permissions:
         default: true
     fmc.dynfmc:
         description: Allows the use of setbase and removebase command
+        default: true
+    fmc.afk:
+        description: Allows the use of afk command
         default: true
     fmc.stats:
         description: Allows the use of statistics command for yourself

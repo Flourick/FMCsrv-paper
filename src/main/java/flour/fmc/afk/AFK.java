@@ -2,11 +2,15 @@ package flour.fmc.afk;
 
 import flour.fmc.FMC;
 import flour.fmc.utils.CConfig;
+import flour.fmc.utils.EmptyTabCompleter;
 import flour.fmc.utils.IModule;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import net.md_5.bungee.api.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -22,7 +26,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
  * 
  * @author Flourick
  */
-public class AFK implements IModule
+public class AFK implements IModule, CommandExecutor
 {
 	private final FMC fmc;
 	private boolean isEnabled = false;
@@ -49,7 +53,45 @@ public class AFK implements IModule
 	@Override
 	public boolean onEnable()
 	{
+		fmc.getCommand("afk").setTabCompleter(new EmptyTabCompleter());
+		fmc.getCommand("afk").setExecutor(this);
+		
+		// player joined, let's watch him closely
+		fmc.getServer().getPluginManager().registerEvents(new Listener()
+		{
+			@EventHandler(priority=EventPriority.NORMAL)
+			public void onPlayerJoin(PlayerJoinEvent e)
+			{		
+				playerTimes.put(e.getPlayer(), 0);
+			}
+		}, fmc);
+		
+		// player disconnected, no longer checking for AFK
+		fmc.getServer().getPluginManager().registerEvents(new Listener()
+		{
+			@EventHandler(priority=EventPriority.NORMAL)
+			public void OnPlayerQuit(PlayerQuitEvent e)
+			{
+				playerTimes.remove(e.getPlayer());
+			}
+		}, fmc);
+		
+		// in case of reload
+		for(Player pl : fmc.getServer().getOnlinePlayers()) {
+			playerTimes.put(pl, 0);
+			pl.setPlayerListName(pl.getDisplayName());
+		}
+		
+		// registers events that cause player to no longer be AFK
+		registerAFKTriggers();
+		
 		// get values from configuration yaml file
+		announceAFKStatus = afkConfig.getConfig().getBoolean("announce-afk-in-chat");
+		if(announceAFKStatus) {
+			playerIsAFKMessage = afkConfig.getConfig().getString("announce-afk-messages.is-afk-message");
+			playerNoLongerAFKMessage = afkConfig.getConfig().getString("announce-afk-messages.no-longer-afk-message");
+		}
+		
 		afkPeriod = afkConfig.getConfig().getInt("afk-check-period") * 20;
 		if(afkPeriod < 20 || afkPeriod > 200) {
 			afkPeriod = 20;
@@ -57,17 +99,127 @@ public class AFK implements IModule
 		}
 		
 		afkTimeout = afkConfig.getConfig().getInt("afk-timeout");
-		if(afkTimeout < afkPeriod || afkTimeout < 30 || afkTimeout > 86400) {
+		if(afkTimeout == -1) {
+			// not checking periodically, skipping...
+			isEnabled = true;
+			return true;
+		}
+		else if(afkTimeout < afkPeriod || afkTimeout < 30 || afkTimeout > 86400) {
 			afkTimeout = 300;
 			fmc.getLogger().log(Level.WARNING, "[AFK] afk-timeout is out of bounds! Falling back to defaults.");
 		}
 		
-		announceAFKStatus = afkConfig.getConfig().getBoolean("announce-afk-in-chat");
-		if(announceAFKStatus) {
-			playerIsAFKMessage = afkConfig.getConfig().getString("announce-afk-messages.is-afk-message");
-			playerNoLongerAFKMessage = afkConfig.getConfig().getString("announce-afk-messages.no-longer-afk-message");
+		// checks for AFK players every second
+		fmc.getServer().getScheduler().scheduleSyncRepeatingTask(fmc, new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				for(Map.Entry<Player, Integer> entry : playerTimes.entrySet()) {
+					Player player = entry.getKey();
+					int time = entry.getValue();
+					
+					if(time == -1) {
+						// player already afk
+					}
+					else if(time >= afkTimeout) {
+						// more than timeout, set to AFK
+						setPlayerAFK(player);
+					}
+					else {
+						// advance players AFK counter
+						playerTimes.put(player, time + 1);
+					}
+				}	
+			}
+			
+		}, 20, afkPeriod);
+		
+		isEnabled = true;
+		return true;
+	}
+	
+	@Override
+	public void onDisable()
+	{
+		isEnabled = false;
+		
+		fmc.getLogger().log(Level.INFO, "Disabled AFK module.");
+	}
+
+	@Override
+	public boolean isEnabled()
+	{
+		return isEnabled;
+	}
+
+	@Override
+	public String getName()
+	{
+		return "AFK";
+	}
+	
+	@Override
+	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args)
+	{
+		if(cmd.getName().toLowerCase().equals("afk")) {
+			if(!(sender instanceof Player)){
+				sender.sendMessage(ChatColor.RED + "Players only command.");
+				return true;
+			}
+
+			if(args.length != 0) {
+				return false;
+			}
+			
+			Player player = (Player) sender;
+			
+			if(playerTimes.get(player) == -1) {
+				// is AFK
+				setPlayerNotAFK(player);
+			}
+			else {
+				// not AFK
+				setPlayerAFK(player);
+				if(!announceAFKStatus) {
+					player.sendMessage(ChatColor.YELLOW + "You are now marked as AFK!");
+				}
+			}
 		}
 		
+		return true;
+	}
+	
+	private void setPlayerAFK(Player player)
+	{
+		player.setPlayerListName(player.getPlayerListName() + ChatColor.GRAY + " [" + ChatColor.RESET +"AFK" + ChatColor.GRAY + "]" + ChatColor.RESET);
+		playerTimes.put(player, -1);
+		
+		// announce message to chat or atleast log it
+		if(announceAFKStatus) {
+			fmc.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', playerIsAFKMessage.replace("{PLAYER}", player.getDisplayName())));
+		}
+		else {
+			fmc.getLogger().log(Level.INFO, "[AFK] {0} is now AFK!", player.getName());
+		}
+	}
+	
+	private void setPlayerNotAFK(Player player)
+	{
+		player.setPlayerListName(player.getDisplayName());
+		playerTimes.put(player, 0);
+		
+		// announce message to chat or atleast log it
+		if(announceAFKStatus) {
+			fmc.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', playerNoLongerAFKMessage.replace("{PLAYER}", player.getDisplayName())));
+		}
+		else {
+			fmc.getLogger().log(Level.INFO, "[AFK] {0} is no longer AFK!", player.getName());
+		}
+	}
+	
+	private void registerAFKTriggers()
+	{
 		// player moved a.k.a no longer AFK!
 		fmc.getServer().getPluginManager().registerEvents(new Listener()
 		{
@@ -109,6 +261,11 @@ public class AFK implements IModule
 			@EventHandler(priority=EventPriority.LOW)
 			public void OnPlayerIssuedCommand(PlayerCommandPreprocessEvent e)
 			{
+				if(e.getMessage().toLowerCase().equals("/afk")) {
+					// skip check for afk command
+					return;
+				}
+				
 				if(playerTimes.get(e.getPlayer()) == -1) {
 					setPlayerNotAFK(e.getPlayer());
 				}
@@ -117,101 +274,5 @@ public class AFK implements IModule
 				}
 			}
 		}, fmc);
-		
-		// player joined, let's watch him closely
-		fmc.getServer().getPluginManager().registerEvents(new Listener()
-		{
-			@EventHandler(priority=EventPriority.NORMAL)
-			public void onPlayerJoin(PlayerJoinEvent e)
-			{		
-				playerTimes.put(e.getPlayer(), 0);
-			}
-		}, fmc);
-		
-		// player disconnected, no longer checking for AFK
-		fmc.getServer().getPluginManager().registerEvents(new Listener()
-		{
-			@EventHandler(priority=EventPriority.NORMAL)
-			public void OnPlayerQuit(PlayerQuitEvent e)
-			{
-				playerTimes.remove(e.getPlayer());
-			}
-		}, fmc);
-		
-		// in case of reload
-		for(Player pl : fmc.getServer().getOnlinePlayers()) {
-			playerTimes.put(pl, 0);
-		}
-		
-		// checks for AFK players every second
-		fmc.getServer().getScheduler().scheduleSyncRepeatingTask(fmc, new Runnable()
-		{
-			@Override
-			public void run()
-			{
-				for(Map.Entry<Player, Integer> entry : playerTimes.entrySet()) {
-					Player player = entry.getKey();
-					int time = entry.getValue();
-					
-					if(time == -1) {
-						// player already afk
-					}
-					else if(time >= afkTimeout) {
-						// more than timeout, set to AFK
-						setPlayerAFK(player);
-					}
-					else {
-						// advance players AFK counter
-						playerTimes.put(player, time + 1);
-					}
-				}	
-			}
-			
-		}, 20, afkPeriod);
-		
-		isEnabled = true;
-		return true;
-	}
-	
-	private void setPlayerAFK(Player player)
-	{
-		player.setPlayerListName(player.getPlayerListName() + ChatColor.GRAY + " [" + ChatColor.RESET +"AFK" + ChatColor.GRAY + "]" + ChatColor.RESET);
-		playerTimes.put(player, -1);
-		
-		// announce message to chat or atleast log it
-		if(announceAFKStatus) {
-			fmc.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', playerIsAFKMessage.replace("{PLAYER}", player.getDisplayName())));
-		}
-		else {
-			fmc.getLogger().log(Level.INFO, "[AFK] {0} is now AFK!", player.getName());
-		}
-	}
-	
-	private void setPlayerNotAFK(Player player)
-	{
-		player.setPlayerListName(player.getDisplayName());
-		playerTimes.put(player, 0);
-		
-		// announce message to chat or atleast log it
-		if(announceAFKStatus) {
-			fmc.getServer().broadcastMessage(ChatColor.translateAlternateColorCodes('&', playerNoLongerAFKMessage.replace("{PLAYER}", player.getDisplayName())));
-		}
-		else {
-			fmc.getLogger().log(Level.INFO, "[AFK] {0} is no longer AFK!", player.getName());
-		}
-	}
-
-	@Override
-	public void onDisable()
-	{
-		isEnabled = false;
-		
-		fmc.getLogger().log(Level.INFO, "Disabled AFK module.");
-	}
-
-	@Override
-	public boolean isEnabled()
-	{
-		return isEnabled;
 	}
 }

@@ -144,46 +144,48 @@ public class ColorMe implements IModule, CommandExecutor
 	}
 	
 	@Override
-	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[])
+	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String args[])
 	{
-		if(!(sender instanceof Player)){
-			sender.sendMessage(ChatColor.RED + "Players only command.");
-			return true;
-		}
-			
-		if(args.length != 1) {
-			return false;
-		}
-			
-		Player player = (Player) sender;
-			
-		if(player.hasPermission("fmc.colorme")) {
-			if(args[0].equalsIgnoreCase("list")) {
-				player.sendMessage(
-					"Available colors: "
-					+ "§4dark_red§r, "
-					+ "§cred§r, "
-					+ "§6gold§r, "
-					+ "§eyellow§r, "
-					+ "§2dark_green§r, "
-					+ "§agreen§r, "
-					+ "§baqua§r, "
-					+ "§3dark_aqua§r, "
-					+ "§1dark_blue§r, "
-					+ "§9blue§r, "
-					+ "§dlight_purple§r, "
-					+ "§5dark_purple§r, "
-					+ "§8dark_gray§r, "
-					+ "§7gray§r, "
-					+ "§fwhite"
-				);
+		if(cmd.getName().toLowerCase().equals("colorme")) {
+			if(!(sender instanceof Player)){
+				sender.sendMessage(ChatColor.RED + "Players only command.");
+				return true;
 			}
-			else {
-				if(colorPlayer(player, args[0])) {
-					colorMeConfig.getConfig().set("player-colors." + player.getName(), args[0]);
+
+			if(args.length != 1) {
+				return false;
+			}
+
+			Player player = (Player) sender;
+
+			if(player.hasPermission("fmc.colorme")) {
+				if(args[0].equalsIgnoreCase("list")) {
+					player.sendMessage(
+						"Available colors: "
+						+ "§4dark_red§r, "
+						+ "§cred§r, "
+						+ "§6gold§r, "
+						+ "§eyellow§r, "
+						+ "§2dark_green§r, "
+						+ "§agreen§r, "
+						+ "§baqua§r, "
+						+ "§3dark_aqua§r, "
+						+ "§1dark_blue§r, "
+						+ "§9blue§r, "
+						+ "§dlight_purple§r, "
+						+ "§5dark_purple§r, "
+						+ "§8dark_gray§r, "
+						+ "§7gray§r, "
+						+ "§fwhite"
+					);
 				}
 				else {
-					player.sendMessage(ChatColor.RED + "Invalid argument " + "\'" + args[0] + "\'" + ".");
+					if(colorPlayer(player, args[0])) {
+						colorMeConfig.getConfig().set("player-colors." + player.getName(), args[0]);
+					}
+					else {
+						player.sendMessage(ChatColor.RED + "Invalid argument " + "\'" + args[0] + "\'" + ".");
+					}
 				}
 			}
 		}
@@ -285,5 +287,11 @@ public class ColorMe implements IModule, CommandExecutor
 		String message = ChatColor.translateAlternateColorCodes('&', quitMessages.get(idx).replace("{PLAYER}", playerName));
 		
 		return message;
+	}
+	
+	@Override
+	public String getName()
+	{
+		return "ColorMe";
 	}
 }

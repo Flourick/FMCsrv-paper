@@ -96,4 +96,10 @@ public class DynFMC implements IModule, CommandExecutor
 	public boolean isEnabled() {
 		return isEnabled;
 	}
+	
+	@Override
+	public String getName()
+	{
+		return "DynFMC";
+	}
 }

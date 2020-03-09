@@ -36,7 +36,10 @@ public class Stats implements IModule, CommandExecutor
 		// Creates default config if not present
 		statsConfig.saveDefaultConfig();
 		
-		this.sql = new MySQLConnection(statsConfig.getConfig().getString("connection-string"), statsConfig.getConfig().getString("username"), statsConfig.getConfig().getString("password"));
+		// jdbc:mysql://hostname:port/database?autoReconnect=true
+		String connString = "jdbc:mysql://" + statsConfig.getConfig().getString("hostname") + ":" + statsConfig.getConfig().getInt("port") + "/" + statsConfig.getConfig().getString("database") + "?autoReconnect=true";
+		
+		this.sql = new MySQLConnection(connString, statsConfig.getConfig().getString("username"), statsConfig.getConfig().getString("password"));
 	}
 	
 	@Override
@@ -45,9 +48,9 @@ public class Stats implements IModule, CommandExecutor
 		fmc.getCommand("statistics").setExecutor(this);
 		fmc.getCommand("statistics").setTabCompleter(new StatsTabCompleter());
 		
-		if(statsConfig.getConfig().getString("connection-string").equals("jdbc:mysql://hostname:port/databaseName")) {
+		if(statsConfig.getConfig().getString("hostname").equals("hostname")) {
 			// default config file
-			fmc.getLogger().log(Level.WARNING, "[Stats] Default connection-string in stats.yml! Please change it and restart/reload the server.");
+			fmc.getLogger().log(Level.WARNING, "[Stats] Default values in stats.yml! Please change them and restart/reload the server.");
 			onDisable();
 			return false;
 		}
@@ -169,5 +172,11 @@ public class Stats implements IModule, CommandExecutor
 	public boolean isEnabled()
 	{
 		return isEnabled;
+	}
+
+	@Override
+	public String getName()
+	{
+		return "Stats";
 	}
 }

@@ -87,19 +87,19 @@ public class OnePlayerSleep implements IModule, CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[])
 	{
-		if(!(sender instanceof Player)){
-			sender.sendMessage(ChatColor.RED + "Players only command.");
-			return true;
-		}
-			
-		if(args.length != 1) {
-			return false;
-		}
-		Player player = (Player) sender;
-		
-		if(player.hasPermission("fmc.wakeplayer")) {
+		if(cmd.getName().toLowerCase().equals("wakeplayer")) {
+			if(!(sender instanceof Player)){
+				sender.sendMessage(ChatColor.RED + "Players only command.");
+				return true;
+			}
+
+			if(args.length != 1) {
+				return false;
+			}
+			Player player = (Player) sender;
+
 			Player target = fmc.getServer().getPlayer(args[0]);
-			
+
 			if(target == null) {
 				player.sendMessage("§cInvalid argument " + "\'" + args[0] + "\'" + ".");
 			}
@@ -109,18 +109,16 @@ public class OnePlayerSleep implements IModule, CommandExecutor
 			else {
 				if(target.isSleeping()) {
 					target.wakeup(true);
-					
+
 					fmc.getServer().broadcastMessage(target.getDisplayName() + ChatColor.YELLOW + " got kicked out of bed by " + player.getDisplayName() + ChatColor.YELLOW + "!");
 				}
 				else {
 					player.sendMessage(ChatColor.RED + "That player is not sleeping!");
 				}
 			}
-			
-			return true;
 		}
 		
-		return false;
+		return true;
 	}
 	
 	public void addSleepTask(OnePlayerSleepRunnable sr)
@@ -154,5 +152,11 @@ public class OnePlayerSleep implements IModule, CommandExecutor
 	@Override
 	public boolean isEnabled() {
 		return isEnabled;
+	}
+	
+	@Override
+	public String getName()
+	{
+		return "OnePlayerSleep";
 	}
 }

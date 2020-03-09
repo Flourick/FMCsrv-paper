@@ -25,4 +25,11 @@ public interface IModule
 	 * Gets called whenever server stops/restarts/reloads or the plugin gets disabled
 	 */
 	public void onDisable();
+	
+	/**
+	 * Gets the name of this module
+	 * 
+	 * @return name of the module
+	 */
+	public String getName();
 }

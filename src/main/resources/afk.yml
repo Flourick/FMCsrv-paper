@@ -3,7 +3,8 @@
 # ---
 # afk-timeout: (time in seconds)
 #    - Time before player is considered AFK
-#    - value must be bigger than afk-check-period and bigger than 30 and less than 86400 (24h)
+#    - value must be bigger than afk-check-period, bigger than 30 and less than 86400 (24h)
+#      OR set to -1 to not check periodically at all
 # afk-check-period: (time in seconds)
 #    - How often every player gets checked for AFK status. Higher values have less impact on performance. 
 #      But even for the biggest servers 5 seconds is more than enough to have negligible impact. I recommend leaving it as is.

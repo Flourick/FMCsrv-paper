@@ -8,6 +8,7 @@ import flour.fmc.dynfmc.DynFMC;
 import flour.fmc.oneplayersleep.OnePlayerSleep;
 import flour.fmc.stats.Stats;
 import flour.fmc.utils.EmptyTabCompleter;
+import flour.fmc.utils.IModule;
 
 import java.util.ArrayList;
 import java.util.logging.Level;
@@ -29,18 +30,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class FMC extends JavaPlugin
 {
 	private Logger rootLogger;
-	
-	// modules
-	private ColorMe			colorMe;
-	private boolean			colorMeEnabled = false;
-	private DynFMC			dynFMC;
-	private boolean			dynFMCEnabled = false;
-	private OnePlayerSleep	onePlayerSleep;
-	private boolean			onePlayerSleepEnabled = false;
-	private AFK				afk;
-	private boolean			afkEnabled = false;
-	private Stats			stats;
-	private boolean			statsEnabled = false;
+
+	ArrayList<IModule> runningModules = new ArrayList<>();
 	
 	@Override
 	public void onEnable()
@@ -55,62 +46,29 @@ public class FMC extends JavaPlugin
 		// creates config.yml if not already present
 		saveDefaultConfig();
 		
-		ArrayList<String> enabledModules = new ArrayList<>();
+		ArrayList<IModule> modules = new ArrayList<>();
 		
-		// load modules
-		if(colorMeEnabled = getConfig().getBoolean("enable-colorme")) {
-			colorMe = new ColorMe(this);
-			if(colorMe.onEnable()) {
-				enabledModules.add("ColorMe");
-			}
-			else {
-				// module disabled itself, maybe wrong config?
-				colorMe = null;
-				colorMeEnabled = false;
-			}
+		// --- adding enabled modules to array (ONLY HERE YOU ADD A NEW MODULE) ---
+		if(getConfig().getBoolean("enable-colorme")) {
+			modules.add(new ColorMe(this));
 		}
-		if(onePlayerSleepEnabled = getConfig().getBoolean("enable-oneplayersleep")) {
-			onePlayerSleep = new OnePlayerSleep(this);
-			if(onePlayerSleep.onEnable()) {
-				enabledModules.add("OnePlayerSleep");
-			}
-			else {
-				// module disabled itself, maybe wrong config?
-				onePlayerSleep = null;
-				onePlayerSleepEnabled = false;
-			}
+		if(getConfig().getBoolean("enable-oneplayersleep")) {
+			modules.add(new OnePlayerSleep(this));
 		}
-		if(dynFMCEnabled = getConfig().getBoolean("enable-dynfmc")) {
-			dynFMC = new DynFMC(this);
-			if(dynFMC.onEnable()) {
-				enabledModules.add("DynFMC");
-			}
-			else {
-				// module disabled itself, maybe wrong config?
-				dynFMC = null;
-				dynFMCEnabled = false;
-			}
+		if(getConfig().getBoolean("enable-dynfmc")) {
+			modules.add(new DynFMC(this));
 		}
-		if(afkEnabled = getConfig().getBoolean("enable-afk")) {
-			afk = new AFK(this);
-			if(afk.onEnable()) {
-				enabledModules.add("AFK");
-			}
-			else {
-				// module disabled itself, maybe wrong config?
-				afk = null;
-				afkEnabled = false;
-			}
+		if(getConfig().getBoolean("enable-afk")) {
+			modules.add(new AFK(this));
 		}
-		if(statsEnabled = getConfig().getBoolean("enable-stats")) {
-			stats = new Stats(this);
-			if(stats.onEnable()) {
-				enabledModules.add("Stats");
-			}
-			else {
-				// module disabled itself, maybe wrong config?
-				stats = null;
-				statsEnabled = false;
+		if(getConfig().getBoolean("enable-stats")) {
+			modules.add(new Stats(this));
+		}
+		// --- ---
+		
+		for(IModule module : modules) {
+			if(module.onEnable()) {
+				runningModules.add(module);
 			}
 		}
 		
@@ -118,33 +76,20 @@ public class FMC extends JavaPlugin
 		getCommand("announce").setTabCompleter(new EmptyTabCompleter());
 		
 		getLogger().log(Level.INFO, "FMC has been successfully enabled!");
-		getLogger().log(Level.INFO, "Loaded modules: {0}", enabledModules);
+		getLogger().log(Level.INFO, "Loaded modules: {0}", getPrintableModules());
 	}
 
 	@Override
 	public void onDisable()
-	{
-		// save main config from memory
-		saveConfig();
-		
+	{		
 		// call onDisable() of modules
-		if(colorMeEnabled) {
-			colorMe.onDisable();
-		}
-		if(onePlayerSleepEnabled) {
-			onePlayerSleep.onDisable();
-		}
-		if(dynFMCEnabled) {
-			dynFMC.onDisable();
-		}
-		if(afkEnabled) {
-			afk.onDisable();
-		}
-		if(statsEnabled) {
-			stats.onDisable();
+		for(IModule module : runningModules) {
+			if(module.isEnabled()) {
+				module.onDisable();
+			}
 		}
 		
-		getLogger().log(Level.INFO, "FMC has been disabled");
+		getLogger().log(Level.INFO, "FMC has been disabled.");
 	}
 	
 	@Override
@@ -176,5 +121,23 @@ public class FMC extends JavaPlugin
 	public void removeLogFilter(Filter filter)
 	{
 		rootLogger.getContext().removeFilter(filter);
+	}
+	
+	private String getPrintableModules()
+	{
+		String modules = "[";
+		
+		int sz = runningModules.size();
+		
+		for(int i = 0; i < sz; i++) {
+			modules += runningModules.get(i).getName();
+			
+			if(i < sz - 1) {
+				modules += ", ";
+			}
+		}
+		modules += "]";
+		
+		return modules;
 	}
 }
