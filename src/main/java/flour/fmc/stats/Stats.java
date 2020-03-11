@@ -13,6 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerLevelChangeEvent;
 
 /**
  * Module for collecting various statistics
@@ -72,6 +73,22 @@ public class Stats implements IModule, CommandExecutor
 				Player player = event.getPlayer();
 				if(!sql.onPlayerJoin(player)) {
 					fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.exceptionLog);
+				}
+			}
+		}, fmc);
+		
+		// listening to a level change
+		fmc.getServer().getPluginManager().registerEvents(new Listener() {
+			@EventHandler
+			public void onPlayerLevelChange(PlayerLevelChangeEvent event)
+			{
+				Player player = event.getPlayer();
+				
+				// LEVEL UP!
+				if(event.getNewLevel() > event.getOldLevel()) {
+					if(!sql.onPlayerLevelUp(player)) {
+						fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.exceptionLog);
+					}
 				}
 			}
 		}, fmc);
@@ -164,7 +181,8 @@ public class Stats implements IModule, CommandExecutor
 			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " UUID" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getUUID(),
 			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " First joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + firstJoined,
 			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Last joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + lastJoined,
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getTimesJoined()
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getTimesJoined(),
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Max Level Reached" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getMaxLevelReached()
 		});
 	}
 	

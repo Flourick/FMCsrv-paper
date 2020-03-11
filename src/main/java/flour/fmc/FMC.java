@@ -31,7 +31,7 @@ public class FMC extends JavaPlugin
 {
 	private Logger rootLogger;
 
-	ArrayList<IModule> runningModules = new ArrayList<>();
+	private final ArrayList<IModule> runningModules = new ArrayList<>();
 	
 	@Override
 	public void onEnable()

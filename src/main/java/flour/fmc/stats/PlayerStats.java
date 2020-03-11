@@ -14,14 +14,16 @@ public class PlayerStats
 	private final Timestamp firstJoined;
 	private final Timestamp lastJoined;
 	private final int timesJoined;
+	private final int maxLevelReached;
 	
-	public PlayerStats(String UUID, String name, Timestamp firstJoinTime, Timestamp lastJoinTime, int timesJoined)
+	public PlayerStats(String UUID, String name, Timestamp firstJoinTime, Timestamp lastJoinTime, int timesJoined, int maxLevelReached)
 	{
 		this.UUID = UUID;
 		this.name = name;
 		this.firstJoined = firstJoinTime;
 		this.lastJoined = lastJoinTime;
 		this.timesJoined = timesJoined;
+		this.maxLevelReached = maxLevelReached;
 	}
 
 	public String getUUID()
@@ -47,5 +49,10 @@ public class PlayerStats
 	public int getTimesJoined()
 	{
 		return timesJoined;
+	}
+	
+	public int getMaxLevelReached()
+	{
+		return maxLevelReached;
 	}
 }

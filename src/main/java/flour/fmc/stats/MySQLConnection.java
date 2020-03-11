@@ -22,7 +22,7 @@ public class MySQLConnection
 	private Statement st;
 	private PreparedStatement getPlayerByNameStatement;
 	
-	private final String playerStatsTableName = "PlayerStats";
+	private final String playerStatsTableName = "PlayerStatsTest";
 	
 	private final String connString;
 	private final String username;
@@ -66,11 +66,12 @@ public class MySQLConnection
 	{
 		String sqlCreatePlayerStats =
 			  "CREATE TABLE IF NOT EXISTS " + playerStatsTableName
-            + "  (uuid            BINARY(16) PRIMARY KEY,"
-            + "   name            VARCHAR(16) NOT NULL,"
-            + "   first_joined    DATETIME,"
-			+ "   last_joined     DATETIME,"
-            + "   times_joined    INT NOT NULL DEFAULT 0)";
+            + "  (uuid                BINARY(16) PRIMARY KEY,"
+            + "   name                VARCHAR(16) NOT NULL,"
+            + "   first_joined        DATETIME,"
+			+ "   last_joined         DATETIME,"
+            + "   times_joined        INT NOT NULL DEFAULT 0,"
+            + "   max_level_reached   INT NOT NULL DEFAULT 0)";
 		
 		st.execute(sqlCreatePlayerStats);
 		
@@ -95,8 +96,9 @@ public class MySQLConnection
 			Timestamp firstJoined = results.getTimestamp("first_joined");
 			Timestamp lastJoined = results.getTimestamp("last_joined");
 			int timesJoined = results.getInt("times_joined");
+			int maxLevelReached = results.getInt("max_level_reached");
 			
-			pStats = new PlayerStats(UUID, foundName, firstJoined, lastJoined, timesJoined);
+			pStats = new PlayerStats(UUID, foundName, firstJoined, lastJoined, timesJoined, maxLevelReached);
 		}
 		catch(SQLException e) {
 			exceptionLog = e.getMessage();
@@ -124,8 +126,9 @@ public class MySQLConnection
 			Timestamp firstJoined = results.getTimestamp("first_joined");
 			Timestamp lastJoined = results.getTimestamp("last_joined");
 			int timesJoined = results.getInt("times_joined");
+			int maxLevelReached = results.getInt("max_level_reached");
 			
-			pStats = new PlayerStats(myUUID, foundName, firstJoined, lastJoined, timesJoined);
+			pStats = new PlayerStats(myUUID, foundName, firstJoined, lastJoined, timesJoined, maxLevelReached);
 		}
 		catch(SQLException e) {
 			exceptionLog = e.getMessage();
@@ -165,6 +168,36 @@ public class MySQLConnection
 				// player does not have a record yet so we create one
 				String sqlNewPlayer = "INSERT INTO " + playerStatsTableName + " (uuid, name, first_joined, last_joined, times_joined) VALUES (UNHEX(REPLACE('" + UUID.replace("-", "") + "', '-', '')), '" + name + "', '" + ts + "', '" + ts + "', 1)";
 				st.execute(sqlNewPlayer);
+			}
+		}
+		catch(SQLException e) {
+			exceptionLog = e.getMessage();
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public boolean onPlayerLevelUp(Player player)
+	{
+		String UUID = player.getUniqueId().toString();
+		
+		String sqlGetPlayer = "SELECT * FROM " + playerStatsTableName + " WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
+		
+		try(ResultSet results = st.executeQuery(sqlGetPlayer)) {
+			if(results.next()) {
+				int curMaxLevelReached = results.getInt("max_level_reached");
+
+				if(player.getLevel() > curMaxLevelReached) {
+					// player hit a new max!
+					String sqlUpdatePlayer = "UPDATE " + playerStatsTableName + " SET max_level_reached = '" + player.getLevel() + "' WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
+					st.execute(sqlUpdatePlayer);
+				}
+			}
+			else {
+				// PLAYER DOES NOT EXIST???
+				exceptionLog = "PLAYER DOES NOT HAVE A RECORD IN DATABASE!!!";
+				return false;
 			}
 		}
 		catch(SQLException e) {
