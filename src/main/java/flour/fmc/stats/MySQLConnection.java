@@ -28,7 +28,7 @@ public class MySQLConnection
 	private final String username;
 	private final String password;
 	
-	public String exceptionLog;
+	private String exceptionLog = null;
 	
 	public MySQLConnection(String connectionString, String username, String password)
 	{
@@ -141,6 +141,84 @@ public class MySQLConnection
 		return pStats;
 	}
 	
+	public TopStats getTopStats()
+	{
+		TopStats tStats = null;
+		ResultSet results = null;
+		
+		String sqlGetTop = 
+				"(SELECT name, first_joined, null AS last_joined, -1 AS times_joined, -1 AS max_level_reached FROM (SELECT MIN(first_joined) AS g FROM " + playerStatsTableName + ") AS f JOIN (SELECT name, first_joined FROM " + playerStatsTableName + ") AS e ON f.g = e.first_joined) "
+				+ "UNION "
+				+ "(SELECT name, null AS first_joined, last_joined, -1 AS times_joined, -1 AS max_level_reached FROM (SELECT MAX(last_joined) AS g FROM " + playerStatsTableName + ") AS f JOIN (SELECT name, last_joined FROM " + playerStatsTableName + ") AS e ON f.g = e.last_joined) "
+				+ "UNION "
+				+ "(SELECT name, null AS first_joined, null AS last_joined, times_joined, -1 AS max_level_reached FROM (SELECT MAX(times_joined) AS g FROM " + playerStatsTableName + ") AS f JOIN (SELECT name, times_joined FROM " + playerStatsTableName + ") AS e ON f.g = e.times_joined) "
+				+ "UNION "
+				+ "(SELECT name, null AS first_joined, null AS last_joined, -1 AS times_joined, max_level_reached FROM (SELECT MAX(max_level_reached) AS g FROM " + playerStatsTableName + ") AS f JOIN (SELECT name, max_level_reached FROM " + playerStatsTableName + ") AS e ON f.g = e.max_level_reached)";
+		
+		try {
+			results = st.executeQuery(sqlGetTop);
+			
+			Timestamp firstJoined = null;
+			String whoFirstJoined = "<EMPTY>";
+
+			Timestamp lastJoined = null;
+			String whoLastJoined = "<EMPTY>";
+
+			int timesJoined = -1;
+			String whoTimesJoined = "<EMPTY>";
+
+			int maxLevelReached = -1;
+			String whoMaxLevelReached = "<EMPTY>";
+			
+			if(!results.next()) {
+				// empty select???
+				return null;
+			}
+			else {
+				do {
+					String curName = results.getString("name");
+					Timestamp curFirstJoined = results.getTimestamp("first_joined");
+					Timestamp curLastJoined = results.getTimestamp("last_joined");
+					int curTimesJoined = results.getInt("times_joined");
+					int curMaxLevelReached = results.getInt("max_level_reached");
+					
+					if(curFirstJoined != null) {
+						firstJoined = curFirstJoined;
+						whoFirstJoined = curName;
+					}
+					
+					if(curLastJoined != null) {
+						lastJoined = curLastJoined;
+						whoLastJoined = curName;
+					}
+					
+					if(curTimesJoined != -1) {
+						timesJoined = curTimesJoined;
+						whoTimesJoined = curName;
+					}
+					
+					if(curMaxLevelReached != -1) {
+						maxLevelReached = curMaxLevelReached;
+						whoMaxLevelReached = curName;
+					}
+					
+				}
+				while(results.next());
+			}
+			
+			tStats = new TopStats(firstJoined, whoFirstJoined, lastJoined, whoLastJoined, timesJoined, whoTimesJoined, maxLevelReached, whoMaxLevelReached);
+		}
+		catch(SQLException e) {
+			exceptionLog = e.getMessage();
+		}
+		finally {
+			try { results.close(); } catch (Exception e) { }
+			try { getPlayerByNameStatement.clearParameters(); } catch (SQLException e) { }
+		}
+		
+		return tStats;
+	}
+	
 	public boolean onPlayerJoin(Player player)
 	{
 		String UUID = player.getUniqueId().toString();
@@ -206,6 +284,16 @@ public class MySQLConnection
 		}
 		
 		return true;
+	}
+	
+	public String getExceptionLog()
+	{
+		return exceptionLog;
+	}
+	
+	public void clearExceptionLog()
+	{
+		exceptionLog = null;
 	}
 	
 	private static UUID toUUID(byte[] bytes)

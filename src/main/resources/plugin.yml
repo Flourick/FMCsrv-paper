@@ -45,6 +45,12 @@ commands:
         permission: fmc.stats
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command> §7[§rplayer§7]"
+    top:
+        description: Shows statistics leaderboard
+        aliases: [topstats]
+        permission: fmc.top
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command>"
 
 permissions:
     fmc.announce:
@@ -70,4 +76,6 @@ permissions:
         default: op
         children:
             fmc.stats: true
-            
+    fmc.top:
+        description: Allows the use of top command
+        default: true

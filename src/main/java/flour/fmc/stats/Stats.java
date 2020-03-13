@@ -2,10 +2,14 @@ package flour.fmc.stats;
 
 import flour.fmc.FMC;
 import flour.fmc.utils.CConfig;
+import flour.fmc.utils.EmptyTabCompleter;
 import flour.fmc.utils.IModule;
+
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
+
 import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -48,6 +52,8 @@ public class Stats implements IModule, CommandExecutor
 	{
 		fmc.getCommand("statistics").setExecutor(this);
 		fmc.getCommand("statistics").setTabCompleter(new StatsTabCompleter());
+		fmc.getCommand("top").setExecutor(this);
+		fmc.getCommand("top").setTabCompleter(new EmptyTabCompleter());
 		
 		if(statsConfig.getConfig().getString("hostname").equals("hostname")) {
 			// default config file
@@ -58,7 +64,8 @@ public class Stats implements IModule, CommandExecutor
 		
 		boolean sqlCorrect = sql.initialize();
 		if(!sqlCorrect) {
-			fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.exceptionLog);
+			fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
+			sql.clearExceptionLog();
 			onDisable();
 			return false;
 		}
@@ -72,7 +79,8 @@ public class Stats implements IModule, CommandExecutor
 			{
 				Player player = event.getPlayer();
 				if(!sql.onPlayerJoin(player)) {
-					fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.exceptionLog);
+					fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
+					sql.clearExceptionLog();
 				}
 			}
 		}, fmc);
@@ -87,7 +95,8 @@ public class Stats implements IModule, CommandExecutor
 				// LEVEL UP!
 				if(event.getNewLevel() > event.getOldLevel()) {
 					if(!sql.onPlayerLevelUp(player)) {
-						fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.exceptionLog);
+						fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
+						sql.clearExceptionLog();
 					}
 				}
 			}
@@ -106,6 +115,18 @@ public class Stats implements IModule, CommandExecutor
 	}
 	
 	@Override
+	public boolean isEnabled()
+	{
+		return isEnabled;
+	}
+
+	@Override
+	public String getName()
+	{
+		return "Stats";
+	}
+	
+	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args)
 	{
 		if(cmd.getName().toLowerCase().equals("statistics")) {
@@ -116,8 +137,9 @@ public class Stats implements IModule, CommandExecutor
 					if(pStats == null) {
 						sender.sendMessage(ChatColor.RED + "Could not get " + args[0] + "\'s statistics!");
 						
-						if(sql.exceptionLog != null) {
-							sender.sendMessage(ChatColor.RED + "REASON: " + sql.exceptionLog);
+						if(sql.getExceptionLog() != null) {
+							fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());;
+							sql.clearExceptionLog();
 						}
 						
 						return true;
@@ -143,7 +165,13 @@ public class Stats implements IModule, CommandExecutor
 				if(player.hasPermission("fmc.stats.others")) {
 					PlayerStats pStats = sql.getPlayerStats(args[0]);
 					if(pStats == null) {
-						player.sendMessage(ChatColor.RED + "Could not get " + args[0] + "\'s statistics!");						
+						player.sendMessage(ChatColor.RED + "Could not get " + args[0] + "\'s statistics!");
+						
+						if(sql.getExceptionLog() != null) {
+							fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());;
+							sql.clearExceptionLog();
+						}
+						
 						return true;
 					}
 					
@@ -157,7 +185,13 @@ public class Stats implements IModule, CommandExecutor
 				// showing stats for the caller
 				PlayerStats pStats = sql.getPlayerStats(player);
 				if(pStats == null) {
-					player.sendMessage(ChatColor.RED + "Could not get " + player.getName() + "\'s statistics!");				
+					player.sendMessage(ChatColor.RED + "Could not get " + player.getName() + "\'s statistics!");
+					
+					if(sql.getExceptionLog() != null) {
+						fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());;
+						sql.clearExceptionLog();
+					}
+					
 					return true;
 				}
 				
@@ -166,6 +200,25 @@ public class Stats implements IModule, CommandExecutor
 			else {
 				return false;
 			}
+		}
+		else if(cmd.getName().toLowerCase().equals("top")) {
+			if(args.length != 0) {
+				return false;
+			}
+			
+			TopStats tStats = sql.getTopStats();
+			if(tStats == null) {
+				sender.sendMessage(ChatColor.RED + "Could not get top statistics!");
+				
+				if(sql.getExceptionLog() != null) {
+					fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());;
+					sql.clearExceptionLog();
+				}
+				
+				return true;
+			}
+			
+			sendTopStatsMessage(sender, tStats);
 		}
 		
 		return true;
@@ -177,24 +230,26 @@ public class Stats implements IModule, CommandExecutor
 		String lastJoined = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(pStats.getLastJoined());
 
 		to.sendMessage(new String[] {
-			ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Stats" + ChatColor.DARK_GREEN + "] " + ChatColor.YELLOW + pStats.getName() + "\'s statistics" + ChatColor.GRAY + ":",
+			ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Stats" + ChatColor.DARK_GREEN + "] " + ChatColor.YELLOW + pStats.getName() + "\'s statistics:",
 			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " UUID" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getUUID(),
 			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " First joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + firstJoined,
 			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Last joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + lastJoined,
 			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getTimesJoined(),
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Max Level Reached" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getMaxLevelReached()
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Max level reached" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getMaxLevelReached()
 		});
 	}
 	
-	@Override
-	public boolean isEnabled()
+	private void sendTopStatsMessage(CommandSender to, TopStats tStats)
 	{
-		return isEnabled;
-	}
+		String firstJoined = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(tStats.getFirstJoined());
+		String lastJoined = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(tStats.getLastJoined());
 
-	@Override
-	public String getName()
-	{
-		return "Stats";
+		to.sendMessage(new String[] {
+			ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Stats" + ChatColor.DARK_GREEN + "] " + ChatColor.YELLOW + "Top statistics:",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " First joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + firstJoined + ChatColor.GRAY + " (" + ChatColor.YELLOW + tStats.getWhoFirstJoined() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Last joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + lastJoined + ChatColor.GRAY +" (" + ChatColor.YELLOW + tStats.getWhoLastJoined() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + tStats.getTimesJoined() + ChatColor.GRAY + " (" + ChatColor.YELLOW + tStats.getWhoTimesJoined() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Max level reached" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + tStats.getMaxLevelReached() + ChatColor.GRAY + " (" + ChatColor.YELLOW + tStats.getWhoMaxLevelReached() + ChatColor.GRAY + ")"
+		});
 	}
 }
