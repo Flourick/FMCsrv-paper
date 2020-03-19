@@ -1,0 +1,16 @@
+# Chatter module configuration file
+# ---
+# use-custom-join-and-quit-messages: (boolean)
+#    - adds custom join/quit messages. Allows the use of color using '&' or '§' symbol.
+# allow-chat-color-codes: (boolean)
+#    - allows users to use formatting codes using '&' symbol
+# ---
+custom-messages:
+    use-custom-join-and-quit-messages: true
+    join-messages:
+        - "{PLAYER} &ehas joined the server"
+        - "{PLAYER} &econnected"
+    quit-messages:
+        - "{PLAYER} &ehas left the server"
+        - "{PLAYER} &edisconnected"
+allow-chat-color-codes: true

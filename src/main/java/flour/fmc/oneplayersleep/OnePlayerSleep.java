@@ -145,8 +145,6 @@ public class OnePlayerSleep implements IModule, CommandExecutor
 	public void onDisable()
 	{
 		isEnabled = false;
-		
-		fmc.getLogger().log(Level.INFO, "Disabled OnePlayerSleep module.");
 	}
 
 	@Override

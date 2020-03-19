@@ -54,8 +54,6 @@ public class DynFMC implements IModule, CommandExecutor
 	public void onDisable()
 	{
 		isEnabled = false;
-		
-		fmc.getLogger().log(Level.INFO, "Disabled DynFMC module.");
 	}
 
 	@Override

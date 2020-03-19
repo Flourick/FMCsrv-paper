@@ -5,4 +5,5 @@ enable-oneplayersleep: true
 enable-dynfmc: true
 enable-afk: true
 enable-stats: true
+enable-chatter: true
     

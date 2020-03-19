@@ -143,8 +143,6 @@ public class AFK implements IModule, CommandExecutor
 	public void onDisable()
 	{
 		isEnabled = false;
-		
-		fmc.getLogger().log(Level.INFO, "Disabled AFK module.");
 	}
 
 	@Override

@@ -111,7 +111,6 @@ public class Stats implements IModule, CommandExecutor
 	{
 		sql.close();
 		isEnabled = false;
-		fmc.getLogger().log(Level.INFO, "Disabled Stats module.");
 	}
 	
 	@Override

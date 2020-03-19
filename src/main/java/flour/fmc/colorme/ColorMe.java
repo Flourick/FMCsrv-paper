@@ -7,8 +7,6 @@ import flour.fmc.utils.IModule;
 import io.papermc.lib.PaperLib;
 
 import java.io.File;
-import java.util.List;
-import java.util.Random;
 import java.util.logging.Level;
 
 import net.md_5.bungee.api.ChatColor;
@@ -22,9 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  * ColorMe module class
@@ -38,10 +34,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public class ColorMe implements IModule, CommandExecutor
 {
 	private boolean isEnabled = false;
-	
-	private boolean useCustomMessages = false;
-	private List<String> joinMessages;
-	private List<String> quitMessages;
 	
 	private final CConfig colorMeConfig;
 	private final FMC fmc;
@@ -71,17 +63,11 @@ public class ColorMe implements IModule, CommandExecutor
 			}
 		}
 		
-		if(useCustomMessages = colorMeConfig.getConfig().getBoolean("custom-messages.use-custom-join-and-quit-messages")) {
-			// gets custom messages from YAML, falls back to defaults if not found
-			joinMessages = colorMeConfig.getConfig().getStringList("custom-messages.join-messages");
-			quitMessages = colorMeConfig.getConfig().getStringList("custom-messages.quit-messages");
-		}
-		
 		fmc.getCommand("colorme").setTabCompleter(new ColorMeTabCompleter());
 		fmc.getCommand("colorme").setExecutor(this);
 
 		fmc.getServer().getPluginManager().registerEvents(new Listener() {
-			@EventHandler
+			@EventHandler(priority=EventPriority.LOWEST)
 			public void onPlayerJoin(PlayerJoinEvent event)
 			{
 				Player player = event.getPlayer();
@@ -98,37 +84,8 @@ public class ColorMe implements IModule, CommandExecutor
 					colorPlayer(player, "white");
 					colorMeConfig.getConfig().set("player-colors." + player.getName(), "white");
 				}
-				
-				// Overrides default join message broadcasted to others
-				if(useCustomMessages) {
-					event.setJoinMessage(getRandomJoinMessage(player.getDisplayName()));
-				}
 			}
 		}, fmc);
-		
-		// Overrides default quit message broadcasted to others
-		if(useCustomMessages) {
-			fmc.getServer().getPluginManager().registerEvents(new Listener() {
-				@EventHandler
-				public void onPlayerQuit(PlayerQuitEvent event)
-				{
-					Player player = event.getPlayer();
-
-					event.setQuitMessage(getRandomQuitMessage(player.getDisplayName()));
-				}
-			}, fmc);
-		}
-		
-		// Enables players colored chat & formatting
-		if(colorMeConfig.getConfig().getBoolean("allow-chat-color-codes")) {
-			fmc.getServer().getPluginManager().registerEvents(new Listener() {
-				@EventHandler(priority=EventPriority.HIGH)
-				public void OnPlayerAsyncChat(AsyncPlayerChatEvent e)
-				{
-					e.setMessage(ChatColor.translateAlternateColorCodes('&', e.getMessage()));
-				}
-			}, fmc);
-		}
 		
 		isEnabled = true;
 		return true;
@@ -140,7 +97,6 @@ public class ColorMe implements IModule, CommandExecutor
 		colorMeConfig.saveConfig();
 		
 		isEnabled = false;
-		fmc.getLogger().log(Level.INFO, "Disabled ColorMe module.");
 	}
 	
 	@Override
@@ -267,26 +223,6 @@ public class ColorMe implements IModule, CommandExecutor
 		}
 		
 		return true;
-	}
-	
-	private String getRandomJoinMessage(String playerName)
-	{
-		Random rnd = new Random();
-		int idx = rnd.nextInt(joinMessages.size());
-		
-		String message = ChatColor.translateAlternateColorCodes('&', joinMessages.get(idx).replace("{PLAYER}", playerName));
-		
-		return message;
-	}
-	
-	private String getRandomQuitMessage(String playerName)
-	{
-		Random rnd = new Random();
-		int idx = rnd.nextInt(quitMessages.size());
-		
-		String message = ChatColor.translateAlternateColorCodes('&', quitMessages.get(idx).replace("{PLAYER}", playerName));
-		
-		return message;
 	}
 	
 	@Override

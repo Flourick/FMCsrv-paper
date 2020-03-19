@@ -1,6 +1,7 @@
 package flour.fmc;
 
 import flour.fmc.afk.AFK;
+import flour.fmc.chatter.Chatter;
 import io.papermc.lib.PaperLib;
 
 import flour.fmc.colorme.ColorMe;
@@ -64,6 +65,9 @@ public class FMC extends JavaPlugin
 		if(getConfig().getBoolean("enable-stats")) {
 			modules.add(new Stats(this));
 		}
+		if(getConfig().getBoolean("enable-chatter")) {
+			modules.add(new Chatter(this));
+		}
 		// --- ---
 		
 		for(IModule module : modules) {
@@ -71,9 +75,6 @@ public class FMC extends JavaPlugin
 				runningModules.add(module);
 			}
 		}
-		
-		//FMC commands
-		getCommand("announce").setTabCompleter(new EmptyTabCompleter());
 		
 		getLogger().log(Level.INFO, "FMC has been successfully enabled!");
 		getLogger().log(Level.INFO, "Loaded modules: {0}", getPrintableModules());
@@ -86,6 +87,7 @@ public class FMC extends JavaPlugin
 		for(IModule module : runningModules) {
 			if(module.isEnabled()) {
 				module.onDisable();
+				getLogger().log(Level.INFO, "Disabled {0} module.", module.getName());
 			}
 		}
 		
@@ -95,18 +97,6 @@ public class FMC extends JavaPlugin
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String commandLabel, String args[])
 	{
-		if(cmd.getName().toLowerCase().equals("announce")) {
-			if(args.length < 1) {
-				return false;
-			}
-			
-			String message;
-			message =  ChatColor.translateAlternateColorCodes('&', String.join(" ", args));
-			getServer().broadcastMessage(message);
-			
-			return true;
-		}
-		
 		// Any other leftover commands from disabled modules
 		sender.sendMessage(ChatColor.RED + "Disabled command.");
 		
