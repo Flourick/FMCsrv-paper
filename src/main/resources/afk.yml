@@ -19,4 +19,3 @@ announce-afk-in-chat: false
 announce-afk-messages:
     is-afk-message: "{PLAYER} &eis now AFK!"
     no-longer-afk-message: "{PLAYER} &eis no longer AFK!"
-    
