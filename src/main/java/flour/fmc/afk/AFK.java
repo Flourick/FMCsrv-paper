@@ -135,8 +135,7 @@ public class AFK implements IModule, CommandExecutor
 			
 		}, 20, afkPeriod);
 		
-		isEnabled = true;
-		return true;
+		return isEnabled = true;
 	}
 	
 	@Override

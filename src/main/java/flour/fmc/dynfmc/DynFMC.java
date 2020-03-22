@@ -46,8 +46,7 @@ public class DynFMC implements IModule, CommandExecutor
 		fmc.getServer().dispatchCommand(fmc.getServer().getConsoleSender(), "dmarker addset bases");
 		fmc.removeLogFilter(basesFilter);
 		
-		isEnabled = true;
-		return true;
+		return isEnabled = true;
 	}
 
 	@Override

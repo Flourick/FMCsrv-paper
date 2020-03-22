@@ -1,9 +1,9 @@
 # Chatter module configuration file
 # ---
 # use-custom-join-and-quit-messages: (boolean)
-#    - adds custom join/quit messages. Allows the use of color using '&' or '§' symbol.
+#    -> adds custom join/quit messages. Allows the use of color using '&' or '§' symbol.
 # allow-chat-color-codes: (boolean)
-#    - allows users to use formatting codes using '&' symbol
+#    -> allows users to use formatting codes using '&' symbol
 # ---
 custom-messages:
     use-custom-join-and-quit-messages: true

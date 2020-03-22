@@ -6,9 +6,9 @@ import io.papermc.lib.PaperLib;
 
 import flour.fmc.colorme.ColorMe;
 import flour.fmc.dynfmc.DynFMC;
+import flour.fmc.loot.Loot;
 import flour.fmc.oneplayersleep.OnePlayerSleep;
 import flour.fmc.stats.Stats;
-import flour.fmc.utils.EmptyTabCompleter;
 import flour.fmc.utils.IModule;
 
 import java.util.ArrayList;
@@ -67,6 +67,9 @@ public class FMC extends JavaPlugin
 		}
 		if(getConfig().getBoolean("enable-chatter")) {
 			modules.add(new Chatter(this));
+		}
+		if(getConfig().getBoolean("enable-loot")) {
+			modules.add(new Loot(this));
 		}
 		// --- ---
 		

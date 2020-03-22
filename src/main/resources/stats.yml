@@ -1,15 +1,15 @@
 # Stats module configuration file
 # ---
 # hostname: String
-#    - URL to where to connect
+#    -> URL to where to connect
 # port: Integer
-#    - port used for connection
+#    -> port used for connection
 # database: String
-#    - Name of the database to use
+#    -> Name of the database to use
 # username: String
-#    - username used to connect to database
+#    -> username used to connect to database
 # password: String
-#    - password of the username
+#    -> password of the username
 # ---
 hostname: hostname
 port: port

@@ -1,0 +1,34 @@
+# Loot module configuration file
+# ---
+# wandering-trader:
+#    -> Any changes made to custom trades will not affect already spawned wandering villagers!
+#    no-wandering-trader-spawn: (boolean)
+#        -> disables wandering trader spawning (also no trade llamas, EVEN FROM EGGS!)
+#    custom-trades:
+#        enabled: (boolean)
+#            -> use custom trades for wandering trader
+#        remove-vanilla-trades: (boolean)
+#            -> removes default vanilla trades (WT WILL HAVE NO TRADES IF YOU DON'T SUPPLY YOUR OWN)
+#        trades:
+#            -> trade below is an EXAMPLE and does not function on it's own, see WIKI for correct usage
+#            trade-seven:
+#                group-id: 2
+#                propability-in-group: 50
+#                first-ingredient:
+#                    name: minecraft:dirt
+#                    count: 32
+#                second-ingredient:
+#                    name: null
+#                    count: 0
+#                output:
+#                    name: minecraft:emerald
+#                    count: 1
+#                max-uses: 4
+#                drop-xp: false
+# ---
+wandering-trader:
+    no-wandering-trader-spawn: false
+    custom-trades:
+        enabled: false
+        remove-vanilla-trades: true
+        trades:

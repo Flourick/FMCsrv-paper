@@ -80,8 +80,7 @@ public class OnePlayerSleep implements IModule, CommandExecutor
 			}
 		}, fmc);
 		
-		isEnabled = true;
-		return true;
+		return isEnabled = true;
 	}
 	
 	@Override

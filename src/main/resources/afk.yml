@@ -2,16 +2,16 @@
 # by default movement, chat and commands make player no longer AFK
 # ---
 # afk-timeout: (time in seconds)
-#    - Time before player is considered AFK
-#    - value must be bigger than afk-check-period, bigger than 30 and less than 86400 (24h)
-#      OR set to -1 to not check periodically at all
+#    -> Time before player is considered AFK
+#    -> value must be bigger than afk-check-period, bigger than 30 and less than 86400 (24h)
+#       OR set to -1 to not check periodically at all
 # afk-check-period: (time in seconds)
-#    - How often every player gets checked for AFK status. Higher values have less impact on performance. 
-#      But even for the biggest servers 5 seconds is more than enough to have negligible impact. I recommend leaving it as is.
-#      By setting to to 10 it can take up to 10 seconds for the module to realize that the player is no longer AFK!
-#    - value must be between 1 and 10
+#    -> How often every player gets checked for AFK status. Higher values have less impact on performance. 
+#       But even for the biggest servers 5 seconds is more than enough to have negligible impact. I recommend leaving it as is.
+#       By setting to to 10 it can take up to 10 seconds for the module to realize that the player is no longer AFK!
+#    -> value must be between 1 and 10
 # announce-afk-in-chat: (boolean)
-#    - Sends a message to all players that {PLAYER} is now AFK or is no longer AFK. Supports colors using '&' or '§' symbol.
+#    -> Sends a message to all players that {PLAYER} is now AFK or is no longer AFK. Supports colors using '&' or '§' symbol.
 # ---
 afk-timeout: 300
 afk-check-period: 1

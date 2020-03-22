@@ -87,8 +87,7 @@ public class ColorMe implements IModule, CommandExecutor
 			}
 		}, fmc);
 		
-		isEnabled = true;
-		return true;
+		return isEnabled = true;
 	}
 	
 	@Override
