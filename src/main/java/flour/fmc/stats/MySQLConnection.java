@@ -22,7 +22,7 @@ public class MySQLConnection
 	private Statement st;
 	private PreparedStatement getPlayerByNameStatement;
 	
-	private final String playerStatsTableName = "PlayerStats";
+	private final String playerStatsTableName = "PlayerStatsTest";
 	
 	private final String connString;
 	private final String username;
@@ -80,9 +80,11 @@ public class MySQLConnection
 	
 	public PlayerStats getPlayerStats(Player player)
 	{
+		testConnectivity();
+
 		PlayerStats pStats = null;
 		String UUID = player.getUniqueId().toString();
-		String name = player.getName();
+		//String name = player.getName();
 		
 		String sqlGetPlayer = "SELECT * FROM " + playerStatsTableName + " WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
 		
@@ -109,6 +111,8 @@ public class MySQLConnection
 	
 	public PlayerStats getPlayerStats(String name)
 	{
+		testConnectivity();
+
 		PlayerStats pStats = null;
 		ResultSet results = null;
 		
@@ -143,6 +147,8 @@ public class MySQLConnection
 	
 	public TopStats getTopStats()
 	{
+		testConnectivity();
+
 		TopStats tStats = null;
 		ResultSet results = null;
 		
@@ -221,6 +227,8 @@ public class MySQLConnection
 	
 	public boolean onPlayerJoin(Player player)
 	{
+		testConnectivity();
+
 		String UUID = player.getUniqueId().toString();
 		String name = player.getName();
 		
@@ -258,6 +266,8 @@ public class MySQLConnection
 	
 	public boolean onPlayerLevelUp(Player player)
 	{
+		testConnectivity();
+
 		String UUID = player.getUniqueId().toString();
 		
 		String sqlGetPlayer = "SELECT * FROM " + playerStatsTableName + " WHERE uuid = UNHEX('" + UUID.replace("-", "") + "')";
@@ -294,6 +304,16 @@ public class MySQLConnection
 	public void clearExceptionLog()
 	{
 		exceptionLog = null;
+	}
+
+	private void testConnectivity()
+	{
+		try {
+			conn.isValid(3);
+		}
+		catch (SQLException e) {
+			// only thrown for invalid timeout, so yeah, nothing to do here.
+		}
 	}
 	
 	private static UUID toUUID(byte[] bytes)

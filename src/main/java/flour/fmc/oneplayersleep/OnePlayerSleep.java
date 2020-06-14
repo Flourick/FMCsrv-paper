@@ -4,7 +4,6 @@ import flour.fmc.FMC;
 import flour.fmc.utils.IModule;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -137,7 +136,9 @@ public class OnePlayerSleep implements IModule, CommandExecutor
 			}
 		}
 
-		scheduledTasks.remove(found);
+		for(OnePlayerSleepRunnable r : found) {
+			scheduledTasks.remove(r);
+		}
     }
 
 	@Override

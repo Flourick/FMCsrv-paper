@@ -4,6 +4,7 @@ import flour.fmc.FMC;
 import flour.fmc.utils.CConfig;
 import flour.fmc.utils.IModule;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
+
 /**
  * Loot module
  * 
@@ -104,7 +106,7 @@ public class Loot implements IModule
 						customTrades.get(groupId).getTrades().add(wtt);
 					}
 					else {
-						customTrades.put(groupId, new WanderingTraderGroup(groupId, new ArrayList<WanderingTraderTrade>() { { add(wtt); } } ));
+						customTrades.put(groupId, new WanderingTraderGroup(groupId, Arrays.asList(wtt)));
 					}
 				}
 			}
@@ -179,16 +181,6 @@ public class Loot implements IModule
 	public String getName()
 	{
 		return "Loot";
-	}
-	
-	private void printTrades()
-	{
-		// debug purposes
-		for(Entry<Integer, WanderingTraderGroup> tradeGroup : customTrades.entrySet()) {
-			System.out.println("GROUP: " + tradeGroup.getKey());
-			System.out.println(tradeGroup.getValue().getTrades());
-			System.out.println("");
-		}
 	}
 	
 	private int checkPropabilitiesInGroups()

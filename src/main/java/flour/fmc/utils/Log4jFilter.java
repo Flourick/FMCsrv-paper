@@ -79,13 +79,13 @@ public class Log4jFilter implements Filter
 	@Override
 	public boolean isStarted()
 	{
-		return true ? state == LifeCycle.State.STARTED : false;
+		return state == LifeCycle.State.STARTED;
 	}
 
 	@Override
 	public boolean isStopped()
 	{
-		return true ? state == LifeCycle.State.STOPPED : false;
+		return state == LifeCycle.State.STOPPED;
 	}
 	
 	@Override

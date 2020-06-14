@@ -6,4 +6,4 @@ enable-dynfmc: true
 enable-afk: true
 enable-stats: true
 enable-chatter: true
-enable-loot: true
+enable-loot: false
