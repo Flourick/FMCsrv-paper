@@ -106,7 +106,7 @@ public class Loot implements IModule
 						customTrades.get(groupId).getTrades().add(wtt);
 					}
 					else {
-						customTrades.put(groupId, new WanderingTraderGroup(groupId, Arrays.asList(wtt)));
+						customTrades.put(groupId, new WanderingTraderGroup(groupId, new ArrayList<>(Arrays.asList(wtt))));
 					}
 				}
 			}

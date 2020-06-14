@@ -22,7 +22,7 @@ public class MySQLConnection
 	private Statement st;
 	private PreparedStatement getPlayerByNameStatement;
 	
-	private final String playerStatsTableName = "PlayerStatsTest";
+	private final String playerStatsTableName = "PlayerStats";
 	
 	private final String connString;
 	private final String username;
