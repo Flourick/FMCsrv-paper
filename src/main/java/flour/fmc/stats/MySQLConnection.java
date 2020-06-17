@@ -71,7 +71,8 @@ public class MySQLConnection
             + "   first_joined        DATETIME,"
 			+ "   last_joined         DATETIME,"
             + "   times_joined        INT NOT NULL DEFAULT 0,"
-            + "   max_level_reached   INT NOT NULL DEFAULT 0)";
+			+ "   max_level_reached   INT NOT NULL DEFAULT 0,"
+			+ "   inactive            TINYINT(1) NOT NULL DEFAULT 0)";
 		
 		st.execute(sqlCreatePlayerStats);
 		
@@ -309,7 +310,10 @@ public class MySQLConnection
 	private void testConnectivity()
 	{
 		try {
-			conn.isValid(3);
+			if(!conn.isValid(3)) {
+				initialize();
+			}
+			
 		}
 		catch (SQLException e) {
 			// only thrown for invalid timeout, so yeah, nothing to do here.
