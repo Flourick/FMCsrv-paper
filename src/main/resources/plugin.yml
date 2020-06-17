@@ -17,23 +17,18 @@ commands:
         aliases: [cme]
         permission: fmc.colorme
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command> §7<§rcolor§7|§rlist§7>§r"
+        usage: "§eUsage:§r /<command> §7<§rcolor§7>§r"
     wakeplayer:
         description: Wakes a player if he is trying to sleep to skip the night.
         aliases: [wp]
         permission: fmc.wakeplayer
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command> §7<§rplayer§7>"
-    setbase:
-        description: Places a marker with your name on DynMap.
+    dynfmc:
+        description: Places a markers with your name or make a town marker!
         permission: fmc.dynfmc
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command>"
-    removebase:
-        description: Removes previously placed marker with your name on DynMap.
-        permission: fmc.dynfmc
-        permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command>"
+        usage: "§eUsage:§r /<command> §7<§rbase§7|§rtown§7>§r §7<§rset§7|§rremove§7|§rlist§7>§r §7[§rlabel§7]§r"
     afk:
         description: Sets you as an AFK individual.
         permission: fmc.afk
@@ -45,10 +40,10 @@ commands:
         permission: fmc.stats
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command> §7[§rplayer§7]"
-    top:
+    topstats:
         description: Shows statistics leaderboard
-        aliases: [topstats]
-        permission: fmc.top
+        aliases: [top]
+        permission: fmc.topstats
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command>"
 
@@ -63,7 +58,7 @@ permissions:
         description: Allows the use of wakeplayer command
         default: true
     fmc.dynfmc:
-        description: Allows the use of setbase and removebase command
+        description: Allows the use of dynfmc command
         default: true
     fmc.afk:
         description: Allows the use of afk command
@@ -76,6 +71,6 @@ permissions:
         default: op
         children:
             fmc.stats: true
-    fmc.top:
-        description: Allows the use of top command
+    fmc.topstats:
+        description: Allows the use of topstats command
         default: true

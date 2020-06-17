@@ -19,10 +19,10 @@ import org.bukkit.entity.WanderingTrader;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
-
 /**
  * Loot module
  * 
@@ -48,6 +48,44 @@ public class Loot implements IModule
 
 	@Override
 	public boolean onEnable()
+	{
+		handleWanderingTrader();
+		
+		// adds one shulker shell drop to shulker
+		if(lootConfig.getConfig().getBoolean("double-shulker-shells")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void onEntitySpawn(EntityDeathEvent event)
+				{
+					if(event.getEntityType()== EntityType.SHULKER) {
+						event.getDrops().add(new ItemStack(Material.SHULKER_SHELL, 1));
+					}
+				}
+			}, fmc);
+		}
+
+		return isEnabled = true;
+	}
+
+	@Override
+	public void onDisable()
+	{
+		isEnabled = false;
+	}
+	
+	@Override
+	public boolean isEnabled()
+	{
+		return isEnabled;
+	}
+
+	@Override
+	public String getName()
+	{
+		return "Loot";
+	}
+	
+	private void handleWanderingTrader()
 	{
 		boolean noWanderingTrader = lootConfig.getConfig().getBoolean("wandering-trader.no-wandering-trader-spawn");
 		boolean enableCustomTrades = lootConfig.getConfig().getBoolean("wandering-trader.custom-trades.enabled");
@@ -115,7 +153,7 @@ public class Loot implements IModule
 			
 			if((wrongGroup = checkPropabilitiesInGroups()) == -1) {
 				fmc.getServer().getPluginManager().registerEvents(new Listener() {
-					@EventHandler(priority=EventPriority.LOWEST)
+					@EventHandler
 					public void onEntitySpawn(EntitySpawnEvent event)
 					{
 						if(event.getEntityType()== EntityType.WANDERING_TRADER) {
@@ -161,26 +199,6 @@ public class Loot implements IModule
 				fmc.getLogger().log(Level.WARNING, "[Loot] Disabled custom trades, please fix and reload/restart your server");
 			}
 		}
-
-		return isEnabled = true;
-	}
-
-	@Override
-	public void onDisable()
-	{
-		isEnabled = false;
-	}
-	
-	@Override
-	public boolean isEnabled()
-	{
-		return isEnabled;
-	}
-
-	@Override
-	public String getName()
-	{
-		return "Loot";
 	}
 	
 	private int checkPropabilitiesInGroups()
@@ -192,9 +210,7 @@ public class Loot implements IModule
 			
 			int curPropability = 0;
 			
-			for(WanderingTraderTrade trade : tradeGroup.getValue().getTrades()) {
-				curPropability += trade.getPropability();
-			}
+			curPropability = tradeGroup.getValue().getTrades().stream().map((trade) -> trade.getPropability()).reduce(curPropability, Integer::sum);
 			
 			if(curPropability != 100) {
 				return tradeGroup.getKey();

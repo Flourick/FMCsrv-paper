@@ -5,7 +5,7 @@
 # port: Integer
 #    -> port used for connection
 # database: String
-#    -> Name of the database to use
+#    -> name of the database to use
 # username: String
 #    -> username used to connect to database
 # password: String

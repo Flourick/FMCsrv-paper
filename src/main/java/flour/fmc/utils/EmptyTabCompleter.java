@@ -7,7 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 /**
- * Removes the usual names from tab completion
+ * Removes the usual names from TAB completion that may be used in Paper
  * 
  * @author Flourick
  */

@@ -1,9 +1,11 @@
 # Loot module configuration file
 # ---
+# double-shulker-shells: (boolean)
+#    -> shulkers drop 1-2 shulker shells instead of having 50% chance to drop one
 # wandering-trader:
-#    -> Any changes made to custom trades will not affect already spawned wandering villagers!
+#    -> any changes made to custom trades will not affect already spawned wandering villagers!
 #    no-wandering-trader-spawn: (boolean)
-#        -> disables wandering trader spawning (also no trade llamas, EVEN FROM EGGS!)
+#        -> disables wandering trader spawning (also no trade llamas, EVEN FROM EGGS!), you can also prevent natural trader spawning by setting doTraderSpawning gamerule to false!
 #    custom-trades:
 #        enabled: (boolean)
 #            -> use custom trades for wandering trader
@@ -26,6 +28,7 @@
 #                max-uses: 4
 #                drop-xp: false
 # ---
+double-shulker-shells: true
 wandering-trader:
     no-wandering-trader-spawn: false
     custom-trades:

@@ -23,12 +23,23 @@ public class CConfig
 	private File customConfigFile = null;
 	private final String configName;
 	
+	/**
+	* The one and only constructor of the CConfig class
+	* 
+	* @param  fmc         FMC plugin instance
+	* @param  configName  name of the config file including .yml (ex. 'chatter.yml')
+	*/
 	public CConfig(FMC fmc, String configName)
 	{
 		this.fmc = fmc;
 		this.configName = configName;
 	}
 	
+	/**
+	* Gets the actual config instance or reloads one from .jar if not present
+	* 
+	* @return FileConfiguration associated with this CConfig instance
+	*/
 	public FileConfiguration getConfig()
 	{
 		if(customConfig == null) {
@@ -38,6 +49,9 @@ public class CConfig
 		return customConfig;
 	}
 	
+	/**
+	* Reloads the config from jar or creates one if not present
+	*/
 	public void reloadConfig()
 	{
 		if(customConfigFile == null) {
@@ -51,6 +65,9 @@ public class CConfig
 		customConfig.setDefaults(defConfig);
 	}
 	
+	/**
+	* Saves all changes from memory to disk file
+	*/
 	public void saveConfig()
 	{
 		if(customConfig == null || customConfigFile == null) {
@@ -64,6 +81,9 @@ public class CConfig
 		}
 	}
 	
+	/**
+	* Creates the .yml file associated with this CConfig instance in plugins data folder, does not overwrite if already present
+	*/
 	public void saveDefaultConfig()
 	{
 		if(customConfigFile == null) {

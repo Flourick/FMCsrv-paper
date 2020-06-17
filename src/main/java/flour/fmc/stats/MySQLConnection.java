@@ -72,7 +72,7 @@ public class MySQLConnection
 			+ "   last_joined         DATETIME,"
             + "   times_joined        INT NOT NULL DEFAULT 0,"
 			+ "   max_level_reached   INT NOT NULL DEFAULT 0,"
-			+ "   inactive            TINYINT(1) NOT NULL DEFAULT 0)";
+			+ "   inactive            BOOLEAN NOT NULL DEFAULT false)";
 		
 		st.execute(sqlCreatePlayerStats);
 		

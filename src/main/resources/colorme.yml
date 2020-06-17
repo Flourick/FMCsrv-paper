@@ -1,6 +1,5 @@
 # ColorMe module configuration file
 # for it to work in Paper use-vanilla-world-scoreboard-name-coloring MUST be set to false in paper.yml!
-# any changes made here while the server is running won't last! You have to stop the server first!
+# any changes made here while the server is running won't last! They will get overwritten by players issuing commands!
 # ---
 player-colors:
-    

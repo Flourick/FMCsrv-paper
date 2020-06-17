@@ -52,8 +52,8 @@ public class Stats implements IModule, CommandExecutor
 	{
 		fmc.getCommand("statistics").setExecutor(this);
 		fmc.getCommand("statistics").setTabCompleter(new StatsTabCompleter());
-		fmc.getCommand("top").setExecutor(this);
-		fmc.getCommand("top").setTabCompleter(new EmptyTabCompleter());
+		fmc.getCommand("topstats").setExecutor(this);
+		fmc.getCommand("topstats").setTabCompleter(new EmptyTabCompleter());
 		
 		if(statsConfig.getConfig().getString("hostname").equals("hostname")) {
 			// default config file
@@ -199,7 +199,7 @@ public class Stats implements IModule, CommandExecutor
 				return false;
 			}
 		}
-		else if(cmd.getName().toLowerCase().equals("top")) {
+		else if(cmd.getName().toLowerCase().equals("topstats")) {
 			if(args.length != 0) {
 				return false;
 			}

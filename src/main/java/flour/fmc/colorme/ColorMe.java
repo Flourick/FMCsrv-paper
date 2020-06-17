@@ -78,11 +78,13 @@ public class ColorMe implements IModule, CommandExecutor
 					if(!colorPlayer(player, color)) {
 						fmc.getLogger().log(Level.WARNING, "[ColorMe] Invalid entry in colorme.yml: ''{0}: {1}''", new Object[] {player.getName(), color});
 						colorMeConfig.getConfig().set("player-colors." + player.getName(), null);
+						colorMeConfig.saveConfig();
 					}
 				}
 				else {
 					colorPlayer(player, "white");
 					colorMeConfig.getConfig().set("player-colors." + player.getName(), "white");
+					colorMeConfig.saveConfig();
 				}
 			}
 		}, fmc);
@@ -93,8 +95,6 @@ public class ColorMe implements IModule, CommandExecutor
 	@Override
 	public void onDisable()
 	{
-		colorMeConfig.saveConfig();
-		
 		isEnabled = false;
 	}
 	
@@ -114,33 +114,12 @@ public class ColorMe implements IModule, CommandExecutor
 			Player player = (Player) sender;
 
 			if(player.hasPermission("fmc.colorme")) {
-				if(args[0].equalsIgnoreCase("list")) {
-					player.sendMessage(
-						"Available colors: "
-						+ "§4dark_red§r, "
-						+ "§cred§r, "
-						+ "§6gold§r, "
-						+ "§eyellow§r, "
-						+ "§2dark_green§r, "
-						+ "§agreen§r, "
-						+ "§baqua§r, "
-						+ "§3dark_aqua§r, "
-						+ "§1dark_blue§r, "
-						+ "§9blue§r, "
-						+ "§dlight_purple§r, "
-						+ "§5dark_purple§r, "
-						+ "§8dark_gray§r, "
-						+ "§7gray§r, "
-						+ "§fwhite"
-					);
+				if(colorPlayer(player, args[0])) {
+					colorMeConfig.getConfig().set("player-colors." + player.getName(), args[0]);
+					colorMeConfig.saveConfig();
 				}
 				else {
-					if(colorPlayer(player, args[0])) {
-						colorMeConfig.getConfig().set("player-colors." + player.getName(), args[0]);
-					}
-					else {
-						player.sendMessage(ChatColor.RED + "Invalid argument " + "\'" + args[0] + "\'" + ".");
-					}
+					player.sendMessage(ChatColor.RED + "Invalid argument " + "\'" + args[0] + "\'" + ".");
 				}
 			}
 		}
