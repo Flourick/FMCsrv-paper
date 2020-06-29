@@ -50,11 +50,6 @@ public class Stats implements IModule, CommandExecutor
 	@Override
 	public boolean onEnable()
 	{
-		fmc.getCommand("statistics").setExecutor(this);
-		fmc.getCommand("statistics").setTabCompleter(new StatsTabCompleter());
-		fmc.getCommand("topstats").setExecutor(this);
-		fmc.getCommand("topstats").setTabCompleter(new EmptyTabCompleter());
-		
 		if(statsConfig.getConfig().getString("hostname").equals("hostname")) {
 			// default config file
 			fmc.getLogger().log(Level.WARNING, "[Stats] Default values in stats.yml! Please change them and restart/reload the server.");
@@ -71,6 +66,11 @@ public class Stats implements IModule, CommandExecutor
 		}
 		
 		fmc.getLogger().log(Level.INFO, "[Stats] Successfully initialized MySQL database connection!");
+
+		fmc.getCommand("statistics").setExecutor(this);
+		fmc.getCommand("statistics").setTabCompleter(new StatsTabCompleter());
+		fmc.getCommand("topstats").setExecutor(this);
+		fmc.getCommand("topstats").setTabCompleter(new EmptyTabCompleter());
 		
 		// listen for player join and update his join times
 		fmc.getServer().getPluginManager().registerEvents(new Listener() {
