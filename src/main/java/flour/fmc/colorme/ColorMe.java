@@ -25,8 +25,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 /**
  * ColorMe module class
  * <p>
- * Allows players to change their names colour using either
- * Bukkit API calls or vanilla teams feature.
+ * Allows players to change their names colour.
  * </p>
  * 
  * @author Flourick
@@ -113,16 +112,15 @@ public class ColorMe implements IModule, CommandExecutor
 
 			Player player = (Player) sender;
 
-			if(player.hasPermission("fmc.colorme")) {
-				if(colorPlayer(player, args[0])) {
-					colorMeConfig.getConfig().set("player-colors." + player.getName(), args[0]);
-					colorMeConfig.saveConfig();
-				}
-				else {
-					player.sendMessage(ChatColor.RED + "Invalid argument " + "\'" + args[0] + "\'" + ".");
-				}
+			if(colorPlayer(player, args[0])) {
+				colorMeConfig.getConfig().set("player-colors." + player.getName(), args[0]);
+				colorMeConfig.saveConfig();
+			}
+			else {
+				player.sendMessage(ChatColor.RED + "Invalid argument " + "\'" + args[0] + "\'" + ".");
 			}
 		}
+		
 
 		return true;
 	}

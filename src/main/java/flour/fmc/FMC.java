@@ -6,6 +6,7 @@ import io.papermc.lib.PaperLib;
 
 import flour.fmc.colorme.ColorMe;
 import flour.fmc.dynfmc.DynFMC;
+import flour.fmc.fun.Fun;
 import flour.fmc.loot.Loot;
 import flour.fmc.oneplayersleep.OnePlayerSleep;
 import flour.fmc.stats.Stats;
@@ -70,6 +71,9 @@ public class FMC extends JavaPlugin
 		}
 		if(getConfig().getBoolean("enable-loot")) {
 			modules.add(new Loot(this));
+		}
+		if(getConfig().getBoolean("enable-fun")) {
+			modules.add(new Fun(this));
 		}
 		// --- ---
 		

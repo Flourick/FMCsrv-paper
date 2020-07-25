@@ -46,6 +46,11 @@ commands:
         permission: fmc.topstats
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command>"
+    hat:
+        description: Puts the block from your main hand onto your head
+        permission: fmc.hat
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command>"
 
 permissions:
     fmc.announce:
@@ -73,4 +78,7 @@ permissions:
             fmc.stats: true
     fmc.topstats:
         description: Allows the use of topstats command
+        default: true
+    fmc.hat:
+        description: Allows the use of hat command
         default: true

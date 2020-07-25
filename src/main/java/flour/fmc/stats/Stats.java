@@ -128,7 +128,7 @@ public class Stats implements IModule, CommandExecutor
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String[] args)
 	{
 		if(cmd.getName().toLowerCase().equals("statistics")) {
-			if(!(sender instanceof Player)){
+			if(!(sender instanceof Player)) {
 				if(args.length == 1) {
 					// showing stats for someone else
 					PlayerStats pStats = sql.getPlayerStats(args[0]);
