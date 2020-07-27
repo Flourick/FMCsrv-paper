@@ -1,6 +1,7 @@
 package flour.fmc.utils;
 
 import java.util.Arrays;
+
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.Marker;
 import org.apache.logging.log4j.core.Filter;

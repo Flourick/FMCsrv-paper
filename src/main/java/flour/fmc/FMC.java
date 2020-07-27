@@ -2,8 +2,6 @@ package flour.fmc;
 
 import flour.fmc.afk.AFK;
 import flour.fmc.chatter.Chatter;
-import io.papermc.lib.PaperLib;
-
 import flour.fmc.colorme.ColorMe;
 import flour.fmc.dynfmc.DynFMC;
 import flour.fmc.fun.Fun;
@@ -11,6 +9,8 @@ import flour.fmc.loot.Loot;
 import flour.fmc.oneplayersleep.OnePlayerSleep;
 import flour.fmc.stats.Stats;
 import flour.fmc.utils.IModule;
+
+import io.papermc.lib.PaperLib;
 
 import java.util.ArrayList;
 import java.util.logging.Level;

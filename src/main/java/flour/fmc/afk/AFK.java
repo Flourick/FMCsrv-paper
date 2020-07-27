@@ -4,10 +4,13 @@ import flour.fmc.FMC;
 import flour.fmc.utils.CConfig;
 import flour.fmc.utils.EmptyTabCompleter;
 import flour.fmc.utils.IModule;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
+
 import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -164,10 +167,6 @@ public class AFK implements IModule, CommandExecutor
 				sender.sendMessage(ChatColor.RED + "Players only command.");
 				return true;
 			}
-
-			if(args.length != 0) {
-				return false;
-			}
 			
 			Player player = (Player) sender;
 			
@@ -258,10 +257,12 @@ public class AFK implements IModule, CommandExecutor
 			@EventHandler(priority=EventPriority.LOW)
 			public void OnPlayerIssuedCommand(PlayerCommandPreprocessEvent e)
 			{
-				if(e.getMessage().toLowerCase().equals("/afk")) {
+				if(e.getMessage().toLowerCase().startsWith("/afk")) {
 					// skip check for afk command
 					return;
 				}
+
+				fmc.getLogger().log(Level.INFO, e.getMessage());
 				
 				if(playerTimes.get(e.getPlayer()) == -1) {
 					setPlayerNotAFK(e.getPlayer());

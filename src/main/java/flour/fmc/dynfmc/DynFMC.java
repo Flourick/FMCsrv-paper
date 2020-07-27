@@ -3,9 +3,11 @@ package flour.fmc.dynfmc;
 import flour.fmc.FMC;
 import flour.fmc.utils.IModule;
 import flour.fmc.utils.SilentOutputSender;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

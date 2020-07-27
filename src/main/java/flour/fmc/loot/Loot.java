@@ -3,6 +3,7 @@ package flour.fmc.loot;
 import flour.fmc.FMC;
 import flour.fmc.utils.CConfig;
 import flour.fmc.utils.IModule;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
+
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;

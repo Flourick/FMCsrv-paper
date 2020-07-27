@@ -58,7 +58,10 @@ public class Fun implements IModule, CommandExecutor
 			Player player = (Player) sender;
 			ItemStack handItem = player.getInventory().getItemInMainHand();
 
-			if(!handItem.getType().isBlock()) {
+			if(handItem == null) {
+				return true;
+			}
+			else if(!handItem.getType().isBlock()) {
 				sender.sendMessage(ChatColor.RED + "You can only put blocks on your head!");
 				return true;
 			}

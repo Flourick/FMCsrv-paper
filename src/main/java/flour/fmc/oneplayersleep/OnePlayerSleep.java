@@ -2,19 +2,19 @@ package flour.fmc.oneplayersleep;
 
 import flour.fmc.FMC;
 import flour.fmc.utils.IModule;
+
 import java.util.ArrayList;
 import java.util.List;
+
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
-
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -61,7 +61,7 @@ public class OnePlayerSleep implements IModule, CommandExecutor
 				TextComponent message = new TextComponent(e.getPlayer().getDisplayName() + ChatColor.YELLOW +" wants to sleep. ");
 				TextComponent clickable = new TextComponent(ChatColor.YELLOW + "Click here to wake them!");
 				clickable.setClickEvent(new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/wakeplayer " + e.getPlayer().getName()));		
-				clickable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GREEN + "KICK FROM BED!")));
+				clickable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("KICK FROM BED!")));
 				message.addExtra(clickable);
 				
 				fmc.getServer().spigot().broadcast(message);

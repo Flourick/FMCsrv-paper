@@ -4,9 +4,12 @@ import flour.fmc.FMC;
 import flour.fmc.utils.CConfig;
 import flour.fmc.utils.EmptyTabCompleter;
 import flour.fmc.utils.IModule;
+
 import java.util.List;
 import java.util.Random;
+
 import net.md_5.bungee.api.ChatColor;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

@@ -1,7 +1,7 @@
 package flour.fmc.utils;
 
 /**
- * Interface that all modules should implement
+ * Interface that all modules have to implement
  * 
  * @author Flourick
  */
