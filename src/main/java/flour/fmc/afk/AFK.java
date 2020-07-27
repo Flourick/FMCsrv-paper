@@ -261,8 +261,6 @@ public class AFK implements IModule, CommandExecutor
 					// skip check for afk command
 					return;
 				}
-
-				fmc.getLogger().log(Level.INFO, e.getMessage());
 				
 				if(playerTimes.get(e.getPlayer()) == -1) {
 					setPlayerNotAFK(e.getPlayer());
