@@ -32,7 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class FMC extends JavaPlugin
 {
 	// can be used to make modules behave differently when debugging
-	public static boolean DEV_MODE = true;
+	public static final boolean DEV_MODE = true;
 
 	private Logger rootLogger;
 

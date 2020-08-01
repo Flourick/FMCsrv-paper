@@ -15,7 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 /**
- * DynFMC module class
+ * DynFMC module that wraps some of dmarker commands in a nicer way
  * 
  * @author Flourick
  */

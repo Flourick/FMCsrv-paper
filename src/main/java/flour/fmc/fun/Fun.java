@@ -13,10 +13,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 /**
- * FUn module class
- * <p>
- * Collection of various 'fun' features
- * </p>
+ * Module for various 'fun' features
  * 
  * @author Flourick
  */

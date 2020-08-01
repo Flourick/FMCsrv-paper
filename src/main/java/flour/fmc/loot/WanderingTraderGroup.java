@@ -3,7 +3,7 @@ package flour.fmc.loot;
 import java.util.List;
 
 /**
- * Wrapper for MerchantRecipe
+ * Holds WanderingTraderTrades that belong to the same group
  * 
  * @author Flourick
  */

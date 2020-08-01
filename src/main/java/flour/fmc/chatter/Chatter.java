@@ -20,8 +20,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+
 /**
- * Chatter module
+ * Module for various chat features
  * 
  * @author Flourick
  */
