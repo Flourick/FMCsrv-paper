@@ -28,7 +28,10 @@ public class SrvTopStats
 	private final int cakeSlices;
 	private final String whoCakeSlices;
 
-	public SrvTopStats(int deaths, String whoDeaths, int playerKills, String whoPlayerKills, int playTime,String whoPlayTime, int sinceDeath, String whoSinceDeath, int cakeSlices, String whoCakeSlices)
+	private final int mobKills;
+	private final String whoMobKills;
+
+	public SrvTopStats(int deaths, String whoDeaths, int playerKills, String whoPlayerKills, int playTime,String whoPlayTime, int sinceDeath, String whoSinceDeath, int cakeSlices, String whoCakeSlices, int mobKills, String whoMobKills)
 	{
 		this.deaths = deaths;
 		this.whoDeaths = whoDeaths;
@@ -40,6 +43,8 @@ public class SrvTopStats
 		this.whoSinceDeath = whoSinceDeath;
 		this.cakeSlices = cakeSlices;
 		this.whoCakeSlices = whoCakeSlices;
+		this.mobKills = mobKills;
+		this.whoMobKills = whoMobKills;
 	}
 
 	public int getDeaths()
@@ -92,6 +97,14 @@ public class SrvTopStats
 		return whoCakeSlices;
 	}
 
+	public int getMobKills() {
+		return mobKills;
+	}
+
+	public String getWhoMobKills() {
+		return whoMobKills;
+	}
+
 	public static String getFormattedTicks(int ticks)
 	{
 		int seconds = ticks / 20;
@@ -127,12 +140,16 @@ public class SrvTopStats
 		int topCakeSlices = 0;
 		String topWhoCakeSlices = "?";
 
+		int topMobKills = 0;
+		String topWhoMobKills = "?";
+
 		for(OfflinePlayer player : Bukkit.getOfflinePlayers()) {
 			int deaths = player.getStatistic(Statistic.DEATHS);
 			int playerKils = player.getStatistic(Statistic.PLAYER_KILLS);
 			int playTime = player.getStatistic(Statistic.PLAY_ONE_MINUTE);
 			int sinceDeath = player.getStatistic(Statistic.TIME_SINCE_DEATH);
 			int cakeSlices = player.getStatistic(Statistic.CAKE_SLICES_EATEN);
+			int mobKills = player.getStatistic(Statistic.MOB_KILLS);
 
 			if(deaths > topDeaths) {
 				topDeaths = deaths;
@@ -154,8 +171,12 @@ public class SrvTopStats
 				topCakeSlices = cakeSlices;
 				topWhoCakeSlices = player.getName();
 			}
+			if(mobKills > topMobKills) {
+				topMobKills = mobKills;
+				topWhoMobKills = player.getName();
+			}
 		}
 
-		return new SrvTopStats(topDeaths, topWhoDeaths, topPlayerKills, topWhoPlayerKills, topPlayTime, topWhoPlayTime, topSinceDeath, topWhoSinceDeath, topCakeSlices, topWhoCakeSlices);
+		return new SrvTopStats(topDeaths, topWhoDeaths, topPlayerKills, topWhoPlayerKills, topPlayTime, topWhoPlayTime, topSinceDeath, topWhoSinceDeath, topCakeSlices, topWhoCakeSlices, topMobKills, topWhoMobKills);
 	}
 }

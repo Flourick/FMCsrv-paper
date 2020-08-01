@@ -61,7 +61,7 @@ public class OnePlayerSleep implements IModule, CommandExecutor
 				TextComponent message = new TextComponent(e.getPlayer().getDisplayName() + ChatColor.YELLOW +" wants to sleep. ");
 				TextComponent clickable = new TextComponent(ChatColor.YELLOW + "Click here to wake them!");
 				clickable.setClickEvent(new ClickEvent( ClickEvent.Action.RUN_COMMAND, "/wakeplayer " + e.getPlayer().getName()));		
-				clickable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text("KICK FROM BED!")));
+				clickable.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GREEN + "KICK FROM BED!")));
 				message.addExtra(clickable);
 				
 				fmc.getServer().spigot().broadcast(message);

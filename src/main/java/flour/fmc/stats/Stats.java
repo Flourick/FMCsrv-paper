@@ -229,10 +229,10 @@ public class Stats implements IModule, CommandExecutor
 
 		to.sendMessage(new String[] {
 			ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Stats" + ChatColor.DARK_GREEN + "] " + ChatColor.YELLOW + pStats.getName() + "\'s statistics:",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " UUID" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getUUID(),
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " First joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + firstJoined,
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Last joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + lastJoined,
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getTimesJoined(),
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " UUID" + 				ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getUUID(),
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " First joined" + 		ChatColor.DARK_GRAY + ": " + ChatColor.RESET + firstJoined,
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Last joined" + 		ChatColor.DARK_GRAY + ": " + ChatColor.RESET + lastJoined,
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + 		ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getTimesJoined(),
 			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Max level reached" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + pStats.getMaxLevelReached()
 		});
 	}
@@ -242,17 +242,21 @@ public class Stats implements IModule, CommandExecutor
 		String firstJoined = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(sqlStats.getFirstJoined());
 		String lastJoined = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(sqlStats.getLastJoined());
 
+		String playTime = SrvTopStats.getFormattedTicks(srvStats.getPlayTime());
+		String sinceDeath = SrvTopStats.getFormattedTicks(srvStats.getSinceDeath());
+
 		to.sendMessage(new String[] {
 			ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Stats" + ChatColor.DARK_GREEN + "] " + ChatColor.YELLOW + "Top statistics:",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " First joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + firstJoined + ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoFirstJoined() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Last joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + lastJoined + ChatColor.GRAY +" (" + ChatColor.YELLOW + sqlStats.getWhoLastJoined() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + sqlStats.getTimesJoined() + ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoTimesJoined() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Most time played" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + SrvTopStats.getFormattedTicks(srvStats.getPlayTime()) + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoPlayTime() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Time since death" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + SrvTopStats.getFormattedTicks(srvStats.getSinceDeath()) + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoSinceDeath() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Deaths" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getDeaths() + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoDeaths() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Player kills" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getPlayerKills() + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoPlayerKills() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Max level reached" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + sqlStats.getMaxLevelReached() + ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoMaxLevelReached() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Cake slices eaten" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getCakeSlices() + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoCakeSlices() + ChatColor.GRAY + ")"
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " First joined" + 		ChatColor.DARK_GRAY + ": " + ChatColor.RESET + firstJoined + 					ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoFirstJoined() +		ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Last joined" + 		ChatColor.DARK_GRAY + ": " + ChatColor.RESET + lastJoined + 					ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoLastJoined() + 		ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + 		ChatColor.DARK_GRAY + ": " + ChatColor.RESET + sqlStats.getTimesJoined() + 		ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoTimesJoined() + 		ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Most time played" + 	ChatColor.DARK_GRAY + ": " + ChatColor.RESET + playTime + 						ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoPlayTime() + 			ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Time since death" + 	ChatColor.DARK_GRAY + ": " + ChatColor.RESET + sinceDeath + 					ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoSinceDeath() + 		ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Deaths" + 			ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getDeaths() +			ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoDeaths() + 			ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Mob kills" + 		ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getMobKills() + 		ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoMobKills() + 			ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Player kills" + 		ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getPlayerKills() + 		ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoPlayerKills() + 		ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Max level reached" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + sqlStats.getMaxLevelReached() + 	ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoMaxLevelReached() + 	ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Cake slices eaten" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getCakeSlices() + 		ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoCakeSlices() + 		ChatColor.GRAY + ")"
 		});
 	}
 }
