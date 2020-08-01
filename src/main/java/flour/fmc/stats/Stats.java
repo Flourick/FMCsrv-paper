@@ -136,7 +136,7 @@ public class Stats implements IModule, CommandExecutor
 						sender.sendMessage(ChatColor.RED + "Could not get " + args[0] + "\'s statistics!");
 						
 						if(sql.getExceptionLog() != null) {
-							fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());;
+							fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
 							sql.clearExceptionLog();
 						}
 						
@@ -166,7 +166,7 @@ public class Stats implements IModule, CommandExecutor
 						player.sendMessage(ChatColor.RED + "Could not get " + args[0] + "\'s statistics!");
 						
 						if(sql.getExceptionLog() != null) {
-							fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());;
+							fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
 							sql.clearExceptionLog();
 						}
 						
@@ -186,7 +186,7 @@ public class Stats implements IModule, CommandExecutor
 					player.sendMessage(ChatColor.RED + "Could not get " + player.getName() + "\'s statistics!");
 					
 					if(sql.getExceptionLog() != null) {
-						fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());;
+						fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
 						sql.clearExceptionLog();
 					}
 					
@@ -204,19 +204,19 @@ public class Stats implements IModule, CommandExecutor
 				return false;
 			}
 			
-			TopStats tStats = sql.getTopStats();
-			if(tStats == null) {
+			SQLTopStats sqlStats = sql.getTopStats();
+			if(sqlStats == null) {
 				sender.sendMessage(ChatColor.RED + "Could not get top statistics!");
 				
 				if(sql.getExceptionLog() != null) {
-					fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());;
+					fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
 					sql.clearExceptionLog();
 				}
 				
 				return true;
 			}
 			
-			sendTopStatsMessage(sender, tStats);
+			sendTopStatsMessage(sender, sqlStats, SrvTopStats.getServerTopStats());
 		}
 		
 		return true;
@@ -237,17 +237,22 @@ public class Stats implements IModule, CommandExecutor
 		});
 	}
 	
-	private void sendTopStatsMessage(CommandSender to, TopStats tStats)
+	private void sendTopStatsMessage(CommandSender to, SQLTopStats sqlStats, SrvTopStats srvStats)
 	{
-		String firstJoined = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(tStats.getFirstJoined());
-		String lastJoined = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(tStats.getLastJoined());
+		String firstJoined = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(sqlStats.getFirstJoined());
+		String lastJoined = new SimpleDateFormat("HH:mm:ss dd.MM.yyyy").format(sqlStats.getLastJoined());
 
 		to.sendMessage(new String[] {
 			ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "Stats" + ChatColor.DARK_GREEN + "] " + ChatColor.YELLOW + "Top statistics:",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " First joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + firstJoined + ChatColor.GRAY + " (" + ChatColor.YELLOW + tStats.getWhoFirstJoined() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Last joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + lastJoined + ChatColor.GRAY +" (" + ChatColor.YELLOW + tStats.getWhoLastJoined() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + tStats.getTimesJoined() + ChatColor.GRAY + " (" + ChatColor.YELLOW + tStats.getWhoTimesJoined() + ChatColor.GRAY + ")",
-			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Max level reached" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + tStats.getMaxLevelReached() + ChatColor.GRAY + " (" + ChatColor.YELLOW + tStats.getWhoMaxLevelReached() + ChatColor.GRAY + ")"
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " First joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + firstJoined + ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoFirstJoined() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Last joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + lastJoined + ChatColor.GRAY +" (" + ChatColor.YELLOW + sqlStats.getWhoLastJoined() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Times joined" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + sqlStats.getTimesJoined() + ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoTimesJoined() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Most time played" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + SrvTopStats.getFormattedTicks(srvStats.getPlayTime()) + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoPlayTime() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Time since death" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + SrvTopStats.getFormattedTicks(srvStats.getSinceDeath()) + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoSinceDeath() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Deaths" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getDeaths() + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoDeaths() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Player kills" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getPlayerKills() + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoPlayerKills() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Max level reached" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + sqlStats.getMaxLevelReached() + ChatColor.GRAY + " (" + ChatColor.YELLOW + sqlStats.getWhoMaxLevelReached() + ChatColor.GRAY + ")",
+			ChatColor.DARK_GRAY + "-" + ChatColor.GRAY + " Cake slices eaten" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + srvStats.getCakeSlices() + ChatColor.GRAY + " (" + ChatColor.YELLOW + srvStats.getWhoCakeSlices() + ChatColor.GRAY + ")"
 		});
 	}
 }

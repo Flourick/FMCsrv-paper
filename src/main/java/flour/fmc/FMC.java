@@ -31,6 +31,9 @@ import org.bukkit.plugin.java.JavaPlugin;
  */
 public class FMC extends JavaPlugin
 {
+	// can be used to make modules behave differently when debugging
+	public static boolean DEV_MODE = true;
+
 	private Logger rootLogger;
 
 	private final ArrayList<IModule> runningModules = new ArrayList<>();
@@ -39,9 +42,6 @@ public class FMC extends JavaPlugin
 	public void onEnable()
 	{
 		PaperLib.suggestPaper(this);
-		if(!PaperLib.isPaper()) {
-			getLogger().log(Level.WARNING, "This plugin might not work as expected or at all on anything other than Paper! I HIGHLY recommend using Paper.");
-		}
 		
 		rootLogger = (Logger) LogManager.getRootLogger();
 		

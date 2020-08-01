@@ -3,11 +3,11 @@ package flour.fmc.stats;
 import java.sql.Timestamp;
 
 /**
- * Wrapper class for /top command output
+ * Wrapper class for /top command output (stats pulled from SQL)
  * 
  * @author Flourick
  */
-public class TopStats
+public class SQLTopStats
 {
 	private final Timestamp firstJoined;
 	private final String whoFirstJoined;
@@ -21,7 +21,7 @@ public class TopStats
 	private final int maxLevelReached;
 	private final String whoMaxLevelReached;
 
-	public TopStats(Timestamp firstJoined, String whoFirstJoined, Timestamp lastJoined, String whoLastJoined, int timesJoined, String whoTimesJoined, int maxLevelReached, String whoMaxLevelReached)
+	public SQLTopStats(Timestamp firstJoined, String whoFirstJoined, Timestamp lastJoined, String whoLastJoined, int timesJoined, String whoTimesJoined, int maxLevelReached, String whoMaxLevelReached)
 	{
 		this.firstJoined = firstJoined;
 		this.whoFirstJoined = whoFirstJoined;
