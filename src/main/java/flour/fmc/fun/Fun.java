@@ -6,6 +6,7 @@ import flour.fmc.utils.IModule;
 
 import net.md_5.bungee.api.ChatColor;
 
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -55,24 +56,14 @@ public class Fun implements IModule, CommandExecutor
 			Player player = (Player) sender;
 			ItemStack handItem = player.getInventory().getItemInMainHand();
 
-			if(handItem == null) {
-				return true;
-			}
-			else if(!handItem.getType().isBlock()) {
-				sender.sendMessage(ChatColor.RED + "You can only put blocks on your head!");
+			// empty hand or not a block type
+			if(handItem.getType() == Material.AIR) {
 				return true;
 			}
 
-			// first let's check if anything is already on his head
-			if(player.getInventory().getHelmet() == null) {
-				player.getInventory().setItemInMainHand(null);
-				player.getInventory().setHelmet(handItem);
-			}
-			else {
-				ItemStack helmet = player.getInventory().getHelmet();
-				player.getInventory().setItemInMainHand(helmet);
-				player.getInventory().setHelmet(handItem);
-			}
+			ItemStack helmet = player.getInventory().getHelmet();
+			player.getInventory().setItemInMainHand(helmet);
+			player.getInventory().setHelmet(handItem);
 		}
 
 		return true;

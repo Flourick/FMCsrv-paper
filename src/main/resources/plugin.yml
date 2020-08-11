@@ -1,7 +1,7 @@
 name: FMC
 main: flour.fmc.FMC
 version: DEV
-api-version: 1.15
+api-version: 1.16
 description: FMC modular vanilla tweaks plugin
 author: Flourick
 

@@ -31,7 +31,7 @@ public class Stats implements IModule, CommandExecutor
 	
 	private final CConfig statsConfig;
 	
-	private final MySQLConnection sql;
+	private final StatsSQLConnection sql;
 	
 	public Stats(FMC fmc)
 	{
@@ -44,7 +44,7 @@ public class Stats implements IModule, CommandExecutor
 		// jdbc:mysql://hostname:port/database?autoReconnect=true
 		String connString = "jdbc:mysql://" + statsConfig.getConfig().getString("hostname") + ":" + statsConfig.getConfig().getInt("port") + "/" + statsConfig.getConfig().getString("database") + "?autoReconnect=true";
 		
-		this.sql = new MySQLConnection(connString, statsConfig.getConfig().getString("username"), statsConfig.getConfig().getString("password"));
+		this.sql = new StatsSQLConnection(connString, statsConfig.getConfig().getString("username"), statsConfig.getConfig().getString("password"));
 	}
 	
 	@Override

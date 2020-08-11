@@ -58,7 +58,7 @@ public class Loot implements IModule
 		if(lootConfig.getConfig().getBoolean("double-shulker-shells")) {
 			fmc.getServer().getPluginManager().registerEvents(new Listener() {
 				@EventHandler
-				public void onEntitySpawn(EntityDeathEvent event)
+				public void onEntityDeath(EntityDeathEvent event)
 				{
 					if(event.getEntityType()== EntityType.SHULKER) {
 						event.getDrops().add(new ItemStack(Material.SHULKER_SHELL, 1));

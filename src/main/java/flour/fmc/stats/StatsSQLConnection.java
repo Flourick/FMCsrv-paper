@@ -19,7 +19,7 @@ import flour.fmc.FMC;
  * 
  * @author Flourick
  */
-public class MySQLConnection
+public class StatsSQLConnection
 {
 	private Connection conn;
 	private Statement st;
@@ -33,7 +33,7 @@ public class MySQLConnection
 	
 	private String exceptionLog = null;
 	
-	public MySQLConnection(String connectionString, String username, String password)
+	public StatsSQLConnection(String connectionString, String username, String password)
 	{
 		this.connString = connectionString;
 		this.username = username;

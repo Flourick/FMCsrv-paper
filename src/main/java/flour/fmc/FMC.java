@@ -7,6 +7,7 @@ import flour.fmc.dynfmc.DynFMC;
 import flour.fmc.fun.Fun;
 import flour.fmc.loot.Loot;
 import flour.fmc.oneplayersleep.OnePlayerSleep;
+import flour.fmc.protection.Protection;
 import flour.fmc.stats.Stats;
 import flour.fmc.utils.IModule;
 
@@ -49,8 +50,8 @@ public class FMC extends JavaPlugin
 		saveDefaultConfig();
 		
 		ArrayList<IModule> modules = new ArrayList<>();
-		
-		// --- adding enabled modules to array (ONLY HERE YOU ADD A NEW MODULE) ---
+
+		// ----- adding enabled modules to array (ONLY HERE YOU ADD A NEW MODULE) -----
 		if(getConfig().getBoolean("enable-colorme")) {
 			modules.add(new ColorMe(this));
 		}
@@ -75,7 +76,12 @@ public class FMC extends JavaPlugin
 		if(getConfig().getBoolean("enable-fun")) {
 			modules.add(new Fun(this));
 		}
-		// --- ---
+		if(getConfig().getBoolean("enable-protection")) {
+			modules.add(new Protection(this));
+		}
+
+		checkConfig();
+		// ----- -----
 		
 		for(IModule module : modules) {
 			if(module.onEnable()) {
@@ -90,7 +96,7 @@ public class FMC extends JavaPlugin
 	@Override
 	public void onDisable()
 	{		
-		// call onDisable() of modules
+		// call onDisable() of all running modules
 		for(IModule module : runningModules) {
 			if(module.isEnabled()) {
 				module.onDisable();
@@ -118,6 +124,41 @@ public class FMC extends JavaPlugin
 	public void removeLogFilter(Filter filter)
 	{
 		rootLogger.getContext().removeFilter(filter);
+	}
+
+	private void checkConfig()
+	{
+		// this makes sure that even older configs will get properly updated
+
+		if(!getConfig().isSet("enable-colorme")) {
+			getConfig().set("enable-colorme", true);
+		}
+		if(!getConfig().isSet("enable-oneplayersleep")) {
+			getConfig().set("enable-oneplayersleep", true);
+		}
+		if(!getConfig().isSet("enable-dynfmc")) {
+			getConfig().set("enable-dynfmc", true);
+		}
+		if(!getConfig().isSet("enable-afk")) {
+			getConfig().set("enable-afk", true);
+		}
+		if(!getConfig().isSet("enable-stats")) {
+			getConfig().set("enable-stats", true);
+		}
+		if(!getConfig().isSet("enable-chatter")) {
+			getConfig().set("enable-chatter", true);
+		}
+		if(!getConfig().isSet("enable-loot")) {
+			getConfig().set("enable-loot", true);
+		}
+		if(!getConfig().isSet("enable-fun")) {
+			getConfig().set("enable-fun", true);
+		}
+		if(!getConfig().isSet("enable-protection")) {
+			getConfig().set("enable-protection", true);
+		}
+
+		saveConfig();
 	}
 	
 	private String getPrintableModules()
