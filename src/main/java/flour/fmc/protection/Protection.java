@@ -7,6 +7,7 @@ import flour.fmc.utils.LogFormatter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -187,12 +188,12 @@ public class Protection implements IModule, CommandExecutor
 		try {
 			protectionLog.setUseParentHandlers(false);
 
-			String folder = fmc.getDataFolder() + "\\" + "logs";
-			if(!Files.isDirectory(Paths.get(folder))) {
-				Files.createDirectories(Paths.get(folder));
+			Path folder = Paths.get(fmc.getDataFolder().toString(), "logs");
+			if(!Files.isDirectory(folder)) {
+				Files.createDirectories(folder);
 			}
 
-			FileHandler fh = new FileHandler(folder + "\\" + LocalDate.now() + "-protection.log", true);
+			FileHandler fh = new FileHandler(Paths.get(folder.toString(), LocalDate.now() + "-protection.log").toString(), true);
 			fh.setFormatter(new LogFormatter());
 
 			protectionLog.addHandler(fh);
