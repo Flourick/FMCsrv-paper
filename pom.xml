@@ -18,9 +18,15 @@
 		</repository>
 		
 		<repository>
-         <id>spigot-repo</id>
-         <url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
-       </repository>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/public/</url>
+		</repository>
+
+		<repository>
+			<id>codemc-repo</id>
+			<url>https://repo.codemc.org/repository/maven-public/</url>
+			<layout>default</layout>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -38,7 +44,28 @@
 			<type>jar</type>
 			<scope>provided</scope>
 		</dependency>
-	   
+
+		<!-- <dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot</artifactId>
+			<version>1.16.1-R0.1-SNAPSHOT</version>
+			<type>jar</type>
+			<scope>provided</scope>
+		</dependency> -->
+
+		<dependency>
+			<groupId>com.mojang</groupId>
+			<artifactId>authlib</artifactId>
+			<version>1.5.25</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>de.tr7zw</groupId>
+			<artifactId>item-nbt-api</artifactId>
+			<version>2.4.1</version>
+		  </dependency>
+
 		<dependency>
 			<groupId>org.apache.logging.log4j</groupId>
 			<artifactId>log4j-core</artifactId>
@@ -65,6 +92,11 @@
 							<pattern>io.papermc.lib</pattern>
 							<shadedPattern>flour.fmc.paperlib</shadedPattern>
 						</relocation>
+
+						<relocation>
+							<pattern>de.tr7zw.changeme.nbtapi</pattern>
+							<shadedPattern>flour.fmc.nbtapi</shadedPattern>
+						  </relocation>
 					</relocations>
 				</configuration>
 				<executions>

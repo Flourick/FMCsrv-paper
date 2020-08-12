@@ -19,7 +19,7 @@ import java.util.logging.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.Filter;
 import org.apache.logging.log4j.core.Logger;
-
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -34,6 +34,8 @@ public class FMC extends JavaPlugin
 {
 	// can be used to make modules behave differently when debugging
 	public static final boolean DEV_MODE = true;
+	// CraftBukkit version string
+	public static final String CRAFT_VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf(46) + 1);
 
 	private Logger rootLogger;
 
