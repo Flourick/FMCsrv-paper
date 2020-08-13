@@ -49,6 +49,7 @@ public class Protection implements IModule, CommandExecutor
 	private final FMC fmc;
 
 	private final Logger protectionLog;
+	private FileHandler protectionLogFileHandler;
 
 	private final HashMap<String, Inventory> openedEnderChests;
 
@@ -82,7 +83,7 @@ public class Protection implements IModule, CommandExecutor
 						String killer = entity.getKiller() == null ? "unknown" : entity.getKiller().getName();
 						String owner = entity.getOwner().getName() == null ? "unknown" : entity.getOwner().getName();
 
-						protectionLog.log(Level.INFO, name + " owned by " + owner + " was killed by " + killer + " via " + entity.getLastDamageCause().getCause() + "!");
+						log(Level.INFO, name + " owned by " + owner + " was killed by " + killer + " via " + entity.getLastDamageCause().getCause() + "!");
 					}
 				}
 			}
@@ -273,10 +274,10 @@ public class Protection implements IModule, CommandExecutor
 				Files.createDirectories(folder);
 			}
 
-			FileHandler fh = new FileHandler(Paths.get(folder.toString(), LocalDate.now() + "-protection.log").toString(), true);
-			fh.setFormatter(new LogFormatter());
+			protectionLogFileHandler = new FileHandler(Paths.get(folder.toString(), LocalDate.now() + "-protection.log").toString(), true);
+			protectionLogFileHandler.setFormatter(new LogFormatter());
 
-			protectionLog.addHandler(fh);
+			protectionLog.addHandler(protectionLogFileHandler);
 		}
 		catch(SecurityException | IOException e) {
 			return false;
@@ -285,9 +286,39 @@ public class Protection implements IModule, CommandExecutor
 		return true;
 	}
 
-	/*
-	 * Gets ender chest via given name and UUID.
-	 */
+	/**
+	* Wrapper for Logger.log method
+	*/
+	private void log(Level level, String msg)
+	{
+		Path today = Paths.get(Paths.get(fmc.getDataFolder().toString(), "logs").toString(), LocalDate.now() + "-protection.log");
+
+		if(Files.notExists(today)) {
+			try {
+				protectionLogFileHandler.close();
+				protectionLog.removeHandler(protectionLogFileHandler);
+				protectionLogFileHandler = new FileHandler(today.toString(), true);
+				protectionLogFileHandler.setFormatter(new LogFormatter());
+			}
+			catch (SecurityException | IOException e) {
+				fmc.getLogger().warning("Error creating new daily Protection log file!");
+				return;
+			}
+
+			protectionLog.addHandler(protectionLogFileHandler);
+		}
+
+		protectionLog.log(level, msg);
+	}
+
+	/**
+	* Gets Ender Chest of offline player
+	* 
+	* @param  name	Name of the player (used in the Ender Chest display)
+	* @param  uuid  String represantation of UUID class coresponding to the player
+	* 
+	* @return The Ender Chest of given player
+	*/
 	private static Inventory getOfflinePlayerEnderChest(String name, String uuid)
 	{
 		Inventory eChest = null;
@@ -313,9 +344,12 @@ public class Protection implements IModule, CommandExecutor
 		return eChest;
 	}
 
-	/*
-	 * Saves ender chest to player with given UUID, enderChest can be null to clear it.
-	 */
+	/**
+	* Saves Ender Chest of offline player
+	* 
+	* @param  uuid        String represantation of UUID class coresponding to the player
+	* @param  enderChest  Ender Chest contents, can be null to empty it
+	*/
 	private static boolean saveOfflinePlayerEnderChest(String uuid, Inventory enderChest)
 	{
 		File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
