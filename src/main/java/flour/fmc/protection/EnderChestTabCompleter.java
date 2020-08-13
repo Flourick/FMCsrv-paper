@@ -2,7 +2,6 @@ package flour.fmc.protection;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -11,26 +10,32 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 /**
- * colorme command TAB completion
+ * enderchest command TAB completion
  * 
  * @author Flourick
  */
 public class EnderChestTabCompleter implements TabCompleter
-{	
+{
+	private static final String[] FIRST_ARGS = { "open", "drop"};
+
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String alias, String[] args)
 	{
         final List<String> completions = new ArrayList<>();
-		
-		 Bukkit.getOfflinePlayers();
 
 		if(args.length == 1) {
+			for(String arg : FIRST_ARGS) {
+				if(arg.startsWith(args[0].toLowerCase())) {
+					completions.add(arg);
+				}
+			}
+		}
+		else if(args.length == 2) {
 			for(OfflinePlayer player : Bukkit.getOfflinePlayers()) {
-				String name = player.getName();
-				UUID uuid = player.getUniqueId();
+				String suggestion = player.getName() + "/" + player.getUniqueId();
 
-				if(name.toLowerCase().startsWith(args[0].toLowerCase())) {
-					completions.add(name + "/" + uuid.toString());
+				if(suggestion.toLowerCase().startsWith(args[1].toLowerCase())) {
+					completions.add(suggestion);
 				}
 			}
 		}

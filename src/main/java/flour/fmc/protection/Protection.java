@@ -112,50 +112,130 @@ public class Protection implements IModule, CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String args[])
 	{
+		// be ware that duplication is still possible in case of forced disconnects/restarts etc..
 		if(cmd.getName().toLowerCase().equals("enderchest")) {
 			if(!(sender instanceof Player)) {
 				sender.sendMessage(ChatColor.RED + "Players only command.");
 				return true;
 			}
 
-			if(args.length == 1) {
-				String[] argz = args[0].split("/");
+			if(args.length == 2) {
+				if(args[0].equals("drop")) {
+					String[] argz = args[1].split("/");
 
-				Player player = (Player) sender;
-				Player onlineOther = Bukkit.getPlayer(argz[0]);
+					Player player = (Player) sender;
+					Player onlineOther = Bukkit.getPlayer(argz[0]);
 
-				if(onlineOther == null) {
-					if(Bukkit.getOfflinePlayer(UUID.fromString(argz[1])).hasPlayedBefore()) {
-						Inventory enderChest = null;
+					if(onlineOther == null && argz.length == 2) {
+						try {
+							if(Bukkit.getOfflinePlayer(UUID.fromString(argz[1])).hasPlayedBefore()) {
+								Inventory enderChest = getOfflinePlayerEnderChest(argz[0], argz[1]);
+								
+								if(openedEnderChests.containsKey(argz[1])) {
+									// cannot drop ender chest if someone else is already editing it (becouse possible duplication)
+									player.sendMessage(ChatColor.RED + "That Ender Chest is currently open, cannot drop!");
+								}
+								else if(enderChest != null) {
+									for(ItemStack item : enderChest.getContents()) {
+										if(item != null && item.getType() != Material.AIR) {
+											player.getWorld().dropItemNaturally(player.getLocation(), item);
+										}
+									}
 
-						// use the cached enderchest so more ppl can simultaneously edit it
-						if(openedEnderChests.containsKey(argz[1])) {
-							enderChest = openedEnderChests.get(argz[1]);
+									saveOfflinePlayerEnderChest(argz[1], null);
+								}
+								else {
+									player.sendMessage(ChatColor.RED + "Could not open the Ender Chest!");
+								}
+							}
+							else {
+								player.sendMessage(ChatColor.RED + "Could not find such player.");
+							}
 						}
-						else {
-							enderChest = getOfflinePlayerEnderChest(argz[0], argz[1]);
+						catch(IllegalArgumentException e) {
+							player.sendMessage(ChatColor.RED + "Could not find such player.");
 						}
-						
-						if(enderChest != null) {
-							openedEnderChests.put(argz[1], enderChest);
-							player.openInventory(enderChest);						
+					}
+					else if(onlineOther != null){
+						// is online
+						for(ItemStack item : onlineOther.getEnderChest().getContents()) {
+							if(item != null && item.getType() != Material.AIR) {
+								player.getWorld().dropItemNaturally(player.getLocation(), item);
+							}
 						}
-						else {
-							player.sendMessage(ChatColor.RED + "Could not open the Ender Chest!");
+
+						onlineOther.getEnderChest().clear();
+					}
+					else {
+						player.sendMessage(ChatColor.RED + "Could not find such player.");
+					}
+				}
+				else if(args[0].equals("open")) {
+					String[] argz = args[1].split("/");
+
+					Player player = (Player) sender;
+					Player onlineOther = Bukkit.getPlayer(argz[0]);
+
+					if(onlineOther == null && argz.length == 2) {
+						try {
+							if(Bukkit.getOfflinePlayer(UUID.fromString(argz[1])).hasPlayedBefore()) {
+								Inventory enderChest = null;
+	
+								// use the cached enderchest so more ppl can simultaneously edit it
+								if(openedEnderChests.containsKey(argz[1])) {
+									enderChest = openedEnderChests.get(argz[1]);
+								}
+								else {
+									enderChest = getOfflinePlayerEnderChest(argz[0], argz[1]);
+								}
+								
+								if(enderChest != null) {
+									openedEnderChests.put(argz[1], enderChest);
+									player.openInventory(enderChest);						
+								}
+								else {
+									player.sendMessage(ChatColor.RED + "Could not open the Ender Chest!");
+								}
+							}
+							else {
+								player.sendMessage(ChatColor.RED + "Could not find such player.");
+							}
 						}
+						catch(IllegalArgumentException e) {
+							player.sendMessage(ChatColor.RED + "Could not find such player.");
+						}
+					}
+					else if(onlineOther != null) {
+						// is online
+						player.openInventory(onlineOther.getEnderChest());
 					}
 					else {
 						player.sendMessage(ChatColor.RED + "Could not find such player.");
 					}
 				}
 				else {
-					// is online
-					player.openInventory(onlineOther.getEnderChest());
+					return false;
 				}
 			}
-			else if(args.length == 0) {
-				Player player = (Player) sender;
-				player.openInventory(player.getEnderChest());
+			else if(args.length == 1) {
+				if(args[0].equals("drop")) {
+					Player player = (Player) sender;
+
+					for(ItemStack item : player.getEnderChest().getContents()) {
+						if(item != null && item.getType() != Material.AIR) {
+							player.getWorld().dropItemNaturally(player.getLocation(), item);
+						}
+					}
+
+					player.getEnderChest().clear();
+				}
+				else if(args[0].equals("open")) {
+					Player player = (Player) sender;
+					player.openInventory(player.getEnderChest());
+				}
+				else {
+					return false;
+				}
 			}
 			else {
 				return false;
@@ -205,6 +285,9 @@ public class Protection implements IModule, CommandExecutor
 		return true;
 	}
 
+	/*
+	 * Gets ender chest via given name and UUID.
+	 */
 	private static Inventory getOfflinePlayerEnderChest(String name, String uuid)
 	{
 		Inventory eChest = null;
@@ -230,6 +313,9 @@ public class Protection implements IModule, CommandExecutor
 		return eChest;
 	}
 
+	/*
+	 * Saves ender chest to player with given UUID, enderChest can be null to clear it.
+	 */
 	private static boolean saveOfflinePlayerEnderChest(String uuid, Inventory enderChest)
 	{
 		File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
@@ -242,12 +328,14 @@ public class Protection implements IModule, CommandExecutor
 				NBTCompoundList NBTeChest = file.getCompoundList("EnderItems");
 				NBTeChest.clear();
 
-				for(Byte i = 0; i < 27; i++) {
-					ItemStack item = enderChest.getItem(i);
-					if(item != null && item.getType() != Material.AIR) {
-						NBTCompound compound = NBTItem.convertItemtoNBT(item);
-						compound.setByte("Slot", i);
-						NBTeChest.addCompound(compound);
+				if(enderChest != null) {
+					for(Byte i = 0; i < 27; i++) {
+						ItemStack item = enderChest.getItem(i);
+						if(item != null && item.getType() != Material.AIR) {
+							NBTCompound compound = NBTItem.convertItemtoNBT(item);
+							compound.setByte("Slot", i);
+							NBTeChest.addCompound(compound);
+						}
 					}
 				}
 

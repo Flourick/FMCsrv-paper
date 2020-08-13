@@ -52,11 +52,10 @@ commands:
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command>"
     enderchest:
-        description: Opens the enderchest of a given player or yourself
-        aliases: [echest]
+        description: Opens or drops the enderchest of a given player or yourself
         permission: fmc.enderchest
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command> §7[§rplayer§7]"
+        usage: "§eUsage:§r /<command> §7<§ropen§7|§rdrop§7>§r §7[§rplayer§7]"
 
 permissions:
     fmc.announce:
