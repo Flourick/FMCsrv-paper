@@ -11,6 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
@@ -21,13 +22,16 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -39,7 +43,7 @@ import de.tr7zw.changeme.nbtapi.NBTItem;
 import net.md_5.bungee.api.ChatColor;
 
 /**
- * Module containing various protection features (mostly logging)
+ * Module containing various protection features
  * 
  * @author Flourick
  */
@@ -89,6 +93,25 @@ public class Protection implements IModule, CommandExecutor
 			}
 		}, fmc);
 
+		// A player whos ender chest is currently opened is attempting to join so we close it to prevent duplication (bit hacky but eh)
+		fmc.getServer().getPluginManager().registerEvents(new Listener() {
+			@EventHandler(priority = EventPriority.LOWEST)
+			public void onAsyncPlayerPreLoginEvent(AsyncPlayerPreLoginEvent event)
+			{
+				if(openedEnderChests.containsKey(event.getUniqueId().toString())) {
+					List<HumanEntity> v = openedEnderChests.get(event.getUniqueId().toString()).getViewers();
+					HumanEntity[] viewers = new HumanEntity[v.size()];
+					v.toArray(viewers);
+
+					for(HumanEntity viewer : viewers) {
+						Bukkit.getScheduler().runTask(fmc, () -> {
+							viewer.closeInventory();
+						});
+					}
+				}
+			}
+		}, fmc);
+
 		// when you close an ender chest of offline player, last to have it opened also triggers saving and removal from hash map
 		fmc.getServer().getPluginManager().registerEvents(new Listener() {
 			@EventHandler
@@ -98,7 +121,7 @@ public class Protection implements IModule, CommandExecutor
 					if(event.getViewers().size() < 2) {
 						String uuid = ((EnderChestInventoryHolder)event.getInventory().getHolder()).getUUID();
 						openedEnderChests.remove(uuid);
-
+						
 						if(!saveOfflinePlayerEnderChest(uuid, event.getInventory())) {
 							fmc.getLogger().info(ChatColor.RED + "[Protection] Error saving Ender Chest!");
 						}
@@ -114,6 +137,7 @@ public class Protection implements IModule, CommandExecutor
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String args[])
 	{
 		// be ware that duplication is still possible in case of forced disconnects/restarts etc..
+		// also isn't this a beautiful spaghetti monster?
 		if(cmd.getName().toLowerCase().equals("enderchest")) {
 			if(!(sender instanceof Player)) {
 				sender.sendMessage(ChatColor.RED + "Players only command.");
@@ -122,6 +146,11 @@ public class Protection implements IModule, CommandExecutor
 
 			if(args.length == 2) {
 				if(args[0].equals("drop")) {
+					if(!sender.hasPermission("fmc.enderchest.others")) {
+						sender.sendMessage(ChatColor.RED + "You do not have permission to drop others Ender Chest!");
+						return true;
+					}
+
 					String[] argz = args[1].split("/");
 
 					Player player = (Player) sender;
@@ -172,6 +201,11 @@ public class Protection implements IModule, CommandExecutor
 					}
 				}
 				else if(args[0].equals("open")) {
+					if(!sender.hasPermission("fmc.enderchest.others")) {
+						sender.sendMessage(ChatColor.RED + "You do not have permission to open others Ender Chest!");
+						return true;
+					}
+
 					String[] argz = args[1].split("/");
 
 					Player player = (Player) sender;
@@ -219,6 +253,7 @@ public class Protection implements IModule, CommandExecutor
 				}
 			}
 			else if(args.length == 1) {
+				// opening or dropping my own enderchest
 				if(args[0].equals("drop")) {
 					Player player = (Player) sender;
 
@@ -347,7 +382,7 @@ public class Protection implements IModule, CommandExecutor
 	/**
 	* Saves Ender Chest of offline player
 	* 
-	* @param  uuid        String represantation of UUID class coresponding to the player
+	* @param  uuid        String representation of UUID class coresponding to the player
 	* @param  enderChest  Ender Chest contents, can be null to empty it
 	*/
 	private static boolean saveOfflinePlayerEnderChest(String uuid, Inventory enderChest)

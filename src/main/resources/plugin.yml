@@ -88,5 +88,10 @@ permissions:
         description: Allows the use of hat command
         default: true
     fmc.enderchest:
-        description: Allows the use of enderchest command
+        description: Allows the use of enderchest command for yourself
         default: op
+    fmc.enderchest.others:
+        description: Allows the use of enderchest command for yourself and others
+        default: op
+        children:
+            fmc.enderchest: true
