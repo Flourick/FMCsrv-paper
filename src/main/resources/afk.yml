@@ -6,7 +6,7 @@
 #    -> value must be bigger than afk-check-period, bigger than 30 and less than 86400 (24h)
 #       OR set to -1 to not check periodically at all
 # afk-check-period: (time in seconds)
-#    -> how often every player gets checked for AFK statusy higher values have less impact on performance
+#    -> how often every player gets checked for AFK status, higher values have less impact on performance
 #       but even for the biggest servers 5 seconds is more than enough to have negligible impact, I recommend leaving it as is
 #    -> by setting to to 10 it can take up to 10 seconds for the module to realize that the player is no longer AFK!
 #    -> value must be between 1 and 10

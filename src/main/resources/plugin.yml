@@ -1,8 +1,8 @@
 name: FMC
-main: flour.fmc.FMC
+main: me.flourick.fmc.FMC
 version: DEV
 api-version: 1.16
-description: FMC modular vanilla tweaks plugin
+description: Modular vanilla tweaks plugin
 author: Flourick
 
 commands:
@@ -56,6 +56,11 @@ commands:
         permission: fmc.enderchest
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command> §7<§ropen§7|§rdrop§7>§r §7[§rplayer§7]"
+    inventory:
+        description: Drops the inventory content of a given player or yourself
+        permission: fmc.inventory
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command> §7<§rdrop§7>§r §7[§rplayer§7]"
 
 permissions:
     fmc.announce:
@@ -95,3 +100,6 @@ permissions:
         default: op
         children:
             fmc.enderchest: true
+    fmc.inventory:
+        description: Allows the use of inventory command
+        default: op
