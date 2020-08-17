@@ -1,0 +1,8 @@
+# Stats module configuration file
+# ---
+# logger:
+#     pets: (boolean)
+#         -> logs pet deaths
+# ---
+logger:
+  pets: true

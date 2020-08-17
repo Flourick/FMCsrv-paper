@@ -1,4 +1,4 @@
-package me.flourick.fmc.protection;
+package me.flourick.fmc.utils;
 
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;

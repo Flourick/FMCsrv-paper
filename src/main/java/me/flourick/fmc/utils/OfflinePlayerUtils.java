@@ -1,4 +1,4 @@
-package me.flourick.fmc.protection;
+package me.flourick.fmc.utils;
 
 import java.io.File;
 import java.io.IOException;

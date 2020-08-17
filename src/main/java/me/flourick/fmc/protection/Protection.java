@@ -1,9 +1,15 @@
 package me.flourick.fmc.protection;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.SimpleFileVisitor;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
@@ -11,6 +17,8 @@ import java.util.UUID;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -31,9 +39,11 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
 import me.flourick.fmc.FMC;
+import me.flourick.fmc.utils.CConfig;
 import me.flourick.fmc.utils.IModule;
 import me.flourick.fmc.utils.LogFormatter;
-
+import me.flourick.fmc.utils.MyInventoryHolder;
+import me.flourick.fmc.utils.OfflinePlayerUtils;
 import net.md_5.bungee.api.ChatColor;
 
 /**
@@ -44,10 +54,14 @@ import net.md_5.bungee.api.ChatColor;
 public class Protection implements IModule, CommandExecutor
 {
 	private boolean isEnabled = false;
+
+	private final CConfig protectionConfig;
 	private final FMC fmc;
 
 	private final Logger protectionLog;
+	private final Path protectionLogsFolder;
 	private FileHandler protectionLogFileHandler;
+	private Path currentLogPath;
 
 	private final HashMap<String, Inventory> openedEnderChests;
 
@@ -55,7 +69,13 @@ public class Protection implements IModule, CommandExecutor
 	{
 		this.fmc = fmc;
 		this.openedEnderChests = new HashMap<>();
-		protectionLog = Logger.getLogger("Protection");
+
+		this.protectionLogsFolder = Paths.get(fmc.getDataFolder().toString(), "logs");
+		this.protectionLog = Logger.getLogger("Protection");
+
+		this.protectionConfig = new CConfig(fmc, "protection.yml");
+		// Creates default config if not present
+		protectionConfig.saveDefaultConfig();
 	}
 
 	@Override
@@ -72,23 +92,25 @@ public class Protection implements IModule, CommandExecutor
 		fmc.getCommand("inventory").setExecutor(this);
 
 		// logs pet deaths becouse for some reason vanilla does not do that
-		fmc.getServer().getPluginManager().registerEvents(new Listener() {
-			@EventHandler
-			public void onEntityDeath(EntityDeathEvent event)
-			{
-				if(event.getEntity() instanceof Tameable) {
-					Tameable entity = (Tameable) event.getEntity();
+		if(protectionConfig.getConfig().getBoolean("logger.pets")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void onEntityDeath(EntityDeathEvent event)
+				{
+					if(event.getEntity() instanceof Tameable) {
+						Tameable entity = (Tameable) event.getEntity();
 
-					if(entity.isTamed()) {
-						String name = entity.getCustomName() == null ? entity.getName() : entity.getCustomName();
-						String killer = entity.getKiller() == null ? "unknown" : entity.getKiller().getName();
-						String owner = entity.getOwner().getName() == null ? "unknown" : entity.getOwner().getName();
+						if(entity.isTamed()) {
+							String name = entity.getCustomName() == null ? entity.getName() : entity.getCustomName();
+							String killer = entity.getKiller() == null ? "unknown" : entity.getKiller().getName();
+							String owner = entity.getOwner().getName() == null ? "unknown" : entity.getOwner().getName();
 
-						log(Level.INFO, name + " owned by " + owner + " was killed by " + killer + " via " + entity.getLastDamageCause().getCause() + "!");
+							log(Level.INFO, name + " owned by " + owner + " was killed by " + killer + " via " + entity.getLastDamageCause().getCause() + "!");
+						}
 					}
 				}
-			}
-		}, fmc);
+			}, fmc);
+		}
 
 		// A player whos ender chest is currently opened is attempting to join so we close it to prevent duplication (bit hacky but eh)
 		fmc.getServer().getPluginManager().registerEvents(new Listener() {
@@ -378,12 +400,18 @@ public class Protection implements IModule, CommandExecutor
 		try {
 			protectionLog.setUseParentHandlers(false);
 
-			Path folder = Paths.get(fmc.getDataFolder().toString(), "logs");
-			if(!Files.isDirectory(folder)) {
-				Files.createDirectories(folder);
+			if(!Files.isDirectory(protectionLogsFolder)) {
+				Files.createDirectories(protectionLogsFolder);
 			}
 
-			protectionLogFileHandler = new FileHandler(Paths.get(folder.toString(), LocalDate.now() + "-protection.log").toString(), true);
+			Path previousLogPath = getPreviousProtectionLog();
+			currentLogPath = Paths.get(protectionLogsFolder.toString(), LocalDate.now() + "-protection.log");
+
+			if(previousLogPath != null && !previousLogPath.getFileName().toString().substring(0, 7).equals(currentLogPath.getFileName().toString().substring(0, 7))){
+				compressMonthLog(previousLogPath.getFileName().toString().substring(0, 7));
+			}
+
+			protectionLogFileHandler = new FileHandler(currentLogPath.toString(), true);
 			protectionLogFileHandler.setFormatter(new LogFormatter());
 
 			protectionLog.addHandler(protectionLogFileHandler);
@@ -400,17 +428,23 @@ public class Protection implements IModule, CommandExecutor
 	*/
 	private void log(Level level, String msg)
 	{
-		Path today = Paths.get(Paths.get(fmc.getDataFolder().toString(), "logs").toString(), LocalDate.now() + "-protection.log");
+		Path today = Paths.get(protectionLogsFolder.toString(), LocalDate.now() + "-protection.log");
 
 		if(Files.notExists(today)) {
 			try {
 				protectionLogFileHandler.close();
 				protectionLog.removeHandler(protectionLogFileHandler);
+
+				// another month
+				if(!today.getFileName().toString().substring(5, 7).equals(currentLogPath.getFileName().toString().substring(5, 7))) {
+					compressMonthLog(currentLogPath.getFileName().toString().substring(0, 7));
+				}
+
 				protectionLogFileHandler = new FileHandler(today.toString(), true);
 				protectionLogFileHandler.setFormatter(new LogFormatter());
 			}
 			catch (SecurityException | IOException e) {
-				fmc.getLogger().warning("Error creating new daily Protection log file!");
+				fmc.getLogger().log(Level.SEVERE, "Error creating new daily Protection log file!");
 				return;
 			}
 
@@ -418,5 +452,103 @@ public class Protection implements IModule, CommandExecutor
 		}
 
 		protectionLog.log(level, msg);
+	}
+
+	private void compressMonthLog(String folderName)
+	{
+		Path monthFolder = Paths.get(protectionLogsFolder.toString(), folderName);
+
+		try {
+			Files.createDirectories(monthFolder);
+
+			File[] files = protectionLogsFolder.toFile().listFiles(new FilenameFilter() {
+				@Override
+				public boolean accept(File dir, String name)
+				{
+					if(name.toLowerCase().endsWith(".log")) {
+						return true;
+					}
+					else {
+						return false;
+					}
+				}
+			});
+
+			boolean empty = true;
+
+			for(File logFile : files) {
+				// only move valid and non-empty files
+				if(logFile.length() == 0) {
+					Files.delete(logFile.toPath());
+				}
+				else {
+					Files.move(logFile.toPath(), monthFolder.resolve(logFile.toPath().getFileName()));
+					empty = false;
+				}
+			}
+
+			// no need to zip no files
+			if(empty) { 
+				return;
+			}
+
+			// now zip the folder
+			zipFolder(monthFolder, Paths.get(protectionLogsFolder.toString(), folderName + ".zip"));
+			// and remove the old one
+			Files.delete(monthFolder);
+		}
+		catch (SecurityException | IOException e) {
+			fmc.getLogger().log(Level.SEVERE, "Error creating month log directory!");
+			return;
+		}
+	}
+
+	private void zipFolder(Path sourcePath, Path zipPath) throws IOException 
+	{
+		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
+		
+        Files.walkFileTree(sourcePath, new SimpleFileVisitor<Path>() {
+			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
+			{
+                zos.putNextEntry(new ZipEntry(sourcePath.relativize(file).toString()));
+                Files.copy(file, zos);
+				zos.closeEntry();
+
+				Files.delete(file);
+				
+                return FileVisitResult.CONTINUE;
+            }
+		});
+		
+        zos.close();
+	}
+	
+	private Path getPreviousProtectionLog()
+	{
+		File[] files = protectionLogsFolder.toFile().listFiles(new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name)
+			{
+				if(name.toLowerCase().endsWith(".log")) {
+					return true;
+				}
+				else {
+					return false;
+				}
+			}
+		});
+
+		Path newest = null;
+
+		for(File file : files) {
+			if(newest == null) {
+				newest = file.toPath();
+			}
+			else if(file.toPath().getFileName().toString().compareTo(newest.toString()) > 0) {
+				newest = file.toPath();
+			}
+		}
+
+		return newest;
 	}
 }

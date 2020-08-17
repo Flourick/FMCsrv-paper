@@ -130,6 +130,7 @@ public class FMC extends JavaPlugin
 	private void checkConfig()
 	{
 		// this makes sure that even older configs will get properly updated
+		// if adding a new module make sure to add appropriate lines here too!
 
 		if(!getConfig().isSet("enable-colorme")) {
 			getConfig().set("enable-colorme", true);
