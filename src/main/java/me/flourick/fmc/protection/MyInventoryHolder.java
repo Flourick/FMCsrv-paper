@@ -8,12 +8,12 @@ import org.bukkit.inventory.InventoryHolder;
  * 
  * @author Flourick
  */
-public class EnderChestInventoryHolder implements InventoryHolder
+public class MyInventoryHolder implements InventoryHolder
 {
 	private final String uuid;
 	private final Inventory inventory;
 
-	public EnderChestInventoryHolder(String uuid, Inventory inventory)
+	public MyInventoryHolder(String uuid, Inventory inventory)
 	{
 		this.uuid = uuid;
 		this.inventory = inventory;

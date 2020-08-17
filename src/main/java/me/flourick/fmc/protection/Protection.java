@@ -1,6 +1,5 @@
 package me.flourick.fmc.protection;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,11 +30,6 @@ import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import de.tr7zw.changeme.nbtapi.NBTCompound;
-import de.tr7zw.changeme.nbtapi.NBTCompoundList;
-import de.tr7zw.changeme.nbtapi.NBTFile;
-import de.tr7zw.changeme.nbtapi.NBTItem;
-
 import me.flourick.fmc.FMC;
 import me.flourick.fmc.utils.IModule;
 import me.flourick.fmc.utils.LogFormatter;
@@ -43,7 +37,7 @@ import me.flourick.fmc.utils.LogFormatter;
 import net.md_5.bungee.api.ChatColor;
 
 /**
- * Module containing various protection features
+ * Module containing protection related features
  * 
  * @author Flourick
  */
@@ -115,17 +109,17 @@ public class Protection implements IModule, CommandExecutor
 			}
 		}, fmc);
 
-		// when you close an ender chest of offline player, last to have it opened also triggers saving and removal from hash map
+		// when you close an ender chest of offline player, last to have it opened also triggers saving and removal from map
 		fmc.getServer().getPluginManager().registerEvents(new Listener() {
 			@EventHandler
 			public void onInventoryClose(InventoryCloseEvent event)
 			{
-				if(event.getInventory().getType() == InventoryType.ENDER_CHEST && event.getInventory().getHolder() instanceof EnderChestInventoryHolder) {
+				if(event.getInventory().getType() == InventoryType.ENDER_CHEST && event.getInventory().getHolder() instanceof MyInventoryHolder) {
 					if(event.getViewers().size() < 2) {
-						String uuid = ((EnderChestInventoryHolder)event.getInventory().getHolder()).getUUID();
+						String uuid = ((MyInventoryHolder)event.getInventory().getHolder()).getUUID();
 						openedEnderChests.remove(uuid);
 						
-						if(!saveOfflinePlayerEnderChest(uuid, event.getInventory())) {
+						if(!OfflinePlayerUtils.saveOfflinePlayerEnderChest(uuid, event.getInventory())) {
 							fmc.getLogger().info(ChatColor.RED + "[Protection] Error saving Ender Chest!");
 						}
 					}
@@ -139,8 +133,7 @@ public class Protection implements IModule, CommandExecutor
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String args[])
 	{
-		// be ware that duplication is still possible in case of forced disconnects/restarts etc..
-		// also isn't this a beautiful spaghetti monster?
+		// isn't this a beautiful spaghetti monster?
 		if(cmd.getName().toLowerCase().equals("enderchest")) {
 			if(!(sender instanceof Player)) {
 				sender.sendMessage(ChatColor.RED + "Players only command.");
@@ -160,9 +153,10 @@ public class Protection implements IModule, CommandExecutor
 					Player onlineOther = Bukkit.getPlayer(argz[0]);
 
 					if(onlineOther == null && argz.length == 2) {
+						// is offline
 						try {
 							if(Bukkit.getOfflinePlayer(UUID.fromString(argz[1])).hasPlayedBefore()) {
-								Inventory enderChest = getOfflinePlayerEnderChest(argz[0], argz[1]);
+								Inventory enderChest = OfflinePlayerUtils.getOfflinePlayerEnderChest(argz[0], argz[1]);
 								
 								if(openedEnderChests.containsKey(argz[1])) {
 									// cannot drop ender chest if someone else is already editing it (becouse possible duplication)
@@ -175,10 +169,10 @@ public class Protection implements IModule, CommandExecutor
 										}
 									}
 
-									saveOfflinePlayerEnderChest(argz[1], null);
+									OfflinePlayerUtils.saveOfflinePlayerEnderChest(argz[1], null);
 								}
 								else {
-									player.sendMessage(ChatColor.RED + "Could not open the Ender Chest!");
+									player.sendMessage(ChatColor.RED + "Could not drop the Ender Chest!");
 								}
 							}
 							else {
@@ -224,7 +218,7 @@ public class Protection implements IModule, CommandExecutor
 									enderChest = openedEnderChests.get(argz[1]);
 								}
 								else {
-									enderChest = getOfflinePlayerEnderChest(argz[0], argz[1]);
+									enderChest = OfflinePlayerUtils.getOfflinePlayerEnderChest(argz[0], argz[1]);
 								}
 								
 								if(enderChest != null) {
@@ -295,9 +289,23 @@ public class Protection implements IModule, CommandExecutor
 					Player onlineOther = Bukkit.getPlayer(argz[0]);
 
 					if(onlineOther == null && argz.length == 2) {
+						// is offline
 						try {
 							if(Bukkit.getOfflinePlayer(UUID.fromString(argz[1])).hasPlayedBefore()) {
-								// TODO: drop offline inventory
+								Inventory inventory = OfflinePlayerUtils.getOfflinePlayerInventory(argz[0], argz[1]);
+
+								if(inventory != null) {
+									for(ItemStack item : inventory.getContents()) {
+										if(item != null && item.getType() != Material.AIR) {
+											player.getWorld().dropItemNaturally(player.getLocation(), item);
+										}
+									}
+
+									OfflinePlayerUtils.saveOfflinePlayerInventory(argz[1], null);
+								}
+								else {
+									player.sendMessage(ChatColor.RED + "Could not drop the Inventory!");
+								}
 							}
 							else {
 								player.sendMessage(ChatColor.RED + "Could not find such player.");
@@ -410,78 +418,5 @@ public class Protection implements IModule, CommandExecutor
 		}
 
 		protectionLog.log(level, msg);
-	}
-
-	/**
-	* Gets Ender Chest of offline player
-	* 
-	* @param  name	Name of the player (used in the Ender Chest display)
-	* @param  uuid  String represantation of UUID class coresponding to the player
-	* 
-	* @return The Ender Chest of given player
-	*/
-	private static Inventory getOfflinePlayerEnderChest(String name, String uuid)
-	{
-		Inventory eChest = null;
-
-		File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
-
-		if(nbtFile.exists() && nbtFile.canRead()) {
-			try {
-				NBTFile file = new NBTFile(nbtFile);
-				NBTCompoundList enderChest = file.getCompoundList("EnderItems");
-
-				eChest = Bukkit.createInventory(new EnderChestInventoryHolder(uuid, eChest), InventoryType.ENDER_CHEST, name + "\'s Ender Chest");
-
-				for(NBTCompound entry : enderChest) {
-					eChest.setItem(entry.getByte("Slot"), NBTItem.convertNBTtoItem(entry));
-				}
-			}
-			catch(IOException | SecurityException | IllegalArgumentException e) {
-				eChest = null;
-			}
-		}
-
-		return eChest;
-	}
-
-	/**
-	* Saves Ender Chest of offline player
-	* 
-	* @param  uuid        String representation of UUID class coresponding to the player
-	* @param  enderChest  Ender Chest contents, can be null to empty it
-	*/
-	private static boolean saveOfflinePlayerEnderChest(String uuid, Inventory enderChest)
-	{
-		File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
-		boolean success = false;
-
-		if(nbtFile.exists() && nbtFile.canWrite()) {
-			try {
-				NBTFile file = new NBTFile(nbtFile);
-				
-				NBTCompoundList NBTeChest = file.getCompoundList("EnderItems");
-				NBTeChest.clear();
-
-				if(enderChest != null) {
-					for(Byte i = 0; i < 27; i++) {
-						ItemStack item = enderChest.getItem(i);
-						if(item != null && item.getType() != Material.AIR) {
-							NBTCompound compound = NBTItem.convertItemtoNBT(item);
-							compound.setByte("Slot", i);
-							NBTeChest.addCompound(compound);
-						}
-					}
-				}
-
-				file.save();
-				success = true;
-			}
-			catch(IOException | SecurityException | IllegalArgumentException e) {
-				// nada
-			}
-		}
-
-		return success;
 	}
 }
