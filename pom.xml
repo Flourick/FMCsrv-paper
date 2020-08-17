@@ -90,12 +90,12 @@
 					<relocations>
 						<relocation>
 							<pattern>io.papermc.lib</pattern>
-							<shadedPattern>flour.fmc.paperlib</shadedPattern>
+							<shadedPattern>me.flourick.fmc.paperlib</shadedPattern>
 						</relocation>
 
 						<relocation>
 							<pattern>de.tr7zw.changeme.nbtapi</pattern>
-							<shadedPattern>flour.fmc.nbtapi</shadedPattern>
+							<shadedPattern>me.flourick.fmc.nbtapi</shadedPattern>
 						  </relocation>
 					</relocations>
 				</configuration>

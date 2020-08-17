@@ -44,6 +44,7 @@ import me.flourick.fmc.utils.IModule;
 import me.flourick.fmc.utils.LogFormatter;
 import me.flourick.fmc.utils.MyInventoryHolder;
 import me.flourick.fmc.utils.OfflinePlayerUtils;
+
 import net.md_5.bungee.api.ChatColor;
 
 /**
@@ -350,6 +351,9 @@ public class Protection implements IModule, CommandExecutor
 					else {
 						player.sendMessage(ChatColor.RED + "Could not find such player.");
 					}
+				}
+				else {
+					return false;
 				}
 			}
 			else if(args.length == 1) {
