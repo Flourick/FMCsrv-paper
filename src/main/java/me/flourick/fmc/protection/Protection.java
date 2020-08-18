@@ -31,10 +31,12 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
@@ -86,32 +88,13 @@ public class Protection implements IModule, CommandExecutor
 			return isEnabled = false;
 		}
 
+		initLogs();
+
 		fmc.getCommand("enderchest").setTabCompleter(new EnderChestTabCompleter());
 		fmc.getCommand("enderchest").setExecutor(this);
 
 		fmc.getCommand("inventory").setTabCompleter(new InventoryTabCompleter());
 		fmc.getCommand("inventory").setExecutor(this);
-
-		// logs pet deaths becouse for some reason vanilla does not do that
-		if(protectionConfig.getConfig().getBoolean("logger.pets")) {
-			fmc.getServer().getPluginManager().registerEvents(new Listener() {
-				@EventHandler
-				public void onEntityDeath(EntityDeathEvent event)
-				{
-					if(event.getEntity() instanceof Tameable) {
-						Tameable entity = (Tameable) event.getEntity();
-
-						if(entity.isTamed()) {
-							String name = entity.getCustomName() == null ? entity.getName() : entity.getCustomName();
-							String killer = entity.getKiller() == null ? "unknown" : entity.getKiller().getName();
-							String owner = entity.getOwner().getName() == null ? "unknown" : entity.getOwner().getName();
-
-							log(Level.INFO, name + " owned by " + owner + " was killed by " + killer + " via " + entity.getLastDamageCause().getCause() + "!");
-						}
-					}
-				}
-			}, fmc);
-		}
 
 		// A player whos ender chest is currently opened is attempting to join so we close it to prevent duplication (bit hacky but eh)
 		fmc.getServer().getPluginManager().registerEvents(new Listener() {
@@ -151,6 +134,48 @@ public class Protection implements IModule, CommandExecutor
 		}, fmc);
 
 		return isEnabled = true;
+	}
+
+	private void initLogs()
+	{
+		// logs pet deaths becouse for some reason vanilla does not do that
+		if(protectionConfig.getConfig().getBoolean("logger.pets")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void onEntityDeath(EntityDeathEvent event)
+				{
+					if(event.getEntity() instanceof Tameable) {
+						Tameable entity = (Tameable) event.getEntity();
+
+						if(entity.isTamed()) {
+							String name = entity.getCustomName() == null ? entity.getName() : entity.getCustomName();
+							String killer = entity.getKiller() == null ? "unknown" : entity.getKiller().getName();
+							String owner = entity.getOwner().getName() == null ? "unknown" : entity.getOwner().getName();
+
+							log(Level.INFO, name + " owned by " + owner + " was killed by " + killer + " via " + entity.getLastDamageCause().getCause() + "!");
+						}
+					}
+				}
+			}, fmc);
+		}
+
+		// logging of chests opening
+		if(protectionConfig.getConfig().getBoolean("logger.chests")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void onPlayerInteractEvent(PlayerInteractEvent event)
+				{
+					if(event.getClickedBlock() != null && event.getAction() == Action.RIGHT_CLICK_BLOCK) {
+						if(event.getClickedBlock().getType() == Material.CHEST) {
+							log(Level.INFO, event.getPlayer().getName() + " opened a chest at [" + event.getClickedBlock().getLocation().getBlockX() + ", " + event.getClickedBlock().getLocation().getBlockY() + ", " + event.getClickedBlock().getLocation().getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
+						}
+						else if(event.getClickedBlock().getType() == Material.TRAPPED_CHEST) {
+							log(Level.INFO, event.getPlayer().getName() + " opened a trapped chest at [" + event.getClickedBlock().getLocation().getBlockX() + ", " + event.getClickedBlock().getLocation().getBlockY() + ", " + event.getClickedBlock().getLocation().getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
+						}
+					}
+				}
+			}, fmc);
+		}
 	}
 
 	@Override
@@ -507,14 +532,14 @@ public class Protection implements IModule, CommandExecutor
 		}
 	}
 
-	private void zipFolder(Path sourcePath, Path zipPath) throws IOException 
+	private void zipFolder(Path source, Path output) throws IOException 
 	{
-		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zipPath.toFile()));
+		ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(output.toFile()));
 		
-        Files.walkFileTree(sourcePath, new SimpleFileVisitor<Path>() {
+        Files.walkFileTree(source, new SimpleFileVisitor<Path>() {
 			public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException
 			{
-                zos.putNextEntry(new ZipEntry(sourcePath.relativize(file).toString()));
+                zos.putNextEntry(new ZipEntry(source.relativize(file).toString()));
                 Files.copy(file, zos);
 				zos.closeEntry();
 

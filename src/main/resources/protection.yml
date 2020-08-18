@@ -1,8 +1,11 @@
-# Stats module configuration file
+# Protection module configuration file
 # ---
 # logger:
 #     pets: (boolean)
 #         -> logs pet deaths
+#     chests: (boolean)
+#         -> logs chests related events
 # ---
 logger:
   pets: true
+  chests: true

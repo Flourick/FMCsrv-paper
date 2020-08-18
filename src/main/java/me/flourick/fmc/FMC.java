@@ -1,6 +1,7 @@
 package me.flourick.fmc;
 
 import io.papermc.lib.PaperLib;
+
 import me.flourick.fmc.afk.AFK;
 import me.flourick.fmc.chatter.Chatter;
 import me.flourick.fmc.colorme.ColorMe;
@@ -32,7 +33,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class FMC extends JavaPlugin
 {
 	// can be used to make modules behave differently when debugging
-	public static final boolean DEV_MODE = true;
+	public static final boolean DEV_MODE = false;
 	// CraftBukkit version string
 	public static final String CRAFT_VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf(46) + 1);
 
