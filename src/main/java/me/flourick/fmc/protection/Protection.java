@@ -82,6 +82,25 @@ public class Protection implements IModule, CommandExecutor
 	}
 
 	@Override
+	public boolean isEnabled()
+	{
+		return isEnabled;
+	}
+
+	@Override
+	public String getName()
+	{
+		return "Protection";
+	}
+
+	@Override
+	public void onDisable()
+	{
+		protectionLogFileHandler.close();
+		isEnabled = false;
+	}
+
+	@Override
 	public boolean onEnable()
 	{
 		if(!setupLogs()) {
@@ -404,24 +423,6 @@ public class Protection implements IModule, CommandExecutor
 		}
 
 		return true;
-	}
-
-	@Override
-	public void onDisable()
-	{
-		isEnabled = false;
-	}
-
-	@Override
-	public boolean isEnabled()
-	{
-		return isEnabled;
-	}
-
-	@Override
-	public String getName()
-	{
-		return "Protection";
 	}
 
 	private boolean setupLogs()
