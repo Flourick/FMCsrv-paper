@@ -257,7 +257,7 @@ public class AFK implements IModule, CommandExecutor
 			@EventHandler(priority=EventPriority.LOW)
 			public void OnPlayerIssuedCommand(PlayerCommandPreprocessEvent e)
 			{
-				if(e.getMessage().toLowerCase().startsWith("/afk")) {
+				if(e.getMessage().toLowerCase().startsWith("/afk") || e.getMessage().toLowerCase().startsWith("/fmc:afk")) {
 					// skip check for afk command
 					return;
 				}

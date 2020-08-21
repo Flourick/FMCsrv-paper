@@ -12,7 +12,7 @@ import java.util.logging.LogRecord;
  */
 public class LogFormatter extends Formatter
 {
-	private static final String DATE_PATTERN = "dd-MM-yyyy HH:mm:ss";
+	private static final String DATE_PATTERN = "dd.MM.yyyy HH:mm:ss";
 
 	@Override
 	public String format(LogRecord record)
