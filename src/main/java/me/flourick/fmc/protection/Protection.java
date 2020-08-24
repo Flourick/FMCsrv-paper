@@ -25,6 +25,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Tameable;
@@ -32,6 +33,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -114,6 +116,18 @@ public class Protection implements IModule, CommandExecutor
 
 		fmc.getCommand("inventory").setTabCompleter(new InventoryTabCompleter());
 		fmc.getCommand("inventory").setExecutor(this);
+
+		// prevent enderman from taking blocks
+		if(protectionConfig.getConfig().getBoolean("no-enderman-grief")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void onEntityChangeBlockEvent(EntityChangeBlockEvent e) {
+					if(e.getEntity().getType() == EntityType.ENDERMAN) {
+						e.setCancelled(true);
+					}
+				}
+			}, fmc);
+		}
 
 		// A player whos ender chest is currently opened is attempting to join so we close it to prevent duplication (bit hacky but eh)
 		fmc.getServer().getPluginManager().registerEvents(new Listener() {
