@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.annotation.Nullable;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.event.inventory.InventoryType;
@@ -88,7 +86,7 @@ public class OfflinePlayerUtils
 	*
 	* @return true if saving was successful, false otherwise
 	*/
-	public static boolean saveOfflinePlayerEnderChest(String uuid, @Nullable Inventory enderChest)
+	public static boolean saveOfflinePlayerEnderChest(String uuid, Inventory enderChest)
 	{
 		File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
 		boolean success = false;
@@ -166,7 +164,7 @@ public class OfflinePlayerUtils
 	*
 	* @return true if saving was successful, false otherwise
 	*/
-	public static boolean saveOfflinePlayerInventory(String uuid, @Nullable Inventory inventory)
+	public static boolean saveOfflinePlayerInventory(String uuid, Inventory inventory)
 	{
 		File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
 		boolean success = false;

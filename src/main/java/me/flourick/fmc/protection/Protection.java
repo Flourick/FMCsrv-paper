@@ -180,7 +180,7 @@ public class Protection implements IModule, CommandExecutor
 					if(event.getEntity() instanceof Tameable) {
 						Tameable entity = (Tameable) event.getEntity();
 
-						if(entity.isTamed()) {
+						if(entity.isTamed() && entity.getOwner() != null) {
 							String name = entity.getCustomName() == null ? entity.getName() : entity.getCustomName();
 							String killer = entity.getKiller() == null ? "unknown" : entity.getKiller().getName();
 							String owner = entity.getOwner().getName() == null ? "unknown" : entity.getOwner().getName();
