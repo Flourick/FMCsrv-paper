@@ -205,6 +205,9 @@ public class Protection implements IModule, CommandExecutor
 						else if(event.getClickedBlock().getType() == Material.TRAPPED_CHEST) {
 							log(Level.INFO, event.getPlayer().getName() + " opened a trapped chest at [" + event.getClickedBlock().getLocation().getBlockX() + ", " + event.getClickedBlock().getLocation().getBlockY() + ", " + event.getClickedBlock().getLocation().getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
 						}
+						else if(event.getClickedBlock().getType() == Material.SHULKER_BOX) {
+							log(Level.INFO, event.getPlayer().getName() + " opened a shulker box at [" + event.getClickedBlock().getLocation().getBlockX() + ", " + event.getClickedBlock().getLocation().getBlockY() + ", " + event.getClickedBlock().getLocation().getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
+						}
 					}
 				}
 			}, fmc);
