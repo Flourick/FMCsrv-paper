@@ -28,7 +28,7 @@ commands:
         description: Places a markers with your name or make a town marker!
         permission: fmc.dynfmc
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command> §7<§rbase§7|§rtown§7>§r §7<§rset§7|§rremove§7|§rlist§7>§r §7[§rlabel§7]§r"
+        usage: "§eUsage:§r /<command> §7<§rbase§7|§rtown§7|§rtown§7>§r §7<§rset§7|§rremove§7|§rlist§7>§r §7[§rlabel§7]§r"
     afk:
         description: Sets you as an AFK individual.
         permission: fmc.afk

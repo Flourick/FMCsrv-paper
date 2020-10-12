@@ -14,7 +14,7 @@ import org.bukkit.command.TabCompleter;
  */
 public class DynFMCTabCompleter implements TabCompleter
 {
-	private static final String[] FIRST_ARGS = { "base", "town"};
+	private static final String[] FIRST_ARGS = { "base", "town", "poi"};
 	private static final String[] SECOND_ARGS = { "set", "remove", "list"};
 
 	@Override

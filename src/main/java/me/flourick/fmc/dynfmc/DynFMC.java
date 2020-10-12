@@ -47,6 +47,7 @@ public class DynFMC implements IModule, CommandExecutor
 		// adds the sets if not already created
 		fmc.getServer().dispatchCommand(soSender, "dmarker addset bases");
 		fmc.getServer().dispatchCommand(soSender, "dmarker addset towns");
+		fmc.getServer().dispatchCommand(soSender, "dmarker addset points_of_interest");
 		
 		return isEnabled = true;
 	}
@@ -264,6 +265,115 @@ public class DynFMC implements IModule, CommandExecutor
 						break;
 				}
 			}
+			else if(args.length > 1 && args.length < 4 && args[0].equals("poi")) {
+				switch(args[1]) {
+					case "set":
+						if(args.length != 3) {
+							player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.RED + " You must supply a label for the point of interest!");
+							return true;
+						}
+						
+						// first check if poi does not already exist
+						if(poiExists(args[2])) {
+							player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.RED + " Point of interest with that name already exists!");
+							return true;
+						}
+						
+						// check the argument
+						if(args[2].length() > 16 || args[2].matches("^.*[^a-zA-Z0-9].*$")) {
+							player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.RED + " Point of interest name max 16 alphanumerical characters!");
+							return true;
+						}
+						
+						fmc.getServer().dispatchCommand(soSender, "dmarker add " + args[2] + " icon:pin set:points_of_interest x:" + player.getLocation().getBlockX() + " y:" + player.getLocation().getBlockY() + " z:" + player.getLocation().getBlockZ() + " world:" + player.getWorld().getName());
+						player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.YELLOW + " Placed point of interest marker on DynMap!");
+						return true;
+						
+					case "remove":
+						if(args.length != 3) {
+							player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.RED + " You must supply a label for the point of interest!");
+							return true;
+						}
+						
+						// first check if point of interest even exists
+						if(!poiExists(args[2])) {
+							player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.RED + " Point of interest with that name does not exist!");
+							return true;
+						}
+						
+						fmc.getServer().dispatchCommand(soSender, "dmarker delete " + args[2] + " set:points_of_interest");
+						player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.YELLOW + " Removed point of interest marker '" + args[2] + "' from DynMap!");
+						return true;
+						
+					case "list":
+						soSender.clearCurrentMessages();
+						fmc.getServer().dispatchCommand(soSender, "dmarker list set:points_of_interest");
+						
+						List<String> pois = soSender.consumeCurrentMessages();
+						if(pois.isEmpty()) {
+							player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.YELLOW + " No points of interest found!");
+							return true;
+						}
+						
+						player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.YELLOW + " POIs list:");
+						for(String poi : pois) {
+							String[] words = poi.split("\\s+");
+							
+							if(words.length < 2) {
+								player.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + "DynFMC" + ChatColor.DARK_GREEN + "]" + ChatColor.YELLOW + " No points of interest found!");
+								return true;
+							}
+							
+							String name = "";
+							String X = "";
+							String Y = "";
+							String Z = "";
+							String world = "";
+							
+							for(String word : words) {
+								if(word.startsWith("label:")) {
+									name = word.substring(7, word.length() - 2);
+								}
+								else if(word.startsWith("x:")) {
+									X = word.substring(2, word.length() - 3);
+								}
+								else if(word.startsWith("y:")) {
+									Y = word.substring(2, word.length() - 3);
+								}
+								else if(word.startsWith("z:")) {
+									Z = word.substring(2, word.length() - 3);
+								}
+								else if(word.startsWith("world:")) {
+									world = word.substring(6, word.length() - 1);
+									
+									// more readable shit
+									switch(world) {
+										case "world":
+											world = "Overworld";
+											break;
+										case "world_nether":
+											world = "Nether";
+											break;
+										case "world_the_end":
+											world = "The End";
+											break;
+									}
+								}
+							}
+
+							String coordX = ChatColor.GRAY + "X" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + X + ChatColor.DARK_GRAY + ", ";
+							String coordY = ChatColor.GRAY + "Y" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + Y + ChatColor.DARK_GRAY + ", ";
+							String coordZ = ChatColor.GRAY + "Z" + ChatColor.DARK_GRAY + ": " + ChatColor.RESET + Z + ChatColor.DARK_GRAY;
+							
+							player.sendMessage(ChatColor.DARK_GRAY + "- " + ChatColor.GRAY + name + ChatColor.DARK_GRAY + " at " + coordX + coordY + coordZ + ChatColor.DARK_GRAY + " in " + ChatColor.RESET + world);
+						}
+						
+						return true;
+						
+					default:
+						break;
+				}
+			}
 		}
 		
 		return false;
@@ -288,6 +398,32 @@ public class DynFMC implements IModule, CommandExecutor
 			});
 
 			if(towns.contains(townName)) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	private boolean poiExists(String poiName)
+	{
+		soSender.clearCurrentMessages();
+		fmc.getServer().dispatchCommand(soSender, "dmarker list set:points_of_interest");
+		List<String> messages = soSender.consumeCurrentMessages();
+		if(!messages.isEmpty()) {
+			List<String> pois = new ArrayList<>();
+
+			messages.forEach((poi) -> {
+				String[] words = poi.split("\\s+");
+
+				for(String word : words) {
+					if(word.contains("label:")) {
+						pois.add(word.substring(7, word.length() - 2));
+					}
+				}
+			});
+
+			if(pois.contains(poiName)) {
 				return true;
 			}
 		}
