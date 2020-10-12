@@ -24,6 +24,7 @@ public class StatsSQLConnection
 	private Connection conn;
 	private Statement st;
 	private PreparedStatement getPlayerByNameStatement;
+	private PreparedStatement updatePlayerInactive;
 	
 	private final String playerStatsTableName;
 	
@@ -53,6 +54,7 @@ public class StatsSQLConnection
 			conn = DriverManager.getConnection(connString, username, password);
 			st = conn.createStatement();
 			getPlayerByNameStatement = conn.prepareStatement("SELECT * FROM " + playerStatsTableName + " WHERE name = ?");
+			updatePlayerInactive = conn.prepareStatement("UPDATE " + playerStatsTableName + " SET inactive = ? WHERE name = ?");
 			
 			// creates tables if not already created
 			createTables();
@@ -87,6 +89,32 @@ public class StatsSQLConnection
 		st.execute(sqlCreatePlayerStats);
 		
 		return true;
+	}
+
+	public boolean setInactivePlayer(String name, boolean inactive)
+	{
+		testConnectivity();
+
+		boolean success = false;
+		int ret = -1;
+		
+		try {
+			updatePlayerInactive.setString(2, name);
+			updatePlayerInactive.setBoolean(1, inactive);
+			ret = updatePlayerInactive.executeUpdate();
+			
+			if(ret > 0) {
+				success = true;
+			}
+		}
+		catch(SQLException e) {
+			exceptionLog = e.getMessage();
+		}
+		finally {
+			try { updatePlayerInactive.clearParameters(); } catch (SQLException e) { }
+		}
+
+		return success;
 	}
 	
 	public PlayerStats getPlayerStats(Player player)
@@ -295,7 +323,7 @@ public class StatsSQLConnection
 				}
 			}
 			else {
-				// PLAYER DOES NOT EXIST???
+				// PLAYER DOES NOT EXIST??? HOW TF.?..
 				exceptionLog = "PLAYER DOES NOT HAVE A RECORD IN DATABASE!!!";
 				return false;
 			}

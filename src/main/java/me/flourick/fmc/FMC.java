@@ -1,7 +1,7 @@
 package me.flourick.fmc;
 
 import io.papermc.lib.PaperLib;
-
+import me.flourick.fmc.administration.Administration;
 import me.flourick.fmc.afk.AFK;
 import me.flourick.fmc.chatter.Chatter;
 import me.flourick.fmc.colorme.ColorMe;
@@ -14,6 +14,8 @@ import me.flourick.fmc.stats.Stats;
 import me.flourick.fmc.utils.IModule;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.logging.Level;
 
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +41,7 @@ public class FMC extends JavaPlugin
 
 	private Logger rootLogger;
 
-	private final ArrayList<IModule> runningModules = new ArrayList<>();
+	public final HashMap<String, IModule> runningModules = new HashMap<>();
 	
 	@Override
 	public void onEnable()
@@ -81,25 +83,35 @@ public class FMC extends JavaPlugin
 		if(getConfig().getBoolean("enable-protection")) {
 			modules.add(new Protection(this));
 		}
+		if(getConfig().getBoolean("enable-administration")) {
+			modules.add(new Administration(this));
+		}
 
 		checkConfig();
 		// ----- -----
 		
 		for(IModule module : modules) {
 			if(module.onEnable()) {
-				runningModules.add(module);
+				runningModules.put(module.getName(), module);
 			}
 		}
-		
-		getLogger().log(Level.INFO, "FMC has been successfully enabled!");
-		getLogger().log(Level.INFO, "Loaded modules: {0}", getPrintableModules());
+
+		if(runningModules.isEmpty()) {
+			getLogger().log(Level.INFO, "No FMC modules enabled! Disabling...");
+		}
+		else {
+			getLogger().log(Level.INFO, "FMC has been successfully enabled!");
+			getLogger().log(Level.INFO, "Loaded modules: {0}", getPrintableModules());
+		}
 	}
 
 	@Override
 	public void onDisable()
 	{		
 		// call onDisable() of all running modules
-		for(IModule module : runningModules) {
+		for(Entry<String, IModule> moduleEntry : runningModules.entrySet()) {
+			IModule module = moduleEntry.getValue();
+
 			if(module.isEnabled()) {
 				module.onDisable();
 				getLogger().log(Level.INFO, "Disabled {0} module.", module.getName());
@@ -117,12 +129,44 @@ public class FMC extends JavaPlugin
 		
 		return true;
 	}
+
+	/**
+	* Gets whether a given module is running or not
+	* 
+	* @param  name	Name of the module to check
+	* 
+	* @return true if module is running, false otherwise
+	*/
+	public boolean isModuleRunning(String moduleName)
+	{
+		for(Entry<String, IModule> moduleEntry : runningModules.entrySet()) {
+			IModule module = moduleEntry.getValue();
+
+			if(module.isEnabled()) {
+				if(module.getName().equals(moduleName)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
 	
+	/**
+	* Adds a Filter to root logger
+	* 
+	* @param  filter	Filter to add
+	*/
 	public void addLogFilter(Filter filter)
 	{
 		rootLogger.getContext().addFilter(filter);
 	}
 	
+	/**
+	* Removes a Filter to root logger
+	* 
+	* @param  filter	Filter to remove
+	*/
 	public void removeLogFilter(Filter filter)
 	{
 		rootLogger.getContext().removeFilter(filter);
@@ -160,6 +204,9 @@ public class FMC extends JavaPlugin
 		if(!getConfig().isSet("enable-protection")) {
 			getConfig().set("enable-protection", true);
 		}
+		if(!getConfig().isSet("enable-administration")) {
+			getConfig().set("enable-administration", true);
+		}
 
 		saveConfig();
 	}
@@ -168,15 +215,12 @@ public class FMC extends JavaPlugin
 	{
 		String modules = "[";
 		
-		int sz = runningModules.size();
-		
-		for(int i = 0; i < sz; i++) {
-			modules += runningModules.get(i).getName();
-			
-			if(i < sz - 1) {
-				modules += ", ";
-			}
+		for(String module : runningModules.keySet()) {
+			modules += module + ", ";
 		}
+
+		modules = modules.substring(0, modules.length() - 2);
+
 		modules += "]";
 		
 		return modules;

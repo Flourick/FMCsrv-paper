@@ -31,7 +31,7 @@ public class Stats implements IModule, CommandExecutor
 	
 	private final CConfig statsConfig;
 	
-	private final StatsSQLConnection sql;
+	public final StatsSQLConnection sql;
 	
 	public Stats(FMC fmc)
 	{

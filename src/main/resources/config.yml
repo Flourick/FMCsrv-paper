@@ -9,3 +9,4 @@ enable-chatter: true
 enable-loot: true
 enable-fun: true
 enable-protection: true
+enable-administration: true

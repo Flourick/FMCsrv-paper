@@ -55,12 +55,17 @@ commands:
         description: Opens or drops the enderchest of a given player or yourself
         permission: fmc.enderchest
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command> §7<§ropen§7|§rdrop§7>§r §7[§rplayer§7]"
+        usage: "§eUsage:§r /<command> §7<§ropen§7|§rdrop§7>§r §7[§rplayer/uuid§7]"
     inventory:
         description: Drops the inventory content of a given player or yourself
         permission: fmc.inventory
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command> §7<§rdrop§7>§r §7[§rplayer§7]"
+        usage: "§eUsage:§r /<command> §7<§rdrop§7>§r §7[§rplayer/uuid§7]"
+    inactive:
+        description: Removes a player from whitelist, marks their base as abandoned and if stats enabled marks as inactive
+        permission: fmc.inactive
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command> §7[§rplayer/uuid§7]"
 
 permissions:
     fmc.announce:
@@ -102,4 +107,7 @@ permissions:
             fmc.enderchest: true
     fmc.inventory:
         description: Allows the use of inventory command
+        default: op
+    fmc.inactive:
+        description: Allows the use of inactive command
         default: op
