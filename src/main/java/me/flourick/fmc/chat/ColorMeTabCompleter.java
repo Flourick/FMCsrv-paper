@@ -1,4 +1,4 @@
-package me.flourick.fmc.colorme;
+package me.flourick.fmc.chat;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -3,8 +3,8 @@ package me.flourick.fmc;
 import io.papermc.lib.PaperLib;
 import me.flourick.fmc.administration.Administration;
 import me.flourick.fmc.afk.AFK;
-import me.flourick.fmc.chatter.Chatter;
-import me.flourick.fmc.colorme.ColorMe;
+import me.flourick.fmc.chat.Chat;
+import me.flourick.fmc.discord.Discord;
 import me.flourick.fmc.dynfmc.DynFMC;
 import me.flourick.fmc.fun.Fun;
 import me.flourick.fmc.loot.Loot;
@@ -35,7 +35,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class FMC extends JavaPlugin
 {
 	// can be used to make modules behave differently when debugging
-	public static final boolean DEV_MODE = true;
+	public static final boolean DEV_MODE = false;
 	// CraftBukkit version string
 	public static final String CRAFT_VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf(46) + 1);
 
@@ -56,9 +56,6 @@ public class FMC extends JavaPlugin
 		ArrayList<IModule> modules = new ArrayList<>();
 
 		// ----- adding enabled modules to array (ONLY HERE YOU ADD A NEW MODULE) -----
-		if(getConfig().getBoolean("enable-colorme")) {
-			modules.add(new ColorMe(this));
-		}
 		if(getConfig().getBoolean("enable-oneplayersleep")) {
 			modules.add(new OnePlayerSleep(this));
 		}
@@ -71,8 +68,8 @@ public class FMC extends JavaPlugin
 		if(getConfig().getBoolean("enable-stats")) {
 			modules.add(new Stats(this));
 		}
-		if(getConfig().getBoolean("enable-chatter")) {
-			modules.add(new Chatter(this));
+		if(getConfig().getBoolean("enable-chat")) {
+			modules.add(new Chat(this));
 		}
 		if(getConfig().getBoolean("enable-loot")) {
 			modules.add(new Loot(this));
@@ -85,6 +82,9 @@ public class FMC extends JavaPlugin
 		}
 		if(getConfig().getBoolean("enable-administration")) {
 			modules.add(new Administration(this));
+		}
+		if(getConfig().getBoolean("enable-discord")) {
+			modules.add(new Discord(this));
 		}
 
 		checkConfig();
@@ -177,9 +177,6 @@ public class FMC extends JavaPlugin
 		// this makes sure that even older configs will get properly updated
 		// if adding a new module make sure to add appropriate lines here too!
 
-		if(!getConfig().isSet("enable-colorme")) {
-			getConfig().set("enable-colorme", true);
-		}
 		if(!getConfig().isSet("enable-oneplayersleep")) {
 			getConfig().set("enable-oneplayersleep", true);
 		}
@@ -192,8 +189,8 @@ public class FMC extends JavaPlugin
 		if(!getConfig().isSet("enable-stats")) {
 			getConfig().set("enable-stats", true);
 		}
-		if(!getConfig().isSet("enable-chatter")) {
-			getConfig().set("enable-chatter", true);
+		if(!getConfig().isSet("enable-chat")) {
+			getConfig().set("enable-chat", true);
 		}
 		if(!getConfig().isSet("enable-loot")) {
 			getConfig().set("enable-loot", true);
@@ -206,6 +203,9 @@ public class FMC extends JavaPlugin
 		}
 		if(!getConfig().isSet("enable-administration")) {
 			getConfig().set("enable-administration", true);
+		}
+		if(!getConfig().isSet("enable-discord")) {
+			getConfig().set("enable-discord", true);
 		}
 
 		saveConfig();

@@ -1,9 +1,13 @@
-# Chatter module configuration file
+# Chat module configuration file
 # ---
 # use-custom-join-and-quit-messages: (boolean)
 #    -> adds custom join/quit messages. Allows the use of color using '&' or '§' symbol
 # allow-chat-color-codes: (boolean)
 #    -> allows users to use formatting codes using '&' symbol
+# enable-player-colors: (boolean)
+#    -> enables changing users name color in chat and tab, for it to work in Paper use-vanilla-world-scoreboard-name-coloring MUST be set to false in paper.yml (if using Paper)!
+# player-colors:
+#    -> list of individual players colors, if you want to edit it here make sure server is offline else changes won't have any effect
 # ---
 custom-messages:
     use-custom-join-and-quit-messages: true
@@ -14,3 +18,5 @@ custom-messages:
         - "{PLAYER} &ehas left the server"
         - "{PLAYER} &edisconnected"
 allow-chat-color-codes: true
+enable-player-colors: true
+player-colors:

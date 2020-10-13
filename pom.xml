@@ -27,6 +27,12 @@
 			<url>https://repo.codemc.org/repository/maven-public/</url>
 			<layout>default</layout>
 		</repository>
+
+		<repository>
+			<id>jcenter</id>
+			<name>jcenter-bintray</name>
+			<url>https://jcenter.bintray.com</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -61,6 +67,18 @@
 			<groupId>mysql</groupId>
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.19</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.dv8tion</groupId>
+			<artifactId>JDA</artifactId>
+			<version>4.2.0_209</version>
+			<exclusions>
+				<exclusion>
+					<groupId>club.minnced</groupId>
+					<artifactId>opus-java</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 	 </dependencies>
 

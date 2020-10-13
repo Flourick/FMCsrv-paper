@@ -1,0 +1,12 @@
+# Discord module configuration file
+# ---
+# discord-token: String
+#    -> your discord bot token
+# discord-channel-id: Integer
+#    -> ID of the discord channel where bot sends messages
+# message-format: String
+#    -> format of the message that is sent to minecraft server. {PLAYER} is substituted for the discord user who sent the message. Supports colors using '&' or '§' symbol
+# ---
+discord-token: TOKEN
+discord-channel-id: 123
+message-format: "<&2[&aDiscord&2]&7 {PLAYER}&r> "
