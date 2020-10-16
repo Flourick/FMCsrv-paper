@@ -66,45 +66,51 @@ public class Administration implements IModule, CommandExecutor
 				String[] argz = args[0].split("/");
 
 				if(argz.length == 2) {
-					String name = argz[0];
-					UUID uuid = UUID.fromString(argz[1]);
+					try {
+						String name = argz[0];
+						UUID uuid = UUID.fromString(argz[1]);
 
-					if(!Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
-						sender.sendMessage(ChatColor.RED + "Given player never even played on this server!");
-						return true;
+						if(!Bukkit.getOfflinePlayer(uuid).hasPlayedBefore()) {
+							sender.sendMessage(ChatColor.RED + "Given player never even played on this server!");
+							return true;
+						}
+
+						// remove from whitelist
+						if(Bukkit.getOfflinePlayer(uuid).isWhitelisted()) {
+							fmc.getServer().dispatchCommand(soSender, "whitelist remove " + name);
+						}
+
+						// rename base marker if DynFMC is enabled & running
+						if(fmc.isModuleRunning("DynFMC")) {
+							soSender.clearCurrentMessages();
+							fmc.getServer().dispatchCommand(soSender, "dmarker update set:bases label:" + name + " newlabel:ABANDONED-(" + name + ")");
+							List<String> response = soSender.consumeCurrentMessages();
+
+							if(response.isEmpty()) {
+								sender.sendMessage(ChatColor.RED + "Error updating base marker!");
+							}
+							else if(response.get(0).startsWith("Error:")) {
+								sender.sendMessage("Player did not have a base set!");
+							}
+							else {
+								sender.sendMessage("Sucessfully updated base marker!");
+							}
+						}
+
+						// mark player as inactive if Stats is enabled & running
+						if(fmc.isModuleRunning("Stats")) {
+							Stats stats = (Stats)fmc.runningModules.get("Stats");
+
+							if(!stats.sql.setInactivePlayer(name, true)) {
+								sender.sendMessage(ChatColor.RED + "Error setting inactivity in your Stats database!");
+							}
+							else {
+								sender.sendMessage("Inactivity updated in database!");
+							}
+						}
 					}
-
-					if(Bukkit.getOfflinePlayer(uuid).isWhitelisted()) {
-						fmc.getServer().dispatchCommand(soSender, "whitelist remove " + name);
-					}
-
-					// rename base marker if DynFMC is enabled & running
-					if(fmc.isModuleRunning("DynFMC")) {
-						soSender.clearCurrentMessages();
-						fmc.getServer().dispatchCommand(soSender, "dmarker update set:bases label:" + name + " newlabel:ABANDONED-(" + name + ")");
-						List<String> response = soSender.consumeCurrentMessages();
-
-						if(response.isEmpty()) {
-							sender.sendMessage(ChatColor.RED + "Error updating base marker!");
-						}
-						else if(response.get(0).startsWith("Error:")) {
-							sender.sendMessage("Player did not have a base set!");
-						}
-						else {
-							sender.sendMessage("Sucessfully updated base marker!");
-						}
-					}
-
-					// mark player as inactive if Stats is enabled & running
-					if(fmc.isModuleRunning("Stats")) {
-						Stats stats = (Stats)fmc.runningModules.get("Stats");
-
-						if(!stats.sql.setInactivePlayer(name, true)) {
-							sender.sendMessage(ChatColor.RED + "Error setting inactivity in your Stats database!");
-						}
-						else {
-							sender.sendMessage("Inactivity updated in database!");
-						}
+					catch(IllegalArgumentException e) {
+						sender.sendMessage(ChatColor.RED + "Could not find such player!");
 					}
 				}
 				else {
