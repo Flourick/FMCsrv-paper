@@ -89,6 +89,8 @@ public class Discord extends ListenerAdapter implements IModule
 	@Override
 	public void onDisable()
 	{
+		bot.close();
+		
 		isEnabled = false;
 	}
 
@@ -134,6 +136,11 @@ public class Discord extends ListenerAdapter implements IModule
 			}
 
 			discord.sendChatMessage(event.getAuthor().getName(), event.getMessage().getContentStripped());
+		}
+
+		public void close()
+		{
+			jda.shutdown();
 		}
 	}
 }
