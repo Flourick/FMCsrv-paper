@@ -89,7 +89,9 @@ public class Discord extends ListenerAdapter implements IModule
 	@Override
 	public void onDisable()
 	{
-		bot.close();
+		if(bot != null) {
+			bot.close();
+		}
 		
 		isEnabled = false;
 	}

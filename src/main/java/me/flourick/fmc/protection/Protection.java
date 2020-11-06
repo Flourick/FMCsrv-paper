@@ -494,6 +494,9 @@ public class Protection implements IModule, CommandExecutor
 				fmc.getLogger().log(Level.SEVERE, "Error creating new daily Protection log file!");
 				return;
 			}
+			finally {
+				currentLogPath = today;
+			}
 
 			protectionLog.addHandler(protectionLogFileHandler);
 		}
