@@ -20,15 +20,13 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
-import io.papermc.lib.PaperLib;
-
 import me.flourick.fmc.FMC;
 import me.flourick.fmc.utils.CConfig;
 import me.flourick.fmc.utils.EmptyTabCompleter;
 import me.flourick.fmc.utils.IModule;
 
 /**
- * Module for various chat features
+ * Module for various chat & customization features
  * 
  * @author Flourick
  */
@@ -100,17 +98,14 @@ public class Chat implements IModule, CommandExecutor
 			}, fmc);
 		}
 
-		if(chatConfig.getConfig().getBoolean("enable-player-colors")) {
-			if(PaperLib.isPaper()) {
-				FileConfiguration config = YamlConfiguration.loadConfiguration(new File("paper.yml"));
-				
-				boolean use_vanilla_world_scoreboard_name_coloring = config.getBoolean("world-settings.default.use-vanilla-world-scoreboard-name-coloring");
-				
-				if(use_vanilla_world_scoreboard_name_coloring) {
-					fmc.getLogger().log(Level.SEVERE, "[Chat] use-vanilla-world-scoreboard-name-coloring has to be set to false in \'paper.yml\' for player colors to work!");
-					onDisable();
-					return false;
-				}
+		if(chatConfig.getConfig().getBoolean("enable-player-colors")) { 
+			FileConfiguration config = YamlConfiguration.loadConfiguration(new File("paper.yml"));
+			boolean use_vanilla_world_scoreboard_name_coloring = config.getBoolean("world-settings.default.use-vanilla-world-scoreboard-name-coloring");
+			
+			if(use_vanilla_world_scoreboard_name_coloring) {
+				fmc.getLogger().log(Level.SEVERE, "[Chat] use-vanilla-world-scoreboard-name-coloring has to be set to false in \'paper.yml\' for player colors to work!");
+				onDisable();
+				return false;
 			}
 
 			fmc.getServer().getPluginManager().registerEvents(new Listener() {

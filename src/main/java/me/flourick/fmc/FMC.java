@@ -1,6 +1,5 @@
 package me.flourick.fmc;
 
-import io.papermc.lib.PaperLib;
 import me.flourick.fmc.administration.Administration;
 import me.flourick.fmc.afk.AFK;
 import me.flourick.fmc.chat.Chat;
@@ -46,8 +45,6 @@ public class FMC extends JavaPlugin
 	@Override
 	public void onEnable()
 	{
-		PaperLib.suggestPaper(this);
-		
 		rootLogger = (Logger) LogManager.getRootLogger();
 		
 		// creates config.yml if not already present

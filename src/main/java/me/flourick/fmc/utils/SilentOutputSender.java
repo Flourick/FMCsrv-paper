@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
@@ -61,6 +62,24 @@ public class SilentOutputSender implements ConsoleCommandSender {
 	@Override
 	public void sendMessage(String[] messages) {
 		Collections.addAll(currentMessages, messages);
+	}
+
+	@Override
+	public void sendMessage(UUID sender, String message)
+	{
+		currentMessages.add(ChatColor.stripColor(message));
+	}
+
+	@Override
+	public void sendMessage(UUID sender, String[] messages)
+	{
+		Collections.addAll(currentMessages, messages);
+	}
+
+	@Override
+	public void sendRawMessage(UUID sender, String message)
+	{
+		currentMessages.add(ChatColor.stripColor(message));
 	}
 
 	@Override
@@ -144,34 +163,28 @@ public class SilentOutputSender implements ConsoleCommandSender {
 	}
 
 	@Override
-	public boolean isConversing()
-	{
+	public boolean isConversing() {
 		return true;
 	}
 
 	@Override
-	public void acceptConversationInput(String input)
-	{
+	public void acceptConversationInput(String input) {
 	}
 
 	@Override
-	public boolean beginConversation(Conversation conversation)
-	{
+	public boolean beginConversation(Conversation conversation) {
 		return false;
 	}
 
 	@Override
-	public void abandonConversation(Conversation conversation)
-	{
+	public void abandonConversation(Conversation conversation) {
 	}
 
 	@Override
-	public void abandonConversation(Conversation conversation, ConversationAbandonedEvent details)
-	{
+	public void abandonConversation(Conversation conversation, ConversationAbandonedEvent details) {
 	}
 
 	@Override
-	public void sendRawMessage(String message)
-	{
+	public void sendRawMessage(String message) {
 	}
 }
