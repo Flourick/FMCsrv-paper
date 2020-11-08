@@ -88,7 +88,7 @@ public class Administration implements IModule, CommandExecutor
 						player.setPlayerListHeaderFooter(tabHeader, tabFooter == null ? null : tabFooter.replace("{TPS}", tps).replace("{MSPT}", mspt));
 					}
 				}
-			}, 20, 20 * 5);
+			}, 20, 20 * 2);
 		}
 
 		return isEnabled = true;
@@ -202,6 +202,6 @@ public class Administration implements IModule, CommandExecutor
 	{
 		double mspt = fmc.getServer().getAverageTickTime();
 
-		return mspt > 50 ? "§4" : "§2" + String.format("%.01f", mspt) + "§r";
+		return (mspt > 50.0D ? "§4" : "§2") + String.format("%.01f", mspt) + "§r";
 	}
 }
