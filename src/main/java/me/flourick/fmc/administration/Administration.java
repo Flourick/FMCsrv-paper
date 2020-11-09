@@ -185,7 +185,7 @@ public class Administration implements IModule, CommandExecutor
 
 	private String getTPS()
 	{
-		double tps = fmc.getServer().getTPS()[0];
+		double tps = fmc.getServer().getTPS()[0] > 20.0D ? 20.0D : fmc.getServer().getTPS()[0];
 		String color = "§2";
 
 		if(tps < 15.0D) {
