@@ -104,8 +104,6 @@ public class Administration implements IModule, CommandExecutor
 	public boolean onCommand(CommandSender sender, Command cmd, String cmdLabel, String args[])
 	{
 		if(cmd.getName().toLowerCase().equals("inactive")) {
-			sender.sendMessage("TPS" + Bukkit.getServer().getTPS());
-
 			if(args.length == 1) {
 				// check if player is whitelisted
 				String[] argz = args[0].split("/");
