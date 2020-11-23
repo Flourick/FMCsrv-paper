@@ -7,6 +7,10 @@
 # message-format: String
 #    -> format of the message that is sent to minecraft server. {PLAYER} is substituted for the discord user who sent the message. Supports colors using '&' or '§' symbol
 # ---
+# send-death-messages: Boolean
+#    -> states if you want death messages to get sent to the discord channel
+# ---
 discord-token: TOKEN
 discord-channel-id: 123
 message-format: "<&2[&aDiscord&2]&7 {PLAYER}&r> "
+send-death-messages: true

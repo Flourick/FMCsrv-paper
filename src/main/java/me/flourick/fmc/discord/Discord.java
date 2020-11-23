@@ -7,6 +7,7 @@ import javax.security.auth.login.LoginException;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 
 import me.flourick.fmc.FMC;
@@ -77,6 +78,17 @@ public class Discord extends ListenerAdapter implements IModule
 				bot.sendMessage("<**" + e.getPlayer().getName() + "**> " + ChatColor.stripColor(e.getMessage()));
 			}
 		}, fmc);
+
+		if(discordConfig.getConfig().getBoolean("send-death-messages")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener()
+			{
+				@EventHandler(priority=EventPriority.HIGHEST)
+				public void OnPlayerAsyncChat(PlayerDeathEvent e)
+				{
+					bot.sendMessage(ChatColor.stripColor(e.getDeathMessage()));
+				}
+			}, fmc);
+		}
 
 		return isEnabled = true;
 	}
