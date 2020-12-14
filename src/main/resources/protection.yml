@@ -1,0 +1,14 @@
+# Protection module configuration file
+# ---
+# no-enderman-grief: (boolean)
+#     -> states if endermen can pickup blocks (set to true to prevent it)
+# logger:
+#     pets: (boolean)
+#         -> logs pet deaths (dogs, parrots, horses...)
+#     chests: (boolean)
+#         -> logs chests/shulkers opening
+# ---
+no-enderman-grief: false
+logger:
+  pets: true
+  chests: true

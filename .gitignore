@@ -36,6 +36,7 @@ buildNumber.properties
 
 # Others
 .settings/
+.vscode/
 .classpath
 .factorypath
 .project

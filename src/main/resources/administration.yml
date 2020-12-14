@@ -1,0 +1,19 @@
+# Administration module configuration file
+# ---
+# enable-custom-tab-header: (boolean)
+#     -> uses custom-tab-header-message as a TAB header
+# custom-tab-header-message: (string)
+#     -> message to be used when enable-custom-tab-header is set to true
+#        you can use '\n' as a new line, '{TPS}' and '{MSPT}' will be substituted for their actual values
+#        supports colors using '§' or '&' symbol
+# enable-custom-tab-footer: (boolean)
+#     -> uses custom-tab-footer-message as a TAB footer
+# custom-tab-footer-message: (string)
+#     -> message to be used when enable-custom-tab-footer is set to true
+#        you can use '\n' as a new line, '{TPS}' and '{MSPT}' will be substituted for their actual values
+#        supports colors using '§' or '&' symbol
+# ---
+enable-custom-tab-header: false
+custom-tab-header-message: "PLACEHOLDER"
+enable-custom-tab-footer: false
+custom-tab-footer-message: "PLACEHOLDER"

@@ -1,9 +1,12 @@
 # Main FMC configuration file
 # ---
-enable-colorme: true
 enable-oneplayersleep: true
 enable-dynfmc: true
 enable-afk: true
 enable-stats: true
-enable-chatter: true
+enable-chat: true
 enable-loot: true
+enable-fun: true
+enable-protection: true
+enable-administration: true
+enable-discord: true

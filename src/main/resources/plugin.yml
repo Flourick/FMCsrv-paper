@@ -1,8 +1,8 @@
 name: FMC
-main: flour.fmc.FMC
+main: me.flourick.fmc.FMC
 version: DEV
-api-version: 1.15
-description: FMC modular vanilla tweaks plugin
+api-version: 1.16
+description: Modular vanilla tweaks plugin
 author: Flourick
 
 commands:
@@ -28,7 +28,7 @@ commands:
         description: Places a markers with your name or make a town marker!
         permission: fmc.dynfmc
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command> §7<§rbase§7|§rtown§7>§r §7<§rset§7|§rremove§7|§rlist§7>§r §7[§rlabel§7]§r"
+        usage: "§eUsage:§r /<command> §7<§rbase§7|§rtown§7|§rtown§7>§r §7<§rset§7|§rremove§7|§rlist§7>§r §7[§rlabel§7]§r"
     afk:
         description: Sets you as an AFK individual.
         permission: fmc.afk
@@ -46,6 +46,26 @@ commands:
         permission: fmc.topstats
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command>"
+    hat:
+        description: Puts the block from your main hand onto your head
+        permission: fmc.hat
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command>"
+    enderchest:
+        description: Opens or drops the enderchest of a given player or yourself
+        permission: fmc.enderchest
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command> §7<§ropen§7|§rdrop§7>§r §7[§rplayer/uuid§7]"
+    inventory:
+        description: Drops the inventory content of a given player or yourself
+        permission: fmc.inventory
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command> §7<§rdrop§7>§r §7[§rplayer/uuid§7]"
+    inactive:
+        description: Removes a player from whitelist, marks their base as abandoned and if stats enabled marks as inactive
+        permission: fmc.inactive
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command> §7[§rplayer/uuid§7]"
 
 permissions:
     fmc.announce:
@@ -74,3 +94,20 @@ permissions:
     fmc.topstats:
         description: Allows the use of topstats command
         default: true
+    fmc.hat:
+        description: Allows the use of hat command
+        default: true
+    fmc.enderchest:
+        description: Allows the use of enderchest command for yourself
+        default: op
+    fmc.enderchest.others:
+        description: Allows the use of enderchest command for yourself and others
+        default: op
+        children:
+            fmc.enderchest: true
+    fmc.inventory:
+        description: Allows the use of inventory command
+        default: op
+    fmc.inactive:
+        description: Allows the use of inactive command
+        default: op
