@@ -1,5 +1,7 @@
 # Loot module configuration file
 # ---
+# craftable-invisible-item-frames: (boolean)
+#    -> allows anyone to craft invisible item frames from 8 normal frames in a chest pattern and one fermented eye in the middle
 # double-shulker-shells: (boolean)
 #    -> shulkers drop 1-2 shulker shells instead of having 50% chance to drop one
 # wandering-trader:
@@ -28,6 +30,7 @@
 #                max-uses: 4
 #                drop-xp: false
 # ---
+craftable-invisible-item-frames: false
 double-shulker-shells: true
 wandering-trader:
     no-wandering-trader-spawn: false

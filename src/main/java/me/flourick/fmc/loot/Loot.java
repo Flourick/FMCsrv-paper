@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.WanderingTrader;
@@ -21,10 +22,14 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.MerchantRecipe;
+import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
 
+import de.tr7zw.changeme.nbtapi.NBTItem;
 import me.flourick.fmc.FMC;
 import me.flourick.fmc.utils.CConfig;
 import me.flourick.fmc.utils.IModule;
+import net.md_5.bungee.api.ChatColor;
 
 /**
  * Loot module
@@ -67,6 +72,10 @@ public class Loot implements IModule
 			}, fmc);
 		}
 
+		if(lootConfig.getConfig().getBoolean("craftable-invisible-item-frames")) {
+			createInvisibleItemFrames();
+		}
+
 		return isEnabled = true;
 	}
 
@@ -86,6 +95,27 @@ public class Loot implements IModule
 	public String getName()
 	{
 		return "Loot";
+	}
+
+	private void createInvisibleItemFrames()
+	{
+		ItemStack invisFrames = new ItemStack(Material.ITEM_FRAME);
+		invisFrames.setAmount(8);
+
+		NBTItem nbtInvisFrames = new NBTItem(invisFrames);
+		nbtInvisFrames.addCompound("EntityTag").setByte("Invisible", (byte) 1);
+		invisFrames = nbtInvisFrames.getItem();
+
+		ItemMeta meta = invisFrames.getItemMeta();
+		meta.setDisplayName(ChatColor.RESET + "Invisible Item Frame");
+		invisFrames.setItemMeta(meta);
+
+		ShapedRecipe recipe = new ShapedRecipe(NamespacedKey.minecraft("invisible_item_frame"), invisFrames);
+		recipe.shape("$$$", "$%$", "$$$");
+		recipe.setIngredient('$', Material.ITEM_FRAME);
+		recipe.setIngredient('%', Material.FERMENTED_SPIDER_EYE);
+
+		fmc.getServer().addRecipe(recipe);
 	}
 	
 	private void handleWanderingTrader()
