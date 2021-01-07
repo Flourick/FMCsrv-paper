@@ -9,6 +9,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 
 import me.flourick.fmc.FMC;
 import me.flourick.fmc.utils.CConfig;
@@ -83,9 +85,36 @@ public class Discord extends ListenerAdapter implements IModule
 			fmc.getServer().getPluginManager().registerEvents(new Listener()
 			{
 				@EventHandler(priority=EventPriority.HIGHEST)
-				public void OnPlayerAsyncChat(PlayerDeathEvent e)
+				public void OnPlayerDeath(PlayerDeathEvent e)
 				{
 					bot.sendMessage(ChatColor.stripColor(e.getDeathMessage()));
+				}
+			}, fmc);
+		}
+
+		if(discordConfig.getConfig().getBoolean("send-join-leave-messages")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener()
+			{
+				@EventHandler(priority=EventPriority.HIGHEST)
+				public void OnPlayerDeath(PlayerJoinEvent e)
+				{
+					if(fmc.getServer().hasWhitelist()) {
+						if(e.getPlayer().isWhitelisted()) {
+							bot.sendMessage(ChatColor.stripColor(e.getJoinMessage()));
+						}
+					}
+					else {
+						bot.sendMessage(ChatColor.stripColor(e.getJoinMessage()));
+					}
+				}
+			}, fmc);
+
+			fmc.getServer().getPluginManager().registerEvents(new Listener()
+			{
+				@EventHandler(priority=EventPriority.HIGHEST)
+				public void OnPlayerDeath(PlayerQuitEvent e)
+				{
+					bot.sendMessage(ChatColor.stripColor(e.getQuitMessage()));
 				}
 			}, fmc);
 		}

@@ -78,9 +78,20 @@ public class Stats implements IModule, CommandExecutor
 			public void onPlayerJoin(PlayerJoinEvent event)
 			{
 				Player player = event.getPlayer();
-				if(!sql.onPlayerJoin(player)) {
-					fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
-					sql.clearExceptionLog();
+
+				if(fmc.getServer().hasWhitelist()) {
+					if(event.getPlayer().isWhitelisted()) {
+						if(!sql.onPlayerJoin(player)) {
+							fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
+							sql.clearExceptionLog();
+						}
+					}
+				}
+				else {
+					if(!sql.onPlayerJoin(player)) {
+						fmc.getLogger().log(Level.SEVERE, "[Stats] {0}", sql.getExceptionLog());
+						sql.clearExceptionLog();
+					}
 				}
 			}
 		}, fmc);

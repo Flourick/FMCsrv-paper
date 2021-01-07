@@ -10,7 +10,11 @@
 # send-death-messages: Boolean
 #    -> states if you want death messages to get sent to the discord channel
 # ---
+# send-join-leave-messages: Boolean
+#    -> states if you want player join and left messages to get sent to the discord channel
+# ---
 discord-token: TOKEN
 discord-channel-id: 123
 message-format: "<&2[&aDiscord&2]&7 {PLAYER}&r> "
 send-death-messages: true
+send-join-leave-messages: true

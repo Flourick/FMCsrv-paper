@@ -78,7 +78,7 @@ public class Chat implements IModule, CommandExecutor
 		// Overrides default join/quit message broadcasted to others
 		if(useCustomMessages) {
 			fmc.getServer().getPluginManager().registerEvents(new Listener() {
-				@EventHandler(priority=EventPriority.HIGHEST)
+				@EventHandler(priority=EventPriority.LOW)
 				public void onPlayerJoin(PlayerJoinEvent event)
 				{
 					Player player = event.getPlayer();
@@ -88,7 +88,7 @@ public class Chat implements IModule, CommandExecutor
 			}, fmc);
 			
 			fmc.getServer().getPluginManager().registerEvents(new Listener() {
-				@EventHandler(priority=EventPriority.HIGHEST)
+				@EventHandler(priority=EventPriority.LOW)
 				public void onPlayerQuit(PlayerQuitEvent event)
 				{
 					Player player = event.getPlayer();
