@@ -6,7 +6,7 @@
 #     pets: (boolean)
 #         -> logs pet deaths (dogs, parrots, horses...)
 #     chests: (boolean)
-#         -> logs chests/shulkers opening
+#         -> logs chests/shulkers actions
 # ---
 no-enderman-grief: false
 logger:

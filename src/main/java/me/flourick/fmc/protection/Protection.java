@@ -11,6 +11,7 @@ import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -36,6 +37,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -70,10 +72,13 @@ public class Protection implements IModule, CommandExecutor
 
 	private final HashMap<String, Inventory> openedEnderChests;
 
+	private final HashMap<Inventory, String> openedContainers;
+
 	public Protection(FMC fmc)
 	{
 		this.fmc = fmc;
 		this.openedEnderChests = new HashMap<>();
+		this.openedContainers = new HashMap<>();
 
 		this.protectionLogsFolder = Paths.get(fmc.getDataFolder().toString(), "logs");
 		this.protectionLog = Logger.getLogger("Protection");
@@ -192,8 +197,9 @@ public class Protection implements IModule, CommandExecutor
 			}, fmc);
 		}
 
-		// logging of chests opening
+		// logging of chests...
 		if(protectionConfig.getConfig().getBoolean("logger.chests")) {
+			// opening of chests
 			fmc.getServer().getPluginManager().registerEvents(new Listener() {
 				@EventHandler
 				public void onPlayerInteractEvent(PlayerInteractEvent event)
@@ -207,6 +213,40 @@ public class Protection implements IModule, CommandExecutor
 						}
 						else if(event.getClickedBlock().getType() == Material.SHULKER_BOX) {
 							log(Level.INFO, event.getPlayer().getName() + " opened a shulker box at [" + event.getClickedBlock().getLocation().getBlockX() + ", " + event.getClickedBlock().getLocation().getBlockY() + ", " + event.getClickedBlock().getLocation().getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
+						}
+						else if(event.getClickedBlock().getType() == Material.BARREL) {
+							log(Level.INFO, event.getPlayer().getName() + " opened a barrel at [" + event.getClickedBlock().getLocation().getBlockX() + ", " + event.getClickedBlock().getLocation().getBlockY() + ", " + event.getClickedBlock().getLocation().getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
+						}
+					}
+				}
+			}, fmc);
+
+			// item taking from chests
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void onInventoryOpenEvent(InventoryOpenEvent event)
+				{
+					InventoryType containers[] = {InventoryType.BARREL, InventoryType.CHEST, InventoryType.SHULKER_BOX};
+
+					if(Arrays.asList(containers).contains(event.getInventory().getType())) {
+						openedContainers.put(event.getInventory(), "TODO: contents");
+					}
+				}
+			}, fmc);
+
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void onInventoryCloseEvent(InventoryCloseEvent event)
+				{
+					InventoryType containers[] = {InventoryType.BARREL, InventoryType.CHEST, InventoryType.SHULKER_BOX};
+
+					if(Arrays.asList(containers).contains(event.getInventory().getType())) {
+						String parseableInventory = openedContainers.get(event.getInventory());
+
+						if(parseableInventory != null) {
+							// TODO: log difference
+
+							openedContainers.remove(event.getInventory());
 						}
 					}
 				}
