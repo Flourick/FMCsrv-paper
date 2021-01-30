@@ -7,8 +7,11 @@
 #         -> logs pet deaths (dogs, parrots, horses...)
 #     chests: (boolean)
 #         -> logs chests/shulkers actions
+#     tnt: (boolean)
+#         -> logs TNT exploding
 # ---
 no-enderman-grief: false
 logger:
   pets: true
   chests: true
+  tnt: true

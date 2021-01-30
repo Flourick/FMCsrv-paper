@@ -36,6 +36,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -245,70 +246,20 @@ public class Protection implements IModule, CommandExecutor
 				}
 			}, fmc);
 		}
-	}
 
-	private List<String> compareInventoryArrays(String[] oldInventory, String[] newInventory)
-	{
-		if(oldInventory.length != newInventory.length) {
-		 	return null;
-		}
-
-		HashMap<String, Integer> oldCounts = new HashMap<>();
-		HashMap<String, Integer> newCounts = new HashMap<>();
-
-		// basically a histogram
-		int sz = oldInventory.length;
-		for(int i = 0; i < sz; i++) {
-			String[] oldStack = oldInventory[i].split("-", 2);
-			String[] newStack = newInventory[i].split("-", 2);
-
-			oldCounts.put(oldStack[1], (oldCounts.get(oldStack[1]) == null) ? Integer.parseInt(oldStack[0]) : oldCounts.get(oldStack[1]) + Integer.parseInt(oldStack[0]));
-			newCounts.put(newStack[1], (newCounts.get(newStack[1]) == null) ? Integer.parseInt(newStack[0]) : newCounts.get(newStack[1]) + Integer.parseInt(newStack[0]));
-		}
-
-		oldCounts.remove("EMPTY");
-		newCounts.remove("EMPTY");
-
-		List<String> takenItems = new ArrayList<>();
-
-		for(Entry<String, Integer> stack : oldCounts.entrySet()) {
-			Integer countInNew = newCounts.get(stack.getKey());
-
-			if(countInNew == null) {
-				takenItems.add(stack.getValue() + " of " + stack.getKey());
-			}
-			else if(countInNew < stack.getValue()) {
-				takenItems.add((stack.getValue() - countInNew) + " of " + stack.getKey());
-			}
-		}
-
-		if(takenItems.isEmpty()) {
-			return null;
-		}
-		else {
-			return takenItems;
-		}
-	}
-
-	private String[] createInventoryArray(ItemStack[] arr)
-	{
-		int sz = arr.length;
-		String out[] = new String[sz];
-
-		for(int i = 0; i < sz; i++) {
-			if(arr[i] == null) {
-				out[i] = "1-EMPTY";
-			}
-			else {
-				out[i] = arr[i].getAmount() + "-" + arr[i].getType().toString();
-
-				if(arr[i].hasItemMeta()) {
-					out[i] += " - " + arr[i].getItemMeta();
+		// logging of TNT
+		if(protectionConfig.getConfig().getBoolean("logger.tnt")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void onBlockPlaceEvent(BlockPlaceEvent event)
+				{
+					if(event.getBlockPlaced().getType() == Material.TNT) {
+						Location loc = event.getBlockPlaced().getLocation();
+						log(Level.INFO, event.getPlayer().getName() + " placed TNT at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
+					}
 				}
-			}
+			}, fmc);
 		}
-
-		return out;
 	}
 
 	@Override
@@ -697,5 +648,69 @@ public class Protection implements IModule, CommandExecutor
 		}
 
 		return newest;
+	}
+
+	private List<String> compareInventoryArrays(String[] oldInventory, String[] newInventory)
+	{
+		if(oldInventory.length != newInventory.length) {
+		 	return null;
+		}
+
+		HashMap<String, Integer> oldCounts = new HashMap<>();
+		HashMap<String, Integer> newCounts = new HashMap<>();
+
+		// basically a histogram
+		int sz = oldInventory.length;
+		for(int i = 0; i < sz; i++) {
+			String[] oldStack = oldInventory[i].split("-", 2);
+			String[] newStack = newInventory[i].split("-", 2);
+
+			oldCounts.put(oldStack[1], (oldCounts.get(oldStack[1]) == null) ? Integer.parseInt(oldStack[0]) : oldCounts.get(oldStack[1]) + Integer.parseInt(oldStack[0]));
+			newCounts.put(newStack[1], (newCounts.get(newStack[1]) == null) ? Integer.parseInt(newStack[0]) : newCounts.get(newStack[1]) + Integer.parseInt(newStack[0]));
+		}
+
+		oldCounts.remove("EMPTY");
+		newCounts.remove("EMPTY");
+
+		List<String> takenItems = new ArrayList<>();
+
+		for(Entry<String, Integer> stack : oldCounts.entrySet()) {
+			Integer countInNew = newCounts.get(stack.getKey());
+
+			if(countInNew == null) {
+				takenItems.add(stack.getValue() + " of " + stack.getKey());
+			}
+			else if(countInNew < stack.getValue()) {
+				takenItems.add((stack.getValue() - countInNew) + " of " + stack.getKey());
+			}
+		}
+
+		if(takenItems.isEmpty()) {
+			return null;
+		}
+		else {
+			return takenItems;
+		}
+	}
+
+	private String[] createInventoryArray(ItemStack[] arr)
+	{
+		int sz = arr.length;
+		String out[] = new String[sz];
+
+		for(int i = 0; i < sz; i++) {
+			if(arr[i] == null) {
+				out[i] = "1-EMPTY";
+			}
+			else {
+				out[i] = arr[i].getAmount() + "-" + arr[i].getType().toString();
+
+				if(arr[i].hasItemMeta()) {
+					out[i] += " - " + arr[i].getItemMeta();
+				}
+			}
+		}
+
+		return out;
 	}
 }
