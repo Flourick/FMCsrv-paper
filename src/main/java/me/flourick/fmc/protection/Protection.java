@@ -207,7 +207,17 @@ public class Protection implements IModule, CommandExecutor
 				public void onInventoryOpenEvent(InventoryOpenEvent event)
 				{
 					if(Arrays.asList(containers).contains(event.getInventory().getType())) {
-						openedContainers.put(event.getInventory(), createInventoryArray(event.getInventory().getContents()));
+						if(event.getInventory().getViewers().size() < 2) {
+							openedContainers.put(event.getInventory(), createInventoryArray(event.getInventory().getContents(), false));
+						}
+						else {
+							String[] updatedDirty = openedContainers.get(event.getInventory());
+
+							if(updatedDirty != null) {
+								updatedDirty[0] = "true";
+								openedContainers.put(event.getInventory(), updatedDirty);
+							}
+						}
 
 						Location loc = event.getInventory().getLocation();
 						if(loc != null) {
@@ -223,23 +233,29 @@ public class Protection implements IModule, CommandExecutor
 				{
 					if(Arrays.asList(containers).contains(event.getInventory().getType())) {
 						String[] oldInventory = openedContainers.get(event.getInventory());
-						String[] curInventory = createInventoryArray(event.getInventory().getContents());
+						String[] curInventory = createInventoryArray(event.getInventory().getContents(), false);
 
-						if(oldInventory != null) {
+						Location loc = event.getInventory().getLocation();
+
+						if(oldInventory != null && loc != null) {
 							List<String> takenItems = compareInventoryArrays(oldInventory, curInventory);
-							
-							if(takenItems != null) {
-								Location loc = event.getInventory().getLocation();
 
-								if(loc != null) {
-									log(Level.INFO, event.getPlayer().getName() + " closed a " + loc.getBlock().getType() + " at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
+							log(Level.INFO, event.getPlayer().getName() + " closed a " + loc.getBlock().getType() + " at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
 
-									for(String item : takenItems) {
+							// basically only logs items taken on the viewer that closes the container last (And yeah there is no way to know which of the viewers took the items)
+							if(takenItems != null && event.getInventory().getViewers().size() < 2) {
+								for(String item : takenItems) {
+									if(oldInventory[0].equals("true")) {
+										log(Level.INFO, " -> is missing: " + item);
+									}
+									else {	
 										log(Level.INFO, " -> took: " + item);
 									}
 								}
 							}
+						}
 
+						if(event.getInventory().getViewers().size() < 2) {
 							openedContainers.remove(event.getInventory());
 						}
 					}
@@ -661,7 +677,7 @@ public class Protection implements IModule, CommandExecutor
 
 		// basically a histogram
 		int sz = oldInventory.length;
-		for(int i = 0; i < sz; i++) {
+		for(int i = 1; i < sz; i++) {
 			String[] oldStack = oldInventory[i].split("-", 2);
 			String[] newStack = newInventory[i].split("-", 2);
 
@@ -693,20 +709,21 @@ public class Protection implements IModule, CommandExecutor
 		}
 	}
 
-	private String[] createInventoryArray(ItemStack[] arr)
+	private String[] createInventoryArray(ItemStack[] arr, boolean dirty)
 	{
 		int sz = arr.length;
-		String out[] = new String[sz];
+		String out[] = new String[sz + 1];
 
+		out[0] = dirty ? "true" : "false";
 		for(int i = 0; i < sz; i++) {
 			if(arr[i] == null) {
-				out[i] = "1-EMPTY";
+				out[i+1] = "1-EMPTY";
 			}
 			else {
-				out[i] = arr[i].getAmount() + "-" + arr[i].getType().toString();
+				out[i+1] = arr[i].getAmount() + "-" + arr[i].getType().toString();
 
 				if(arr[i].hasItemMeta()) {
-					out[i] += " - " + arr[i].getItemMeta();
+					out[i+1] += " - " + arr[i].getItemMeta();
 				}
 			}
 		}

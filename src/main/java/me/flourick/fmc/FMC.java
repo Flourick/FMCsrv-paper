@@ -34,7 +34,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class FMC extends JavaPlugin
 {
 	// can be used to make modules behave differently when debugging
-	public static final boolean DEV_MODE = true;
+	public static final boolean DEV_MODE = false;
 	// CraftBukkit version string
 	public static final String CRAFT_VERSION = Bukkit.getServer().getClass().getPackage().getName().substring(Bukkit.getServer().getClass().getPackage().getName().lastIndexOf(46) + 1);
 
@@ -52,7 +52,7 @@ public class FMC extends JavaPlugin
 		
 		ArrayList<IModule> modules = new ArrayList<>();
 
-		// ----- adding enabled modules to array (ONLY HERE YOU ADD A NEW MODULE) -----
+		// ----- adding enabled modules to array (ONLY HERE AND IN checkConfig() YOU ADD A NEW MODULE) -----
 		if(getConfig().getBoolean("enable-oneplayersleep")) {
 			modules.add(new OnePlayerSleep(this));
 		}
