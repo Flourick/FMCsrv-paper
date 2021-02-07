@@ -36,6 +36,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -74,6 +75,9 @@ public class Protection implements IModule, CommandExecutor
 
 	private final HashMap<String, Inventory> openedEnderChests;
 
+	private final List<Material> logOnBreakBlocks; 			 														     // these get logged on block break event
+	private final List<Material> logOnPlaceBlocks; 			 														 	 // these get logged on block place event
+
 	private final InventoryType containers[] = {InventoryType.BARREL, InventoryType.CHEST, InventoryType.SHULKER_BOX};   // only these get logged on item transfers
 	private final HashMap<Inventory, String[]> openedContainers;
 
@@ -82,6 +86,9 @@ public class Protection implements IModule, CommandExecutor
 		this.fmc = fmc;
 		this.openedEnderChests = new HashMap<>();
 		this.openedContainers = new HashMap<>();
+
+		this.logOnBreakBlocks = new ArrayList<Material>();
+		this.logOnPlaceBlocks = new ArrayList<Material>();
 
 		this.protectionLogsFolder = Paths.get(fmc.getDataFolder().toString(), "logs");
 		this.protectionLog = Logger.getLogger("Protection");
@@ -201,7 +208,7 @@ public class Protection implements IModule, CommandExecutor
 		}
 
 		// logging of containers
-		if(protectionConfig.getConfig().getBoolean("logger.chests")) {
+		if(protectionConfig.getConfig().getBoolean("logger.containers")) {
 			fmc.getServer().getPluginManager().registerEvents(new Listener() {
 				@EventHandler
 				public void onInventoryOpenEvent(InventoryOpenEvent event)
@@ -221,7 +228,7 @@ public class Protection implements IModule, CommandExecutor
 
 						Location loc = event.getInventory().getLocation();
 						if(loc != null) {
-							log(Level.INFO, event.getPlayer().getName() + " opened a " + loc.getBlock().getType() + " at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
+							log(Level.INFO, event.getPlayer().getName() + " opened " + loc.getBlock().getType() + " at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
 						}
 					}
 				}
@@ -238,18 +245,33 @@ public class Protection implements IModule, CommandExecutor
 						Location loc = event.getInventory().getLocation();
 
 						if(oldInventory != null && loc != null) {
-							List<String> takenItems = compareInventoryArrays(oldInventory, curInventory);
+							List<List<String>> group = compareInventoryArrays(oldInventory, curInventory);
+							List<String> takenItems = group.get(0);
+							List<String> addedItems = group.get(1);
 
-							log(Level.INFO, event.getPlayer().getName() + " closed a " + loc.getBlock().getType() + " at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
+							log(Level.INFO, event.getPlayer().getName() + " closed " + loc.getBlock().getType() + " at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
 
-							// basically only logs items taken on the viewer that closes the container last (And yeah there is no way to know which of the viewers took the items)
-							if(takenItems != null && event.getInventory().getViewers().size() < 2) {
-								for(String item : takenItems) {
-									if(oldInventory[0].equals("true")) {
-										log(Level.INFO, " -> is missing: " + item);
+							// basically only logs items on the viewer that closes the container last (And yeah there is no way to know which of the viewers took or placed the items)
+							if(event.getInventory().getViewers().size() < 2) {
+								if(takenItems != null) {
+									for(String item : takenItems) {
+										if(oldInventory[0].equals("true")) {
+											log(Level.INFO, " -> is missing: " + item);
+										}
+										else {	
+											log(Level.INFO, " -> took: " + item);
+										}
 									}
-									else {	
-										log(Level.INFO, " -> took: " + item);
+								}
+								
+								if(addedItems != null) {
+									for(String item : addedItems) {
+										if(oldInventory[0].equals("true")) {
+											log(Level.INFO, " -> has additional: " + item);
+										}
+										else {	
+											log(Level.INFO, " -> added: " + item);
+										}
 									}
 								}
 							}
@@ -263,18 +285,48 @@ public class Protection implements IModule, CommandExecutor
 			}, fmc);
 		}
 
-		// logging of TNT
-		if(protectionConfig.getConfig().getBoolean("logger.tnt")) {
-			fmc.getServer().getPluginManager().registerEvents(new Listener() {
-				@EventHandler
-				public void onBlockPlaceEvent(BlockPlaceEvent event)
-				{
-					if(event.getBlockPlaced().getType() == Material.TNT) {
-						Location loc = event.getBlockPlaced().getLocation();
-						log(Level.INFO, event.getPlayer().getName() + " placed TNT at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
-					}
+		// logging of block placing
+		if(protectionConfig.getConfig().getBoolean("logger.block-place.enabled")) {
+			protectionConfig.getConfig().getStringList("logger.block-place.block-list").forEach((block) -> {
+				if(Material.getMaterial(block) != null) { // makes sure to skip invalid entries
+					logOnPlaceBlocks.add(Material.getMaterial(block));
 				}
-			}, fmc);
+			});
+
+			// no need to log if there is nothing to log
+			if(!logOnPlaceBlocks.isEmpty()) {
+				fmc.getServer().getPluginManager().registerEvents(new Listener() {
+					@EventHandler
+					public void onBlockPlaceEvent(BlockPlaceEvent event)
+					{
+						if(logOnPlaceBlocks.contains(event.getBlock().getType())) {
+							log(Level.INFO, event.getPlayer().getName() + " placed " + event.getBlock().getType() + " at [" + event.getBlock().getX() + ", " + event.getBlock().getY() + ", " + event.getBlock().getZ() + "] in " + event.getPlayer().getWorld().getName());
+						}
+					}
+				}, fmc);
+			}
+		}
+
+		// logging of block breaking
+		if(protectionConfig.getConfig().getBoolean("logger.block-break.enabled")) {
+			protectionConfig.getConfig().getStringList("logger.block-break.block-list").forEach((block) -> {
+				if(Material.getMaterial(block) != null) { // makes sure to skip invalid entries
+					logOnBreakBlocks.add(Material.getMaterial(block));
+				}
+			});
+
+			// no need to log if there is nothing to log
+			if(!logOnBreakBlocks.isEmpty()) {
+				fmc.getServer().getPluginManager().registerEvents(new Listener() {
+					@EventHandler
+					public void onBlockBreakEvent(BlockBreakEvent event)
+					{
+						if(logOnBreakBlocks.contains(event.getBlock().getType())) {
+							log(Level.INFO, event.getPlayer().getName() + " broke " + event.getBlock().getType() + " at [" + event.getBlock().getX() + ", " + event.getBlock().getY() + ", " + event.getBlock().getZ() + "] in " + event.getPlayer().getWorld().getName());
+						}
+					}
+				}, fmc);
+			}
 		}
 	}
 
@@ -666,7 +718,7 @@ public class Protection implements IModule, CommandExecutor
 		return newest;
 	}
 
-	private List<String> compareInventoryArrays(String[] oldInventory, String[] newInventory)
+	private List<List<String>> compareInventoryArrays(String[] oldInventory, String[] newInventory)
 	{
 		if(oldInventory.length != newInventory.length) {
 		 	return null;
@@ -688,6 +740,7 @@ public class Protection implements IModule, CommandExecutor
 		oldCounts.remove("EMPTY");
 		newCounts.remove("EMPTY");
 
+		// getting items taken
 		List<String> takenItems = new ArrayList<>();
 
 		for(Entry<String, Integer> stack : oldCounts.entrySet()) {
@@ -701,12 +754,25 @@ public class Protection implements IModule, CommandExecutor
 			}
 		}
 
-		if(takenItems.isEmpty()) {
-			return null;
+		// getting items added
+		List<String> addedItems = new ArrayList<>();
+
+		for(Entry<String, Integer> stack : newCounts.entrySet()) {
+			Integer countInOld = oldCounts.get(stack.getKey());
+
+			if(countInOld == null) {
+				addedItems.add(stack.getValue() + " of " + stack.getKey());
+			}
+			else if(countInOld < stack.getValue()) {
+				addedItems.add((stack.getValue() - countInOld) + " of " + stack.getKey());
+			}
 		}
-		else {
-			return takenItems;
-		}
+
+		List<List<String>> ret = new ArrayList<List<String>>(2);
+		ret.add(takenItems.isEmpty() ? null : takenItems);
+		ret.add(addedItems.isEmpty() ? null : addedItems);
+
+		return ret;
 	}
 
 	private String[] createInventoryArray(ItemStack[] arr, boolean dirty)

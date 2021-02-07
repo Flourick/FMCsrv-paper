@@ -5,6 +5,8 @@ import java.util.logging.Level;
 
 import net.md_5.bungee.api.ChatColor;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -226,8 +228,18 @@ public class Stats implements IModule, CommandExecutor
 				
 				return true;
 			}
+
+			OfflinePlayer[] players = Bukkit.getOfflinePlayers();
 			
-			sendTopStatsMessage(sender, sqlStats, SrvTopStats.getServerTopStats());
+			// since it can take several seconds, better to not stall the entire server
+			Bukkit.getScheduler().runTaskAsynchronously(fmc, new Runnable()
+			{
+				@Override
+				public void run() {
+					sendTopStatsMessage(sender, sqlStats, SrvTopStats.getServerTopStats(players));
+				}
+						
+			});
 		}
 		
 		return true;

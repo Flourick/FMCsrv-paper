@@ -2,7 +2,6 @@ package me.flourick.fmc.stats;
 
 import java.util.concurrent.TimeUnit;
 
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 
@@ -123,7 +122,7 @@ public class SrvTopStats
 		return str;
 	}
 
-	public static SrvTopStats getServerTopStats()
+	public static SrvTopStats getServerTopStats(OfflinePlayer[] playersToCheck)
 	{
 		int topDeaths = 0;
 		String topWhoDeaths = "?";
@@ -143,7 +142,7 @@ public class SrvTopStats
 		int topMobKills = 0;
 		String topWhoMobKills = "?";
 
-		for(OfflinePlayer player : Bukkit.getOfflinePlayers()) {
+		for(OfflinePlayer player : playersToCheck) {
 			int deaths = player.getStatistic(Statistic.DEATHS);
 			int playerKils = player.getStatistic(Statistic.PLAYER_KILLS);
 			int playTime = player.getStatistic(Statistic.PLAY_ONE_MINUTE);

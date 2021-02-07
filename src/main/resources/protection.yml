@@ -1,17 +1,51 @@
 # Protection module configuration file
 # ---
 # no-enderman-grief: (boolean)
-#     -> states if endermen can pickup blocks (set to true to prevent it)
+#     -> states if endermen can pickup blocks (set to true to prevent them)
 # logger:
 #     pets: (boolean)
 #         -> logs pet deaths (dogs, parrots, horses...)
-#     chests: (boolean)
-#         -> logs chests/shulkers actions
-#     tnt: (boolean)
-#         -> logs TNT exploding
+#     containers: (boolean)
+#         -> logs containers actions (eg. chests opening/closing/item taking...)
+#     block-break:
+#         enabled: (boolean)
+#             -> logs blocks breaking
+#         block-list:
+#             -> list of blocks to log (format is as here https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html)
+#     block-place:
+#         enabled: (boolean)
+#             -> logs blocks placing
+#         block-list:
+#             -> list of blocks to log (format is as here https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Material.html)
 # ---
 no-enderman-grief: false
 logger:
   pets: true
-  chests: true
-  tnt: true
+  containers: true
+  block-place:
+    enabled: true
+    block-list:
+      - TNT
+  block-break:
+    enabled: true
+    block-list:
+      - BARREL
+      - CHEST
+      - TRAPPED_CHEST
+      - SHULKER_BOX
+      - WHITE_SHULKER_BOX
+      - ORANGE_SHULKER_BOX
+      - MAGENTA_SHULKER_BOX
+      - LIGHT_BLUE_SHULKER_BOX
+      - YELLOW_SHULKER_BOX
+      - LIME_SHULKER_BOX
+      - PINK_SHULKER_BOX
+      - GRAY_SHULKER_BOX
+      - LIGHT_GRAY_SHULKER_BOX
+      - CYAN_SHULKER_BOX
+      - PURPLE_SHULKER_BOX
+      - BLUE_SHULKER_BOX
+      - BROWN_SHULKER_BOX
+      - GREEN_SHULKER_BOX
+      - RED_SHULKER_BOX
+      - BLACK_SHULKER_BOX
