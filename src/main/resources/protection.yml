@@ -5,6 +5,8 @@
 # logger:
 #     pets: (boolean)
 #         -> logs pet deaths (dogs, parrots, horses...)
+#     creepers: (boolean)
+#         -> logs creeper explosions
 #     containers: (boolean)
 #         -> logs containers actions (eg. chests opening/closing/item taking...)
 #     block-break:
@@ -21,6 +23,7 @@
 no-enderman-grief: false
 logger:
   pets: true
+  creepers: true
   containers: true
   block-place:
     enabled: true

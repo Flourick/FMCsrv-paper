@@ -29,6 +29,7 @@ import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -40,6 +41,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.event.inventory.InventoryType;
@@ -132,6 +134,9 @@ public class Protection implements IModule, CommandExecutor
 		fmc.getCommand("inventory").setTabCompleter(new InventoryTabCompleter());
 		fmc.getCommand("inventory").setExecutor(this);
 
+		fmc.getCommand("deluser").setTabCompleter(new DelUserTabCompleter());
+		fmc.getCommand("deluser").setExecutor(this);
+
 		// prevent enderman from taking blocks
 		if(protectionConfig.getConfig().getBoolean("no-enderman-grief")) {
 			fmc.getServer().getPluginManager().registerEvents(new Listener() {
@@ -190,7 +195,7 @@ public class Protection implements IModule, CommandExecutor
 		if(protectionConfig.getConfig().getBoolean("logger.pets")) {
 			fmc.getServer().getPluginManager().registerEvents(new Listener() {
 				@EventHandler
-				public void onEntityDeath(EntityDeathEvent event)
+				public void onPetDeath(EntityDeathEvent event)
 				{
 					if(event.getEntity() instanceof Tameable) {
 						Tameable entity = (Tameable) event.getEntity();
@@ -200,8 +205,22 @@ public class Protection implements IModule, CommandExecutor
 							String killer = entity.getKiller() == null ? "unknown" : entity.getKiller().getName();
 							String owner = entity.getOwner().getName() == null ? "unknown" : entity.getOwner().getName();
 
-							log(Level.INFO, name + " owned by " + owner + " was killed by " + killer + " via " + entity.getLastDamageCause().getCause() + "!");
+							Location loc = event.getEntity().getLocation();
+							log(Level.INFO, name + " owned by " + owner + " was killed by " + killer + " via " + entity.getLastDamageCause().getCause() + " at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getEntity().getWorld().getName());
 						}
+					}
+				}
+			}, fmc);
+		}
+
+		// logs creepers exploding
+		if(protectionConfig.getConfig().getBoolean("logger.creepers")) {
+			fmc.getServer().getPluginManager().registerEvents(new Listener() {
+				@EventHandler
+				public void onCreeperExplosion(EntityExplodeEvent event)
+				{
+					if(event.getEntity() instanceof Creeper) {
+						log(Level.INFO, "Creeper exploded at [" + event.getLocation().getBlockX() + ", " + event.getLocation().getBlockY() + ", " + event.getLocation().getBlockZ() + "] in " + event.getEntity().getWorld().getName());
 					}
 				}
 			}, fmc);
@@ -545,6 +564,26 @@ public class Protection implements IModule, CommandExecutor
 					}
 
 					player.getInventory().clear();
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+		}
+		else if(cmd.getName().toLowerCase().equals("deluser")) {
+			if(args.length == 1) {
+				String[] argz = args[0].split("/");
+
+				if(argz.length == 2) {
+					if(OfflinePlayerUtils.deleteUserDataFiles(argz[1])) {
+						sender.sendMessage("Successfully deleted user's .dat files!");
+					}
+					else {
+						sender.sendMessage("Could not find any user's .dat files!");
+					}
 				}
 				else {
 					return false;

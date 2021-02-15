@@ -48,8 +48,8 @@ public class OfflinePlayerUtils
 	/**
 	* Gets Ender Chest of offline player
 	* 
-	* @param  name	Name of the player (used in the Ender Chest display)
-	* @param  uuid  String represantation of UUID class coresponding to the player
+	* @param name Name of the player (used in the Ender Chest display)
+	* @param uuid String represantation of UUID class coresponding to the player
 	* 
 	* @return The Ender Chest of given player
 	*/
@@ -57,21 +57,23 @@ public class OfflinePlayerUtils
 	{
 		Inventory eChest = null;
 
-		File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
+		if(Bukkit.getWorld("world") != null) {
+			File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
 
-		if(nbtFile.exists() && nbtFile.canRead()) {
-			try {
-				NBTFile file = new NBTFile(nbtFile);
-				NBTCompoundList enderChest = file.getCompoundList("EnderItems");
+			if(nbtFile.exists() && nbtFile.canRead()) {
+				try {
+					NBTFile file = new NBTFile(nbtFile);
+					NBTCompoundList enderChest = file.getCompoundList("EnderItems");
 
-				eChest = Bukkit.createInventory(new MyInventoryHolder(uuid, eChest), InventoryType.ENDER_CHEST, name + "\'s Ender Chest");
+					eChest = Bukkit.createInventory(new MyInventoryHolder(uuid, eChest), InventoryType.ENDER_CHEST, name + "\'s Ender Chest");
 
-				for(NBTCompound entry : enderChest) {
-					eChest.setItem(entry.getByte("Slot"), NBTItem.convertNBTtoItem(entry));
+					for(NBTCompound entry : enderChest) {
+						eChest.setItem(entry.getByte("Slot"), NBTItem.convertNBTtoItem(entry));
+					}
 				}
-			}
-			catch(IOException | SecurityException | IllegalArgumentException e) {
-				eChest = null;
+				catch(IOException | SecurityException | IllegalArgumentException e) {
+					eChest = null;
+				}
 			}
 		}
 
@@ -81,40 +83,43 @@ public class OfflinePlayerUtils
 	/**
 	* Saves Ender Chest of offline player
 	* 
-	* @param  uuid        String representation of UUID class corresponding to the player
-	* @param  enderChest  Ender Chest contents, can be null to empty it
+	* @param uuid       String representation of UUID class corresponding to the player
+	* @param enderChest Ender Chest contents, can be null to empty it
 	*
 	* @return true if saving was successful, false otherwise
 	*/
 	public static boolean saveOfflinePlayerEnderChest(String uuid, Inventory enderChest)
 	{
-		File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
 		boolean success = false;
 
-		if(nbtFile.exists() && nbtFile.canWrite()) {
-			try {
-				NBTFile file = new NBTFile(nbtFile);
-				
-				NBTCompoundList NBTeChest = file.getCompoundList("EnderItems");
-				NBTeChest.clear();
+		if(Bukkit.getWorld("world") != null) {
+			File nbtFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
 
-				if(enderChest != null) {
-					for(Byte i = 0; i < 27; i++) {
-						ItemStack item = enderChest.getItem(i);
+			if(nbtFile.exists() && nbtFile.canWrite()) {
+				try {
+					NBTFile file = new NBTFile(nbtFile);
+					
+					NBTCompoundList NBTeChest = file.getCompoundList("EnderItems");
+					NBTeChest.clear();
 
-						if(item != null && item.getType() != Material.AIR) {
-							NBTCompound compound = NBTItem.convertItemtoNBT(item);
-							compound.setByte("Slot", i);
-							NBTeChest.addCompound(compound);
+					if(enderChest != null) {
+						for(Byte i = 0; i < 27; i++) {
+							ItemStack item = enderChest.getItem(i);
+
+							if(item != null && item.getType() != Material.AIR) {
+								NBTCompound compound = NBTItem.convertItemtoNBT(item);
+								compound.setByte("Slot", i);
+								NBTeChest.addCompound(compound);
+							}
 						}
 					}
-				}
 
-				file.save();
-				success = true;
-			}
-			catch(IOException | SecurityException | IllegalArgumentException e) {
-				// nada
+					file.save();
+					success = true;
+				}
+				catch(IOException | SecurityException | IllegalArgumentException e) {
+					// nada
+				}
 			}
 		}
 
@@ -124,8 +129,8 @@ public class OfflinePlayerUtils
 	/**
 	* Gets Inventory of offline player
 	* 
-	* @param  name	Name of the player
-	* @param  uuid  String represantation of UUID class corresponding to the player
+	* @param name Name of the player
+	* @param uuid String represantation of UUID class corresponding to the player
 	* 
 	* @return The Inventory of given player
 	*/
@@ -159,8 +164,8 @@ public class OfflinePlayerUtils
 	/**
 	* Saves Inventory of offline player
 	* 
-	* @param  uuid       String representation of UUID class coresponding to the player
-	* @param  inventory  Inventory contents, can be null to empty it
+	* @param uuid      String representation of UUID class corresponding to the player
+	* @param inventory Inventory contents, can be null to empty it
 	*
 	* @return true if saving was successful, false otherwise
 	*/
@@ -192,6 +197,42 @@ public class OfflinePlayerUtils
 				success = true;
 			}
 			catch(IOException | SecurityException | IllegalArgumentException e) {
+				// nada
+			}
+		}
+
+		return success;
+	}
+
+	/**
+	* Deletes users .dat files, basically resetting all of his progress
+	* 
+	* @param uuid String representation of UUID class corresponding to the player
+	*
+	* @return true if deletion was successful, false if not or no files found for given user
+	*/
+	public static boolean deleteUserDataFiles(String uuid)
+	{
+		File dataFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
+		File dataFileOld = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
+		boolean success = false;
+
+		if(dataFile.exists() && dataFile.canWrite()) {
+			try {
+				dataFile.delete();
+				success = true;
+			}
+			catch(SecurityException e) {
+				// nada
+			}
+		}
+
+		if(dataFileOld.exists() && dataFileOld.canWrite()) {
+			try {
+				dataFileOld.delete();
+				success = true;
+			}
+			catch(SecurityException e) {
 				// nada
 			}
 		}

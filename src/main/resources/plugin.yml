@@ -66,6 +66,11 @@ commands:
         permission: fmc.inactive
         permission-message: §cYou do not have permission for that!
         usage: "§eUsage:§r /<command> §7[§rplayer/uuid§7]"
+    deluser:
+        description: Deletes associated .dat files of given user
+        permission: fmc.deluser
+        permission-message: §cYou do not have permission for that!
+        usage: "§eUsage:§r /<command> §7[§rplayer/uuid§7]"
 
 permissions:
     fmc.announce:
@@ -110,4 +115,7 @@ permissions:
         default: op
     fmc.inactive:
         description: Allows the use of inactive command
+        default: op
+    fmc.deluser:
+        description: Allows the use of deluser command
         default: op

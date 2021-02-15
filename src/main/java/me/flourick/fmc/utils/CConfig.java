@@ -28,8 +28,8 @@ public class CConfig
 	/**
 	* The one and only constructor of the CConfig class
 	* 
-	* @param  fmc         FMC plugin instance
-	* @param  configName  name of the config file including .yml (ex. 'chatter.yml')
+	* @param fmc        FMC plugin instance
+	* @param configName name of the config file including .yml (ex. 'chatter.yml')
 	*/
 	public CConfig(FMC fmc, String configName)
 	{
@@ -93,6 +93,6 @@ public class CConfig
 		}
 		if(!customConfigFile.exists()) {            
 			 fmc.saveResource(configName, false);
-		 }
+		}
 	}
 }
