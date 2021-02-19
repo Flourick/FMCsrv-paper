@@ -4,6 +4,7 @@ import me.flourick.fmc.FMC;
 import me.flourick.fmc.stats.Stats;
 import me.flourick.fmc.utils.CConfig;
 import me.flourick.fmc.utils.IModule;
+import me.flourick.fmc.utils.OfflinePlayerUtils;
 import me.flourick.fmc.utils.SilentOutputSender;
 
 import net.md_5.bungee.api.ChatColor;
@@ -51,6 +52,9 @@ public class Administration implements IModule, CommandExecutor
 	{
 		fmc.getCommand("inactive").setExecutor(this);
 		fmc.getCommand("inactive").setTabCompleter(new InactiveTabCompleter());
+
+		fmc.getCommand("deluser").setTabCompleter(new DelUserTabCompleter());
+		fmc.getCommand("deluser").setExecutor(this);
 
 		soSender = new SilentOutputSender(fmc.getServer().getConsoleSender());
 
@@ -152,6 +156,26 @@ public class Administration implements IModule, CommandExecutor
 					}
 					catch (IllegalArgumentException e) {
 						sender.sendMessage(ChatColor.RED + "Could not find such player!");
+					}
+				}
+				else {
+					return false;
+				}
+			}
+			else {
+				return false;
+			}
+		}
+		else if(cmd.getName().toLowerCase().equals("deluser")) {
+			if(args.length == 1) {
+				String[] argz = args[0].split("/");
+
+				if(argz.length == 2) {
+					if(OfflinePlayerUtils.deleteUserDataFiles(argz[1])) {
+						sender.sendMessage("Successfully deleted user's .dat files!");
+					}
+					else {
+						sender.sendMessage("Could not find any user's .dat files!");
 					}
 				}
 				else {

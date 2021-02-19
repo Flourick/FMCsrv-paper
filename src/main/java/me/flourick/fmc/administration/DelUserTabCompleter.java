@@ -1,4 +1,4 @@
-package me.flourick.fmc.protection;
+package me.flourick.fmc.administration;
 
 import java.util.ArrayList;
 import java.util.List;

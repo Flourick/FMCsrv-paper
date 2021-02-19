@@ -134,9 +134,6 @@ public class Protection implements IModule, CommandExecutor
 		fmc.getCommand("inventory").setTabCompleter(new InventoryTabCompleter());
 		fmc.getCommand("inventory").setExecutor(this);
 
-		fmc.getCommand("deluser").setTabCompleter(new DelUserTabCompleter());
-		fmc.getCommand("deluser").setExecutor(this);
-
 		// prevent enderman from taking blocks
 		if(protectionConfig.getConfig().getBoolean("no-enderman-grief")) {
 			fmc.getServer().getPluginManager().registerEvents(new Listener() {
@@ -573,27 +570,7 @@ public class Protection implements IModule, CommandExecutor
 				return false;
 			}
 		}
-		else if(cmd.getName().toLowerCase().equals("deluser")) {
-			if(args.length == 1) {
-				String[] argz = args[0].split("/");
-
-				if(argz.length == 2) {
-					if(OfflinePlayerUtils.deleteUserDataFiles(argz[1])) {
-						sender.sendMessage("Successfully deleted user's .dat files!");
-					}
-					else {
-						sender.sendMessage("Could not find any user's .dat files!");
-					}
-				}
-				else {
-					return false;
-				}
-			}
-			else {
-				return false;
-			}
-		}
-
+		
 		return true;
 	}
 
