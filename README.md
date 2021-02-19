@@ -14,7 +14,7 @@ Features are divided into 10 modules for easier configuration of what you want t
 
 * ### Administration
 
-    Unfinished module for various administration features, as it is you can change the TAB list header & footer and also adds two commands `/deluser` that will delete given users *.dat* files, which basically resets all of his progress on the server.
+    Module for various administration features, as it is you can change the TAB list header & footer and also adds two commands `/deluser` that will delete given users *.dat* files, which basically resets all of his progress on the server.
 
     Second command is `/inactive` which is basically a wrapper for three commands. It removes given player from whitelist, then marks his base on dynmap as abandoned and updates the inactive tag in database. The last two are only performed if their corresponding modules are enabled.
 
@@ -127,6 +127,6 @@ Features are divided into 10 modules for easier configuration of what you want t
 
 * ### Stats
 
-    Also a bit unfinished. Stores some user info in a MySQL database. Mainly good for keeping track how many times a user joined and when was the last time he did so.
+    Stores some user info in a MySQL database. Mainly good for keeping track how many times a user joined and when was the last time he did so.
 
 ---
