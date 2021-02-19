@@ -20,7 +20,7 @@ Features are divided into 10 modules for easier configuration of what you want t
 
 * ### AFK
 
-    Simple AFK module, by default players will get a TAB AFK prefix after five minutes of inactivity, optionally it can also be announced in chat when someone is AFK. Also add a `/afk` command to toggle the AFK state manually.
+    Simple AFK module, by default players will get a TAB AFK prefix after five minutes of inactivity, optionally it can also be announced in chat when someone is AFK. Also adds an `/afk` command to toggle the AFK state manually.
 
 * ### Discord
 
@@ -28,7 +28,7 @@ Features are divided into 10 modules for easier configuration of what you want t
 
 * ### DynFMC
 
-    Module for marking bases/towns and points of interest on DynMap. The command to do so is `/dynfmc`. Basically works as a wrapper for `/dmarker` command. By default all players can use it to mark one base, infinite towns and infinite points of interest. This module does not have a config.
+    Module for marking bases, towns and points of interest on DynMap. The command to do so is `/dynfmc`. Basically works as a wrapper for `/dmarker` command. By default all players can use it to mark one base, infinite towns and infinite points of interest. This module does not have a config.
 
 * ### Fun
 
@@ -109,24 +109,26 @@ Features are divided into 10 modules for easier configuration of what you want t
     ...
     ```
 
-    So what does this example do? First of all removes all vanilla trades from any trader that will spawn. Then you can see four available trades in the config (trade-one to trade-four). First two trades are in group 0 which means that they will ALWAYS be present in any trader. As is in the comments you can omit the group and propability. Then we have *trade-three* and *trade-four*, those are in the same group (1 in this example but can be any number larger than zero). The important part is that they are in the same group which means **only one** trade from a group will be added to the trader! As in the example there is a 50/50 chance of the final trade to either be *trade-three* or *trade-four*. This also means that the cumulative propability in a defined group has to be **exactly** 100. To sum this example up Wandering Trader will have **three** trades, first two are given and the third one is determined from the group 1.
+    So what does this example do? First of all removes all vanilla trades from any trader that will spawn. Then you can see four available trades in the config (*trade-one* to *trade-four*). Every trade has a group id, propability in such group, first ingredient, second ingredient and the output you will receive, then you can set how many times the trade can be used before locking and if it drops xp or not.
+
+    First two trades are in group 0 which means that they will ALWAYS be present in any trader. As is in the comments you can omit the group and propability. Then we have *trade-three* and *trade-four*, those are in the same group (1 in this example but can be any number larger than zero). The important part is that they are in the same group which means **only one** trade from a group will be added to the trader! As in the example there is a 50/50 chance of the final trade to either be *trade-three* or *trade-four*. This also means that the cumulative propability in a defined group has to be **exactly** 100. To sum this example up Wandering Trader will have **three** trades, first two are given and the third one is determined from the group 1.
 
     If still unsure what exactly does it do just plop this in your loot config and spawn a few traders, then it should be crystal clear.
 
 * ### OnePlayerSleep
 
-    Only one player needs to sleep through the night, however this time there is a twist! If there is someone on the server who needs the night (hunting mobs, taking epic night screenshots...), then he can simply kick him out of the bed. Cruel but effective. Kicking works by clicking on the chat message that pops-up when someone wants to sleep or you can type the `/wakeplayer` command manually.
+    Only one player needs to sleep through the night, however this time there is a twist! If there is someone on the server who needs the night (hunting mobs, taking epic night screenshots...), then he can simply kick him out of the bed. Cruel but effective. Kicking works by clicking on the chat message that pops-up when someone wants to sleep or typing the `/wakeplayer` command manually.
 
 * ### Protection
 
-    Adds three features. First smaller one prevents endermen from picking up blocks. Then as an administrator you can open and edit enderchests of any player that has ever played on the server, yes offline ones too. You can also drop them directly on the ground. You can also drop their inventories but those cannot be opened.
+    Adds three features. First smaller one prevents endermen from picking up blocks. Then as an administrator you can open and edit enderchests of any player that has ever played on the server, yes offline ones too. You can also drop them directly on the ground. You can also drop their inventories but those cannot be opened. Commands are `/enderchest` and `/inventory`.
 
-    A big plusplus of this is the logger. You can set it to log pet deaths, creeper explosions, block placing and block breaking and all things container related such as items being taken/put into them and opening/closing.
+    A big plusplus of this is the logger. You can set it to log pet deaths, creeper explosions, block placing/breaking and all things container related such as items being taken/put into them and opening/closing.
 
-    If you enable everything then be warned that the daily log files can get pretty big. They are also stored in `/plugins/FMC/logs` to prevent cluttering the normal logs.
+    If you enable everything then be warned that the daily log files can get pretty big. They are also stored in `/plugins/FMC/logs` to prevent cluttering the vanilla logs.
 
 * ### Stats
 
-    Stores some user info in a MySQL database. Mainly good for keeping track how many times a user joined and when was the last time he did so.
+    Stores some user info in a MySQL database. Mainly useful for keeping track how many times a user joined and when was the last time he did so. Adds a `/stats` command to see your or others statistics and also a `/topstats` command that will show some additional statistics (such as cake slices eaten) and who is the best in each of those stats.
 
 ---
