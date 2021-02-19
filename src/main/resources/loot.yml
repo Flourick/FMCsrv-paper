@@ -5,16 +5,16 @@
 # double-shulker-shells: (boolean)
 #    -> shulkers drop 1-2 shulker shells instead of having 50% chance to drop one
 # wandering-trader:
-#    -> any changes made to custom trades will not affect already spawned wandering villagers!
+#    -> any changes made to custom trades will not affect already spawned wandering traders!
 #    no-wandering-trader-spawn: (boolean)
 #        -> disables wandering trader spawning (also no trade llamas, EVEN FROM EGGS!), you can also prevent natural trader spawning by setting doTraderSpawning gamerule to false!
 #    custom-trades:
 #        enabled: (boolean)
 #            -> use custom trades for wandering trader
 #        remove-vanilla-trades: (boolean)
-#            -> removes default vanilla trades (WT WILL HAVE NO TRADES IF YOU DON'T SUPPLY YOUR OWN)
+#            -> removes default vanilla trades (WANDERING TRADER WILL HAVE NO TRADES IF YOU DON'T SUPPLY YOUR OWN)
 #        trades:
-#            -> trade below is an EXAMPLE and does not function on it's own, see WIKI for correct usage
+#            -> trade below is an EXAMPLE and does not function on it's own
 #            trade-seven:
 #                group-id: 2
 #                propability-in-group: 50

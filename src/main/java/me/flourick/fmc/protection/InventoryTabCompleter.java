@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 /**
- * inventory command TAB completion
+ * inventory command TAB completion.
  * 
  * @author Flourick
  */

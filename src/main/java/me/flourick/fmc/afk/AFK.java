@@ -25,7 +25,7 @@ import me.flourick.fmc.utils.EmptyTabCompleter;
 import me.flourick.fmc.utils.IModule;
 
 /**
- * Simple AFK module
+ * Simple AFK module.
  * 
  * @author Flourick
  */
@@ -59,7 +59,7 @@ public class AFK implements IModule, CommandExecutor
 		fmc.getCommand("afk").setTabCompleter(new EmptyTabCompleter());
 		fmc.getCommand("afk").setExecutor(this);
 		
-		// player joined, let's watch him closely
+		// player joined, let's watch him VERY closely
 		fmc.getServer().getPluginManager().registerEvents(new Listener()
 		{
 			@EventHandler(priority=EventPriority.NORMAL)
@@ -258,7 +258,7 @@ public class AFK implements IModule, CommandExecutor
 			public void OnPlayerIssuedCommand(PlayerCommandPreprocessEvent e)
 			{
 				if(e.getMessage().toLowerCase().startsWith("/afk") || e.getMessage().toLowerCase().startsWith("/fmc:afk")) {
-					// skip check for afk command
+					// skip check for afk command as it would doublefire otherwise
 					return;
 				}
 				

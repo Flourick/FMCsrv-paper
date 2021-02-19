@@ -27,7 +27,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
- * Main class of the FMC plugin
+ * Main class of the FMC plugin.
  * 
  * @author Flourick
  */
@@ -128,11 +128,11 @@ public class FMC extends JavaPlugin
 	}
 
 	/**
-	* Gets whether a given module is running or not
+	* Gets whether a given module is running or not.
 	* 
-	* @param  name	Name of the module to check
+	* @param moduleName name of the module to check
 	* 
-	* @return true if module is running, false otherwise
+	* @return {@code true} if module is running, {@code false} otherwise
 	*/
 	public boolean isModuleRunning(String moduleName)
 	{
@@ -150,9 +150,9 @@ public class FMC extends JavaPlugin
 	}
 	
 	/**
-	* Adds a Filter to root logger
+	* Adds a filter to the root logger.
 	* 
-	* @param  filter	Filter to add
+	* @param filter filter to add
 	*/
 	public void addLogFilter(Filter filter)
 	{
@@ -160,9 +160,9 @@ public class FMC extends JavaPlugin
 	}
 	
 	/**
-	* Removes a Filter from root logger
+	* Removes a filter from the root logger.
 	* 
-	* @param  filter	Filter to remove
+	* @param filter filter to remove
 	*/
 	public void removeLogFilter(Filter filter)
 	{

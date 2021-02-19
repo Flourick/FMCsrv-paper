@@ -15,7 +15,7 @@ import org.bukkit.entity.Player;
 import me.flourick.fmc.FMC;
 
 /**
- * Wrapper for JDBC MySQL driver and its calls
+ * Wrapper for JDBC MySQL driver and its calls.
  * 
  * @author Flourick
  */
@@ -283,6 +283,7 @@ public class StatsSQLConnection
 				String foundName = results.getString("name");
 				int joinCount = results.getInt("times_joined");
 				
+				// DOES NOT WORK??? HELLO???
 				if(!foundName.equals(name)) {
 					name = foundName;
 				}

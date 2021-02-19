@@ -3,7 +3,7 @@ package me.flourick.fmc.loot;
 import java.util.List;
 
 /**
- * Holds WanderingTraderTrades that belong to the same group
+ * Holds WanderingTraderTrades that belong to the same group.
  * 
  * @author Flourick
  */

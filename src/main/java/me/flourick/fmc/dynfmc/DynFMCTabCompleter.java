@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 /**
- * dynfmc command TAB completion
+ * TAB completion for dynfmc command.
  * 
  * @author Flourick
  */

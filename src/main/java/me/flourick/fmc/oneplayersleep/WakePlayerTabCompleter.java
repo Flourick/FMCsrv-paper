@@ -9,7 +9,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 /**
- * TAB completion for wakeplayer command
+ * TAB completion for wakeplayer command.
  * 
  * @author Flourick
  */

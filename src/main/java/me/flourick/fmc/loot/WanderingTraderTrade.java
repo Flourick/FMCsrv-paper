@@ -3,7 +3,7 @@ package me.flourick.fmc.loot;
 import org.bukkit.inventory.MerchantRecipe;
 
 /**
- * Wrapper for MerchantRecipe
+ * Wrapper for MerchantRecipe as it's read from config.
  * 
  * @author Flourick
  */

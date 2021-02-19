@@ -1,16 +1,14 @@
 # Discord module configuration file
 # ---
-# discord-token: String
+# discord-token: (string)
 #    -> your discord bot token
-# discord-channel-id: Integer
+# discord-channel-id: (integer)
 #    -> ID of the discord channel where bot sends messages
-# message-format: String
+# message-format: (string)
 #    -> format of the message that is sent to minecraft server. {PLAYER} is substituted for the discord user who sent the message. Supports colors using '&' or '§' symbol
-# ---
-# send-death-messages: Boolean
+# send-death-messages: (boolean)
 #    -> states if you want death messages to get sent to the discord channel
-# ---
-# send-join-leave-messages: Boolean
+# send-join-leave-messages: (boolean)
 #    -> states if you want player join and left messages to get sent to the discord channel
 # ---
 discord-token: TOKEN

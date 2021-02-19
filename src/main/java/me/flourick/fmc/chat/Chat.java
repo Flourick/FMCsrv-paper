@@ -26,7 +26,7 @@ import me.flourick.fmc.utils.EmptyTabCompleter;
 import me.flourick.fmc.utils.IModule;
 
 /**
- * Module for various chat & customization features
+ * Module for various chat & customization features.
  * 
  * @author Flourick
  */

@@ -8,7 +8,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 /**
- * colorme command TAB completion
+ * TAB completion for colorme command.
  * 
  * @author Flourick
  */

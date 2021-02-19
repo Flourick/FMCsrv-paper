@@ -11,7 +11,7 @@ import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 
 /**
- * Log4j Filter that filters console using a given array of strings
+ * Log4j Filter that is used to filter console using a given array of strings.
  * 
  * @author Flourick
  */

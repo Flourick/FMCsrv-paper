@@ -11,7 +11,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 /**
- * deluser command TAB completion
+ * TAB completion for deluser command.
  * 
  * @author Flourick
  */

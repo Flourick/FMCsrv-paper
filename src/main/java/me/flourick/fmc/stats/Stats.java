@@ -22,7 +22,7 @@ import me.flourick.fmc.utils.EmptyTabCompleter;
 import me.flourick.fmc.utils.IModule;
 
 /**
- * Module for collecting various statistics
+ * Module for collecting various statistics.
  * 
  * @author Flourick
  */

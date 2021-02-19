@@ -4,7 +4,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 
 /**
- * InventoryHolder implementation
+ * InventoryHolder implementation, used in getting offline players ender chest.
  * 
  * @author Flourick
  */

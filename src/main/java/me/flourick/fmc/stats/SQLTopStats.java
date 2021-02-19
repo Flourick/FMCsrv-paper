@@ -3,7 +3,7 @@ package me.flourick.fmc.stats;
 import java.sql.Timestamp;
 
 /**
- * Wrapper class for /top command output (stats pulled from SQL)
+ * Wrapper class for /top command output (stats pulled from SQL).
  * 
  * @author Flourick
  */

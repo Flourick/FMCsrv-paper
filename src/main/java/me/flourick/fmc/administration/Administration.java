@@ -21,10 +21,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 /**
- * Administration module class
- * <p>
- * Various admin features
- * </p>
+ * Administration module to make some tasks easier.
  * 
  * @author Flourick
  */

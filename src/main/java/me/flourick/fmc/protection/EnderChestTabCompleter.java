@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 /**
- * enderchest command TAB completion
+ * TAB completion for enderchest command.
  * 
  * @author Flourick
  */

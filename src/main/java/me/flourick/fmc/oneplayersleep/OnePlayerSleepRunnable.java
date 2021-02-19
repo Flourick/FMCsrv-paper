@@ -4,7 +4,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerBedEnterEvent;
 
 /**
- * Runnable of the OnePlayerSleep module
+ * Runnable of the OnePlayerSleep module.
  * 
  * @author Flourick
  */

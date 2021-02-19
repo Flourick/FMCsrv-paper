@@ -17,13 +17,14 @@ import de.tr7zw.changeme.nbtapi.NBTFile;
 import de.tr7zw.changeme.nbtapi.NBTItem;
 
 /**
- * Holder of various utility function regarding offline player saving and loading
+ * Holder of various utility function regarding offline player saving and loading.
  * 
  * @author Flourick
  */
 public class OfflinePlayerUtils
 {
-	private static final Map<Byte, Byte> TO_NMS_INVENTORY_INDEXES = new HashMap<Byte, Byte>() {
+	private static final Map<Byte, Byte> TO_NMS_INVENTORY_INDEXES = new HashMap<Byte, Byte>()
+	{
 		private static final long serialVersionUID = 1L;
 
 		{
@@ -34,7 +35,8 @@ public class OfflinePlayerUtils
 		}
 	};
 
-	private static final Map<Byte, Byte> FROM_NMS_INVENTORY_INDEXES = new HashMap<Byte, Byte>() {
+	private static final Map<Byte, Byte> FROM_NMS_INVENTORY_INDEXES = new HashMap<Byte, Byte>()
+	{
 		private static final long serialVersionUID = 1L;
 
 		{
@@ -46,12 +48,12 @@ public class OfflinePlayerUtils
 	};
 
 	/**
-	* Gets Ender Chest of offline player
+	* Gets the ender chest of offline player.
 	* 
-	* @param name Name of the player (used in the Ender Chest display)
-	* @param uuid String represantation of UUID class coresponding to the player
+	* @param name name of the player (used in the Ender Chest display)
+	* @param uuid string represantation of UUID class coresponding to the player
 	* 
-	* @return The Ender Chest of given player
+	* @return the ender chest of given player
 	*/
 	public static Inventory getOfflinePlayerEnderChest(String name, String uuid)
 	{
@@ -81,12 +83,12 @@ public class OfflinePlayerUtils
 	}
 
 	/**
-	* Saves Ender Chest of offline player
+	* Saves the ender chest of offline player.
 	* 
-	* @param uuid       String representation of UUID class corresponding to the player
-	* @param enderChest Ender Chest contents, can be null to empty it
+	* @param uuid       string representation of UUID class corresponding to the player
+	* @param enderChest ender chest contents, can be null to empty it
 	*
-	* @return true if saving was successful, false otherwise
+	* @return {@code true} if saving was successful, {@code false} otherwise
 	*/
 	public static boolean saveOfflinePlayerEnderChest(String uuid, Inventory enderChest)
 	{
@@ -127,12 +129,12 @@ public class OfflinePlayerUtils
 	}
 
 	/**
-	* Gets Inventory of offline player
+	* Gets the inventory of offline player.
 	* 
-	* @param name Name of the player
-	* @param uuid String represantation of UUID class corresponding to the player
+	* @param name name of the player
+	* @param uuid string represantation of UUID class corresponding to the player
 	* 
-	* @return The Inventory of given player
+	* @return the inventory of given player
 	*/
 	public static Inventory getOfflinePlayerInventory(String name, String uuid)
 	{
@@ -162,12 +164,12 @@ public class OfflinePlayerUtils
 	}
 
 	/**
-	* Saves Inventory of offline player
+	* Saves the inventory of offline player.
 	* 
-	* @param uuid      String representation of UUID class corresponding to the player
-	* @param inventory Inventory contents, can be null to empty it
+	* @param uuid      string representation of UUID class corresponding to the player
+	* @param inventory inventory contents, can be null to empty it
 	*
-	* @return true if saving was successful, false otherwise
+	* @return {@code true} if saving was successful, {@code false} otherwise
 	*/
 	public static boolean saveOfflinePlayerInventory(String uuid, Inventory inventory)
 	{
@@ -205,11 +207,11 @@ public class OfflinePlayerUtils
 	}
 
 	/**
-	* Deletes users .dat files, basically resetting all of his progress
+	* Deletes users .dat files, basically resetting all of his progress.
 	* 
-	* @param uuid String representation of UUID class corresponding to the player
+	* @param uuid string representation of UUID class corresponding to the player
 	*
-	* @return true if deletion was successful, false if not or no files found for given user
+	* @return {@code true} if deletion was successful, {@code false} if not or no files found for given user
 	*/
 	public static boolean deleteUserDataFiles(String uuid)
 	{

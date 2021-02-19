@@ -70,7 +70,7 @@ commands:
         description: Deletes associated .dat files of given user
         permission: fmc.deluser
         permission-message: §cYou do not have permission for that!
-        usage: "§eUsage:§r /<command> §7[§rplayer/uuid§7]"
+        usage: "§eUsage:§r /<command> §7<§rplayer/uuid§7>"
 
 permissions:
     fmc.announce:

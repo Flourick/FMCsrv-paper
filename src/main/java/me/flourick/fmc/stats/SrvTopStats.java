@@ -6,7 +6,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Statistic;
 
 /**
- * Wrapper class for /top command output (server collected statistics)
+ * Wrapper class for /top command output (server collected statistics).
  * 
  * @author Flourick
  */

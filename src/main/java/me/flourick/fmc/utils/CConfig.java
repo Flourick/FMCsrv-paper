@@ -13,7 +13,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import me.flourick.fmc.FMC;
 
 /**
- * Custom config class for additional configuration files
+ * Custom config class for additional configuration files.
  * 
  * @author Flourick
  */
@@ -26,10 +26,10 @@ public class CConfig
 	private final String configName;
 	
 	/**
-	* The one and only constructor of the CConfig class
+	* The one and only constructor of the CConfig class.
 	* 
 	* @param fmc        FMC plugin instance
-	* @param configName name of the config file including .yml (ex. 'chatter.yml')
+	* @param configName name of the config file including the extension (ex. 'chatter.yml')
 	*/
 	public CConfig(FMC fmc, String configName)
 	{
@@ -38,9 +38,9 @@ public class CConfig
 	}
 	
 	/**
-	* Gets the actual config instance or reloads one from .jar if not present
+	* Gets the actual config instance or reloads one from .jar if not present.
 	* 
-	* @return FileConfiguration associated with this CConfig instance
+	* @return {@code FileConfiguration} associated with this CConfig instance
 	*/
 	public FileConfiguration getConfig()
 	{
@@ -52,7 +52,7 @@ public class CConfig
 	}
 	
 	/**
-	* Reloads the config from jar or creates one if not present
+	* Reloads the config from jar or creates one if not present.
 	*/
 	public void reloadConfig()
 	{
@@ -68,7 +68,7 @@ public class CConfig
 	}
 	
 	/**
-	* Saves all changes from memory to disk file
+	* Saves all changes from memory to disk file.
 	*/
 	public void saveConfig()
 	{
@@ -84,7 +84,7 @@ public class CConfig
 	}
 	
 	/**
-	* Creates the .yml file associated with this CConfig instance in plugins data folder, does not overwrite if already present
+	* Creates the .yml file associated with this CConfig instance in plugins data folder, does not overwrite if already present.
 	*/
 	public void saveDefaultConfig()
 	{

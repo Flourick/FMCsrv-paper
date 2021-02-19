@@ -32,7 +32,7 @@ import me.flourick.fmc.utils.IModule;
 import net.md_5.bungee.api.ChatColor;
 
 /**
- * Loot module
+ * Loot module.
  * 
  * @author Flourick
  */

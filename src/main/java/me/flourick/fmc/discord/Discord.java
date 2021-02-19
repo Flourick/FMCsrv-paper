@@ -25,7 +25,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.md_5.bungee.api.ChatColor;
 
 /**
- * Discord bot chat integration module
+ * Discord bot chat integration module.
  * 
  * @author Flourick
  */

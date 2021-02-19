@@ -6,7 +6,7 @@ import java.util.logging.Formatter;
 import java.util.logging.LogRecord;
 
 /**
- * Java log formatter
+ * Java log formatter for logging to files in Protection module.
  * 
  * @author Flourick
  */

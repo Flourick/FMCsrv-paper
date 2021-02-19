@@ -10,7 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 /**
- * inactive command TAB completion
+ * TAB completion for inactive command.
  * 
  * @author Flourick
  */

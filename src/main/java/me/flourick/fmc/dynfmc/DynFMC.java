@@ -15,7 +15,7 @@ import me.flourick.fmc.utils.IModule;
 import me.flourick.fmc.utils.SilentOutputSender;
 
 /**
- * DynFMC module that wraps some of dmarker commands in a nicer way
+ * DynFMC module that wraps some of dmarker commands in a 'nicer' way and more user friendly way.
  * 
  * @author Flourick
  */

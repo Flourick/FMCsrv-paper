@@ -24,7 +24,7 @@ import me.flourick.fmc.utils.IModule;
 import org.bukkit.event.player.PlayerBedLeaveEvent;
 
 /**
- * Allows just one player to skip the night by sleeping. Others can kick him out of bed if skipping is not desired
+ * Allows just one player to skip the night by sleeping. Others can kick him out of bed if skipping is not desired.
  * 
  * @author Flourick
  */

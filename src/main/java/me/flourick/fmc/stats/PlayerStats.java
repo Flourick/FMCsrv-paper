@@ -3,7 +3,7 @@ package me.flourick.fmc.stats;
 import java.sql.Timestamp;
 
 /**
- * Wrapper class for PlayerStats table in database
+ * Wrapper class for PlayerStats table in database.
  * 
  * @author Flourick
  */

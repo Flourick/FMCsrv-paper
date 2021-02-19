@@ -5,7 +5,7 @@
 # allow-chat-color-codes: (boolean)
 #    -> allows users to use formatting codes using '&' symbol
 # enable-player-colors: (boolean)
-#    -> enables changing users name color in chat and tab, for it to work in Paper use-vanilla-world-scoreboard-name-coloring MUST be set to false in paper.yml (if using Paper)!
+#    -> enables changing users name color in chat and tab, for it to work in Paper use-vanilla-world-scoreboard-name-coloring MUST be set to false in paper.yml!
 # player-colors:
 #    -> list of individual players colors, if you want to edit it here make sure server is offline else changes won't have any effect
 # ---

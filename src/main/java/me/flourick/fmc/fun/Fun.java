@@ -14,7 +14,7 @@ import me.flourick.fmc.utils.EmptyTabCompleter;
 import me.flourick.fmc.utils.IModule;
 
 /**
- * Module for various 'fun' features
+ * Module for various 'fun' features.
  * 
  * @author Flourick
  */

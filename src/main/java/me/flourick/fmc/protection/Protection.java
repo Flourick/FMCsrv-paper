@@ -59,7 +59,7 @@ import me.flourick.fmc.utils.OfflinePlayerUtils;
 import net.md_5.bungee.api.ChatColor;
 
 /**
- * Module containing protection related features
+ * Module containing protection related features.
  * 
  * @author Flourick
  */
@@ -270,7 +270,7 @@ public class Protection implements IModule, CommandExecutor
 
 							log(Level.INFO, event.getPlayer().getName() + " closed " + loc.getBlock().getType() + " at [" + loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ() + "] in " + event.getPlayer().getWorld().getName());
 
-							// basically only logs items on the viewer that closes the container last (And yeah there is no way to know which of the viewers took or placed the items)
+							// basically only logs items on the viewer that closes the container last (And yeah there is no way to know which of the viewers took or placed the items specifically)
 							if(event.getInventory().getViewers().size() < 2) {
 								if(takenItems != null) {
 									for(String item : takenItems) {
