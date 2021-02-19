@@ -207,7 +207,7 @@ public class Loot implements IModule
 								}
 								
 								MerchantRecipe chosenOne = null;
-;								
+								
 								int cutoff = (int) Math.round(Math.random() * 100);
 								int cumult = 0;
 								for(WanderingTraderTrade td : tradeGroup.getValue().getTrades()) {

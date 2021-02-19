@@ -172,10 +172,10 @@ public class Administration implements IModule, CommandExecutor
 
 				if(argz.length == 2) {
 					if(OfflinePlayerUtils.deleteUserDataFiles(argz[1])) {
-						sender.sendMessage("Successfully deleted user's .dat files!");
+						sender.sendMessage(ChatColor.GREEN + "Successfully deleted user's .dat files!");
 					}
 					else {
-						sender.sendMessage("Could not find any user's .dat files!");
+						sender.sendMessage(ChatColor.RED + "Could not find any user's .dat files!");
 					}
 				}
 				else {
