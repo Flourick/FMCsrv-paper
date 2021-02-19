@@ -10,7 +10,7 @@ Once you run it for the first time configs will be created in `/plugins/FMC/` di
 
 ## Modules
 
-Features are divided in 10 modules for easier configuration of what you want to enable or not.
+Features are divided into 10 modules for easier configuration of what you want to enable or not.
 
 * ### Administration
 
