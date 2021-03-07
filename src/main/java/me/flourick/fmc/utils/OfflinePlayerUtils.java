@@ -216,7 +216,7 @@ public class OfflinePlayerUtils
 	public static boolean deleteUserDataFiles(String uuid)
 	{
 		File dataFile = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
-		File dataFileOld = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat");
+		File dataFileOld = new File(new File(Bukkit.getWorld("world").getWorldFolder(), "playerdata"), uuid + ".dat_old");
 		boolean success = false;
 
 		if(dataFile.exists() && dataFile.canWrite()) {
